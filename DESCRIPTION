@@ -1,0 +1,21 @@
+Package: multichainr
+Title: R Interface to MultiChain Blockchain RPC API
+Version: 0.0.0.9000
+Authors@R: 
+    person("Aliaksandr", "Martsinkevich", , "alex@capsula.by", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-3655-4489"))
+Description: Provides a comprehensive R interface to the MultiChain
+    blockchain JSON-RPC API. Users can manage blockchain nodes, create and
+    subscribe to data streams, issue assets, and manage network
+    permissions directly from the R console.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports: 
+    httr2,
+    jsonlite,
+    magrittr
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

@@ -61,14 +61,17 @@ mc_rpc <- function(conn, method, params = list()) {
 rpc_res_to_df <- function(res) {
   if (is.null(res) || length(res) == 0) return(data.frame())
   
+  all_names <- unique(unlist(lapply(res, names)))
+  
   df_list <- lapply(res, function(x) {
+    missing <- setdiff(all_names, names(x))
+    x[missing] <- NA
+    x <- x[all_names]
     x[sapply(x, is.null)] <- NA
     as.data.frame(x, stringsAsFactors = FALSE)
   })
   
-  df <- do.call(rbind, df_list)
-  rownames(df) <- NULL
-  return(df)
+  do.call(rbind, df_list)
 }
 
 #' Decode hex string to character
@@ -82,14 +85,24 @@ rpc_res_to_df <- function(res) {
 #' @keywords internal
 hex_to_char <- function(hex_str) {
   if (is.null(hex_str) || nchar(as.character(hex_str)) == 0) return("")
-  if (nchar(hex_str) %% 2 != 0) return(as.character(hex_str))
+  
+  hex_str <- as.character(hex_str)
+
+  is_valid_hex <- nchar(hex_str) %% 2 == 0 && grepl("^[0-9a-fA-F]+$", hex_str)
+  
+  if (!is_valid_hex) return(hex_str)
   
   res <- tryCatch({
-    raw_val <- as.raw(strtoi(substring(hex_str, seq(1, nchar(hex_str), 2), seq(2, nchar(hex_str), 2)), 16L))
+    starts <- seq(1, nchar(hex_str), 2)
+    bytes_str <- substring(hex_str, starts, starts + 1)
+    
+    ints <- strtoi(bytes_str, 16L)
+    
+    raw_val <- as.raw(ints)
     
     rawToChar(raw_val)
   }, error = function(e) {
-    return(as.character(hex_str))
+    return(hex_str)
   })
   
   return(unname(res))

@@ -12,11 +12,9 @@ test_that("mc_pause and mc_resume return NULL on success", {
       )
     },
     {
-      # Проверка с вектором задач
       res1 <- mc_pause(conn_mock, c("mining", "incoming"))
       expect_null(res1)
       
-      # Проверка с одной задачей
       res2 <- mc_resume(conn_mock, "offchain")
       expect_null(res2)
     }

@@ -12,11 +12,9 @@ test_that("mc_subscribe returns NULL on success", {
       )
     },
     {
-      # Подписка на один элемент
       res1 <- mc_subscribe(conn_mock, "stream1")
       expect_null(res1)
       
-      # Подписка на вектор элементов (актив и поток сразу)
       res2 <- mc_subscribe(conn_mock, c("asset1", "stream2"), rescan = FALSE)
       expect_null(res2)
     }

@@ -2,7 +2,6 @@ conn_mock <- mc_connect(port = 8570, user = "u", password = "p")
 
 test_that("mc_get_filter_code returns string", {
   fake_code <- "function filtertx() { return 'ok'; }"
-  # Исправлено: используем fake_code для формирования тела ответа
   fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_code)
   
   httr2::with_mocked_responses(
@@ -60,7 +59,6 @@ test_that("mc_test_tx_filter returns compilation status", {
 })
 
 test_that("mc_get_variable_value returns JSON value", {
-  # Используем готовую строку JSON, где error явно прописан как null
   fake_body <- '{"result":{"temp":25,"status":"ok"},"error":null,"id":1}'
   
   httr2::with_mocked_responses(
@@ -74,7 +72,6 @@ test_that("mc_get_variable_value returns JSON value", {
     {
       res <- mc_get_variable_value(conn_mock, "temp_var")
       
-      # Ожидаем, что результат парсинга JSON будет списком
       expect_type(res, "list")
       expect_equal(res$temp, 25)
       expect_equal(res$status, "ok")
@@ -83,7 +80,6 @@ test_that("mc_get_variable_value returns JSON value", {
 })
 
 test_that("mc_get_variable_history returns data.frame", {
-  # Пример истории изменений переменной
   fake_body <- '{"result":[
     {"value":10,"blocktime":1600000000},
     {"value":20,"blocktime":1600000100}

@@ -1,7 +1,5 @@
 conn_mock <- mc_connect(port = 8570, user = "u", password = "p")
 
-# --- Группа 1: Информационные функции ---
-
 test_that("mc_get_asset_info returns asset details", {
   fake_body <- '{"result":{"name":"myasset","issuetxid":"tx123","units":0.01},"error":null,"id":1}'
   
@@ -127,8 +125,6 @@ test_that("mc_list_assets returns empty data.frame on empty result", {
   )
 })
 
-# --- Группа 2: Выпуск активов (Issuance) ---
-
 test_that("mc_issue and mc_issue_from return txid", {
   fake_txid <- "issuance_txid_001"
   fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
@@ -142,11 +138,9 @@ test_that("mc_issue and mc_issue_from return txid", {
       )
     },
     {
-      # Тест базового выпуска
       tx1 <- mc_issue(conn_mock, "1ADDR", "assetname", 1000)
       expect_equal(tx1, fake_txid)
       
-      # Тест выпуска с адреса
       tx2 <- mc_issue_from(conn_mock, "1FROM", "1TO", "assetname", 500)
       expect_equal(tx2, fake_txid)
     }
@@ -194,8 +188,6 @@ test_that("mc_issue_token returns txid", {
   )
 })
 
-# --- Группа 3: Обновление (Update) ---
-
 test_that("mc_update and mc_update_from return txid", {
   fake_txid <- "update_txid_004"
   fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
@@ -218,17 +210,11 @@ test_that("mc_update and mc_update_from return txid", {
   )
 })
 
-# --- Группа 4: Проверка логики необязательных параметров ---
-
 test_that("mc_issue correctly handles custom_fields without native_amount", {
-  # Мы проверяем, что функция не падает при сборке параметров
-  # и корректно отправляет данные в RPC (через мок)
   fake_body <- '{"result":"tx123","error":null,"id":1}'
   
   httr2::with_mocked_responses(
     function(req) {
-      # Проверка того, что 4-й и 5-й параметры (native_amount и custom_fields) 
-      # передаются правильно — это делает сама функция mc_issue
       httr2::response(status_code = 200, body = charToRaw(fake_body))
     },
     {

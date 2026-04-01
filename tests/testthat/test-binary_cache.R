@@ -23,7 +23,6 @@ test_that("mc_append_binary_cache returns numeric size", {
       httr2::response(status_code = 200, body = charToRaw(fake_body))
     },
     {
-      # Добавляем hex данные
       size <- mc_append_binary_cache(conn_mock, "id1", "48656c6c6f")
       expect_equal(size, 1024)
     }

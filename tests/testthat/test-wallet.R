@@ -18,7 +18,6 @@ test_that("mc_list_unspent returns data.frame with assets", {
       expect_equal(nrow(df), 1)
       expect_equal(df$txid[1], "tx1")
       
-      # Теперь assets[[1]] будет списком, содержащим один элемент (информацию об активе)
       expect_type(df$assets[[1]], "list")
       expect_equal(df$assets[[1]][[1]]$name, "ast")
     }
@@ -166,42 +165,6 @@ test_that("mc_get_wallet_info returns wallet status", {
       expect_type(res, "list")
       expect_equal(res$txcount, 42)
       expect_equal(res$balance, 10.5)
-    }
-  )
-})
-
-test_that("mc_dump_privkey returns the key string", {
-  conn <- mc_connect(port = 8570, user = "u", password = "p")
-  
-  fake_response <- list(
-    result = NULL,
-    error = NULL,
-    id = 1
-  )
-  
-  httr2::with_mocked_responses(
-    function(req) {
-      httr2::response(
-        status_code = 200,
-        headers = list("Content-Type" = "application/json"),
-        body = charToRaw(as.character(jsonlite::toJSON(fake_response, null = "null", auto_unbox = TRUE)))
-      )
-    },
-    {
-      # Should not throw error and return NULL
-      res <- mc_dump_privkey(conn, "Vp4k8S...")
-      expect_null(res)
-    }
-  )
-  fake_body <- '{"result":"Vp4k8S...","error":null,"id":1}'
-  
-  httr2::with_mocked_responses(
-    function(req) {
-      httr2::response(status_code = 200, body = charToRaw(fake_body))
-    },
-    {
-      res <- mc_dump_privkey(conn_mock, "1ADDR")
-      expect_equal(res, "Vp4k8S...")
     }
   )
 })

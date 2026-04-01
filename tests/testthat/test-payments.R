@@ -9,7 +9,6 @@ test_that("mc_send and mc_send_from return txid", {
       httr2::response(status_code = 200, body = charToRaw(fake_body))
     },
     {
-      # Простая отправка нативной валюты
       tx1 <- mc_send(conn_mock, "1ADDR", 10.5)
       expect_equal(tx1, fake_txid)
       
@@ -44,9 +43,6 @@ test_that("mc_send_with_data returns txid and handles metadata", {
   
   httr2::with_mocked_responses(
     function(req) {
-      # Просто возвращаем успешный ответ. 
-      # Если бы hex-конвертация внутри mc_send_with_data сломалась, 
-      # мы бы даже не дошли до этого мока.
       httr2::response(
         status_code = 200, 
         headers = list("Content-Type" = "application/json"),
@@ -54,11 +50,9 @@ test_that("mc_send_with_data returns txid and handles metadata", {
       )
     },
     {
-      # Проверяем передачу строки
       tx1 <- mc_send_with_data(conn_mock, "1ADDR", 0, "Hello")
       expect_equal(tx1, fake_txid)
       
-      # Проверяем передачу списка (JSON)
       tx2 <- mc_send_with_data(conn_mock, "1ADDR", 0, list(key = "val"))
       expect_equal(tx2, fake_txid)
     }

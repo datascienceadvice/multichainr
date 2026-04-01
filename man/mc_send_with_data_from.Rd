@@ -37,6 +37,15 @@ txid <- mc_send_with_data_from(conn, "1A...", "1B...", 0.5,
 \code{\link{mc_send_with_data}}, \code{\link{mc_send_from}}.
 
 Other transactions: 
+\code{\link{mc_get_address_balances}()},
+\code{\link{mc_get_address_transaction}()},
+\code{\link{mc_get_multi_balances}()},
+\code{\link{mc_get_token_balances}()},
+\code{\link{mc_get_total_balances}()},
+\code{\link{mc_get_tx_out_data}()},
+\code{\link{mc_get_wallet_transaction}()},
+\code{\link{mc_list_address_transactions}()},
+\code{\link{mc_list_wallet_transactions}()},
 \code{\link{mc_send}()},
 \code{\link{mc_send_asset}()},
 \code{\link{mc_send_asset_from}()},

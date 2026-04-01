@@ -22,7 +22,7 @@
 #' @seealso \code{\link{mc_create_multisig}} to create a multisig address
 #'   without adding it to the wallet.
 #'
-#' @family address operations
+#' @family addresses
 #' @export
 mc_add_multisig_address <- function(conn, n_required, keys) {
   params <- list(as.integer(n_required), as.list(keys))
@@ -53,7 +53,7 @@ mc_add_multisig_address <- function(conn, n_required, keys) {
 #'
 #' @seealso \code{\link{mc_list_addresses}} for more flexible listing options.
 #'
-#' @family address operations
+#' @family addresses
 #' @export
 mc_get_addresses <- function(conn, verbose = FALSE) {
   res <- mc_rpc(conn, "getaddresses", list(verbose))
@@ -78,7 +78,7 @@ mc_get_addresses <- function(conn, verbose = FALSE) {
 #' @seealso \code{\link{mc_create_keypairs}} to generate key pairs not stored
 #'   in the wallet.
 #'
-#' @family address operations
+#' @family addresses
 #' @export
 mc_get_new_address <- function(conn) {
   mc_rpc(conn, "getnewaddress")
@@ -108,7 +108,7 @@ mc_get_new_address <- function(conn) {
 #'
 #' @seealso \code{\link{mc_validate_address}} to check address validity.
 #'
-#' @family address operations
+#' @family addresses
 #' @export
 mc_import_address <- function(conn, address, label = "", rescan = TRUE) {
   mc_rpc(conn, "importaddress", list(address, label, rescan))
@@ -149,7 +149,7 @@ mc_import_address <- function(conn, address, label = "", rescan = TRUE) {
 #'
 #' @seealso \code{\link{mc_get_addresses}} for a simpler version.
 #'
-#' @family address operations
+#' @family addresses
 #' @export
 mc_list_addresses <- function(conn, addresses = "*", verbose = FALSE, count = NULL, start = NULL) {
   params <- list(addresses, verbose)
@@ -191,7 +191,7 @@ mc_list_addresses <- function(conn, addresses = "*", verbose = FALSE, count = NU
 #' @seealso \code{\link{mc_get_new_address}} to create an address stored in the
 #'   wallet.
 #'
-#' @family address operations
+#' @family addresses
 #' @export
 mc_create_keypairs <- function(conn, count = 1) {
   res <- mc_rpc(conn, "createkeypairs", list(as.integer(count)))
@@ -223,7 +223,7 @@ mc_create_keypairs <- function(conn, count = 1) {
 #' @seealso \code{\link{mc_add_multisig_address}} to create and add the address
 #'   to the wallet.
 #'
-#' @family address operations
+#' @family addresses
 #' @export
 mc_create_multisig <- function(conn, n_required, keys) {
   params <- list(as.integer(n_required), as.list(keys))
@@ -257,7 +257,7 @@ mc_create_multisig <- function(conn, n_required, keys) {
 #'
 #' @seealso \code{\link{mc_import_address}} to add an address to the wallet.
 #'
-#' @family address operations
+#' @family addresses
 #' @export
 mc_validate_address <- function(conn, address_or_key) {
   mc_rpc(conn, "validateaddress", list(address_or_key))

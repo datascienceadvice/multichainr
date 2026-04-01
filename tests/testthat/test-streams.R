@@ -9,11 +9,9 @@ test_that("mc_create_stream returns txid", {
       httr2::response(status_code = 200, body = charToRaw(fake_body))
     },
     {
-      # Проверка создания простого открытого стрима
       tx1 <- mc_create_stream(conn_mock, "test_stream", open = TRUE)
       expect_equal(tx1, fake_txid)
       
-      # Проверка создания стрима с ограничениями
       tx2 <- mc_create_stream(conn_mock, "restricted", open = list(restrict = "write"))
       expect_equal(tx2, fake_txid)
     }
@@ -61,15 +59,12 @@ test_that("mc_publish and mc_publish_from return txid", {
       httr2::response(status_code = 200, body = charToRaw(fake_body))
     },
     {
-      # Тест обычной публикации текста (используя MultiChain формат {"text":...})
       tx1 <- mc_publish(conn_mock, "stream1", "key1", list(text = "hello"))
       expect_equal(tx1, fake_txid)
       
-      # Тест публикации с несколькими ключами
       tx2 <- mc_publish(conn_mock, "stream1", c("k1", "k2"), "68656c6c6f") # hex "hello"
       expect_equal(tx2, fake_txid)
       
-      # Тест публикации From
       tx3 <- mc_publish_from(conn_mock, "1ADDR", "stream1", "key1", list(json = list(a = 1)))
       expect_equal(tx3, fake_txid)
     }
@@ -112,7 +107,6 @@ test_that("mc_get_stream_item returns a single item list", {
 })
 
 test_that("mc_get_stream_key_summary returns merged JSON list", {
-  # Это тест "базы данных": несколько записей схлопнулись в один объект
   fake_body <- '{"result":{"status":"active","priority":10,"user":"admin"},"error":null,"id":1}'
   
   httr2::with_mocked_responses(
@@ -145,7 +139,6 @@ test_that("mc_list_stream_keys returns data.frame of keys", {
 })
 
 test_that("mc_list_stream_query_items returns filtered data.frame", {
-  # Важно: MultiChain возвращает массив объектов
   fake_body <- '{"result":[{"key":"k1","data":"aa"},{"key":"k1","data":"bb"}],"error":null,"id":1}'
   
   httr2::with_mocked_responses(

@@ -41,4 +41,4 @@ Other asset information:
 \code{\link{mc_list_asset_issues}()},
 \code{\link{mc_list_assets}()}
 }
-\concept{asset information}
+\concept{assets}

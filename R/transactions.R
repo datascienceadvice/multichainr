@@ -8,7 +8,7 @@
 #' @param include_locked Logical. If \code{TRUE}, includes unspent outputs that have been locked (default \code{FALSE}).
 #' 
 #' @return A data frame containing asset names, amounts, and other balance details.
-#' @family MultiChain Balances
+#' @family transactions
 #' @export
 mc_get_address_balances <- function(conn, address, minconf = 1, include_locked = FALSE) {
   res <- mc_rpc(conn, "getaddressbalances", list(address, as.integer(minconf), include_locked))
@@ -25,7 +25,7 @@ mc_get_address_balances <- function(conn, address, minconf = 1, include_locked =
 #' @param verbose Logical. If \code{TRUE}, provides a detailed breakdown of inputs and outputs (default \code{FALSE}).
 #' 
 #' @return A list containing transaction details.
-#' @family MultiChain Transactions
+#' @family transactions
 #' @export
 mc_get_address_transaction <- function(conn, address, txid, verbose = FALSE) {
   mc_rpc(conn, "getaddresstransaction", list(address, txid, verbose))
@@ -43,7 +43,7 @@ mc_get_address_transaction <- function(conn, address, txid, verbose = FALSE) {
 #' @param include_locked Logical. Include locked unspent outputs (default \code{FALSE}).
 #' 
 #' @return A list or data frame of balances, indexed by address and asset.
-#' @family MultiChain Balances
+#' @family transactions
 #' @export
 mc_get_multi_balances <- function(conn, addresses = "*", assets = "*", minconf = 1, 
                                   include_watch_only = FALSE, include_locked = FALSE) {
@@ -65,7 +65,7 @@ mc_get_multi_balances <- function(conn, addresses = "*", assets = "*", minconf =
 #' @param include_locked Logical. Include locked outputs (default \code{FALSE}).
 #' 
 #' @return A data frame containing token-level balance details.
-#' @family MultiChain Balances
+#' @family transactions
 #' @export
 mc_get_token_balances <- function(conn, addresses = "*", assets = "*", minconf = 1, 
                                   include_watch_only = FALSE, include_locked = FALSE) {
@@ -85,7 +85,7 @@ mc_get_token_balances <- function(conn, addresses = "*", assets = "*", minconf =
 #' @param include_locked Logical. Include locked outputs (default \code{FALSE}).
 #' 
 #' @return A data frame summarizing total balances for each asset.
-#' @family MultiChain Balances
+#' @family transactions
 #' @export
 mc_get_total_balances <- function(conn, minconf = 1, include_watch_only = FALSE, include_locked = FALSE) {
   res <- mc_rpc(conn, "gettotalbalances", list(as.integer(minconf), include_watch_only, include_locked))
@@ -102,7 +102,7 @@ mc_get_total_balances <- function(conn, minconf = 1, include_watch_only = FALSE,
 #' @param verbose Logical. If \code{TRUE}, provides details of inputs and outputs (default \code{FALSE}).
 #' 
 #' @return A list containing detailed transaction data.
-#' @family MultiChain Transactions
+#' @family transactions
 #' @export
 mc_get_wallet_transaction <- function(conn, txid, include_watch_only = FALSE, verbose = FALSE) {
   mc_rpc(conn, "getwallettransaction", list(txid, include_watch_only, verbose))
@@ -119,7 +119,7 @@ mc_get_wallet_transaction <- function(conn, txid, include_watch_only = FALSE, ve
 #' @param verbose Logical. If \code{TRUE}, provides details of inputs and outputs (default \code{FALSE}).
 #' 
 #' @return A data frame of transaction history for the address.
-#' @family MultiChain Transactions
+#' @family transactions
 #' @export
 mc_list_address_transactions <- function(conn, address, count = 10, skip = 0, verbose = FALSE) {
   res <- mc_rpc(conn, "listaddresstransactions", list(address, as.integer(count), as.integer(skip), verbose))
@@ -137,7 +137,7 @@ mc_list_address_transactions <- function(conn, address, count = 10, skip = 0, ve
 #' @param verbose Logical. If \code{TRUE}, provides details of inputs and outputs (default \code{FALSE}).
 #' 
 #' @return A data frame of transaction history for the wallet.
-#' @family MultiChain Transactions
+#' @family transactions
 #' @export
 mc_list_wallet_transactions <- function(conn, count = 10, skip = 0, include_watch_only = FALSE, verbose = FALSE) {
   res <- mc_rpc(conn, "listwallettransactions", list(as.integer(count), as.integer(skip), include_watch_only, verbose))
@@ -156,7 +156,7 @@ mc_list_wallet_transactions <- function(conn, count = 10, skip = 0, include_watc
 #' @param start_byte Integer. The byte offset to start reading from (default \code{0}).
 #' 
 #' @return A list or string containing the hex data from the transaction output.
-#' @family MultiChain Transactions
+#' @family transactions
 #' @export
 mc_get_tx_out_data <- function(conn, txid, vout, count_bytes = NULL, start_byte = 0) {
   params <- list(txid, as.integer(vout))

@@ -48,4 +48,4 @@ Other asset information:
 \code{\link{mc_get_asset_info}()},
 \code{\link{mc_list_assets}()}
 }
-\concept{asset information}
+\concept{assets}

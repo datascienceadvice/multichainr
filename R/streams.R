@@ -30,8 +30,7 @@
 #' @family streams
 #' @export
 mc_create_stream <- function(conn, name, open = TRUE, custom_fields = NULL) {
-  # В MultiChain параметр может быть либо boolean (open), либо объектом с параметрами
-  params_arg <- if (is.list(open)) open else open
+  params_arg <- if (is.list(open)) open else as.logical(open)
   
   args <- list("stream", name, params_arg)
   if (!is.null(custom_fields)) args <- c(args, list(custom_fields))
@@ -126,8 +125,7 @@ mc_list_streams <- function(conn, streams = "*", verbose = FALSE, count = NULL, 
       params <- c(params, list(as.integer(start)))
     }
   } else if (!is.null(start)) {
-    # Если указан start, но не count, ставим максимально возможное число для count
-    params <- c(params, list(2147483647, as.integer(start)))
+    params <- c(params, list(2147483647, as.integer(start))) # MAX_INT
   }
   
   res <- mc_rpc(conn, "liststreams", params)
@@ -167,7 +165,6 @@ mc_list_streams <- function(conn, streams = "*", verbose = FALSE, count = NULL, 
 #' @family stream items
 #' @export
 mc_publish <- function(conn, stream, keys, data, options = NULL) {
-  # Если передано несколько ключей, превращаем в список для JSON-RPC
   keys_param <- if (length(keys) > 1) as.list(keys) else keys
   
   params <- list(stream, keys_param, data)
@@ -376,7 +373,6 @@ mc_get_stream_publisher_summary <- function(conn, stream, address, mode = "jsono
 #' @family stream items
 #' @export
 mc_list_stream_items <- function(conn, stream, verbose = FALSE, count = 10, start = NULL, local_ordering = FALSE) {
-  # Обработка пагинации по умолчанию (последние 10 элементов)
   actual_start <- if (is.null(start)) -as.integer(count) else as.integer(start)
   params <- list(stream, verbose, as.integer(count), actual_start, local_ordering)
   
@@ -438,7 +434,7 @@ mc_list_stream_keys <- function(conn, stream, keys = "*", verbose = FALSE, count
   params <- list(stream, keys, verbose)
   if (!is.null(count)) params <- c(params, list(as.integer(count)))
   if (!is.null(start)) {
-    if (is.null(count)) params <- c(params, list(2147483647))
+    if (is.null(count)) params <- c(params, list(2147483647)) # MAX_INT
     params <- c(params, list(as.integer(start)))
   }
   if (local_ordering) params <- c(params, list(TRUE))
@@ -501,7 +497,7 @@ mc_list_stream_publishers <- function(conn, stream, addresses = "*", verbose = F
   params <- list(stream, addresses, verbose)
   if (!is.null(count)) params <- c(params, list(as.integer(count)))
   if (!is.null(start)) {
-    if (is.null(count)) params <- c(params, list(2147483647))
+    if (is.null(count)) params <- c(params, list(2147483647)) # MAX_INT
     params <- c(params, list(as.integer(start)))
   }
   res <- mc_rpc(conn, "liststreampublishers", params)

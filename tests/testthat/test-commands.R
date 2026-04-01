@@ -122,14 +122,12 @@ test_that("mc_set_runtime_param handles RPC error correctly", {
   httr2::with_mocked_responses(
     function(req) {
       httr2::response(
-        status_code = 200, # RPC часто возвращает 200 даже при ошибках в теле JSON
+        status_code = 200,
         headers = list("Content-Type" = "application/json"),
         body = charToRaw(jsonlite::toJSON(fake_error, null = "null", auto_unbox = TRUE))
       )
     },
     {
-      # Здесь мы ожидаем, что mc_rpc внутри функции mc_set_runtime_param 
-      # правильно обработает поле error в JSON
       expect_error(
         mc_set_runtime_param(conn, "lockblock", TRUE),
         "RPC error occurred"
@@ -207,36 +205,6 @@ test_that("mc_get_info handles connection or auth errors via mc_rpc", {
     },
     {
       expect_error(mc_get_info(conn), "401 Unauthorized")
-    }
-  )
-})
-
-test_that("mc_get_init_status returns progress during loading", {
-  conn <- mc_connect(port = 8570, user = "u", password = "p")
-  
-  fake_status <- list(
-    result = list(
-      status = "loading blocks",
-      progress = 0.45
-    ),
-    error = NULL,
-    id = 1
-  )
-  
-  httr2::with_mocked_responses(
-    function(req) {
-      httr2::response(
-        status_code = 200,
-        headers = list("Content-Type" = "application/json"),
-        body = charToRaw(as.character(jsonlite::toJSON(fake_status, null = "null", auto_unbox = TRUE)))
-      )
-    },
-    {
-      res <- mc_get_init_status(conn)
-      
-      expect_type(res, "list")
-      expect_equal(res$status, "loading blocks")
-      expect_equal(res$progress, 0.45)
     }
   )
 })

@@ -60,7 +60,6 @@ mc_create_binary_cache <- function(conn) {
 #' @family binary cache
 #' @export
 mc_append_binary_cache <- function(conn, identifier, data = "") {
-  # Если передана пустая строка, RPC вернет текущий размер без добавления данных
   mc_rpc(conn, "appendbinarycache", list(identifier, data))
 }
 

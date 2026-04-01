@@ -45,7 +45,6 @@ test_that("mc_list_permissions correctly parses response into data.frame", {
       expect_true("address" %in% names(df))
       expect_true("type" %in% names(df))
       
-      # Проверяем конкретные данные
       expect_equal(df$type[1], "connect")
       expect_equal(df$endblock[1], 1000)
       expect_equal(df$address[3], "1XYZ...")

@@ -84,8 +84,8 @@ mc_get_runtime_params <- function(conn) {
 #'
 #' @examples
 #' \dontrun{
-#' # Enable mining
-#' mc_set_runtime_param(conn, "mining", TRUE)
+#' # Turn off auto‑subscription
+#' mc_set_runtime_param(conn, "autosubscribe", FALSE)
 #'
 #' # Set maximum connections to 50
 #' mc_set_runtime_param(conn, "maxconnections", 50)

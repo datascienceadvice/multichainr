@@ -687,7 +687,7 @@ mc_list_variables <- function(conn, variables = "*", verbose = FALSE, count = NU
   params <- list(variables, verbose)
   if (!is.null(count)) params <- c(params, list(as.integer(count)))
   if (!is.null(start)) {
-    if (is.null(count)) params <- c(params, list(2147483647))
+    if (is.null(count)) params <- c(params, list(2147483647)) # MAX_INT
     params <- c(params, list(as.integer(start)))
   }
   res <- mc_rpc(conn, "listvariables", params)

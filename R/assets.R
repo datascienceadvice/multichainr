@@ -24,7 +24,7 @@
 #' @seealso \code{\link{mc_list_assets}} to list all assets,
 #'   \code{\link{mc_list_asset_issues}} to list issuances.
 #'
-#' @family asset information
+#' @family assets
 #' @export
 mc_get_asset_info <- function(conn, asset, verbose = FALSE) {
   mc_rpc(conn, "getassetinfo", list(asset, verbose))
@@ -333,7 +333,7 @@ mc_issue_token_from <- function(conn, from_address, to_address, asset, token, qu
 #' @seealso \code{\link{mc_list_assets}} to list assets,
 #'   \code{\link{mc_get_asset_info}} for asset summary.
 #'
-#' @family asset information
+#' @family assets
 #' @export
 mc_list_asset_issues <- function(conn, asset, verbose = FALSE, count = NULL, start = NULL) {
   params <- list(asset, verbose)
@@ -378,13 +378,13 @@ mc_list_asset_issues <- function(conn, asset, verbose = FALSE, count = NULL, sta
 #'
 #' @seealso \code{\link{mc_get_asset_info}} for single asset details.
 #'
-#' @family asset information
+#' @family assets
 #' @export
 mc_list_assets <- function(conn, assets = "*", verbose = FALSE, count = NULL, start = NULL) {
   params <- list(assets, verbose)
   if (!is.null(count)) params <- c(params, list(as.integer(count)))
   if (!is.null(start)) {
-    if (is.null(count)) params <- c(params, list(2147483647))
+    if (is.null(count)) params <- c(params, list(2147483647)) # MAX_INT
     params <- c(params, list(as.integer(start)))
   }
   res <- mc_rpc(conn, "listassets", params)

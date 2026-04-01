@@ -45,6 +45,15 @@ txid <- mc_send(conn, "1A...", list(0.5, myasset = 50))
 \code{\link{mc_send_asset}} for single‑asset convenience.
 
 Other transactions: 
+\code{\link{mc_get_address_balances}()},
+\code{\link{mc_get_address_transaction}()},
+\code{\link{mc_get_multi_balances}()},
+\code{\link{mc_get_token_balances}()},
+\code{\link{mc_get_total_balances}()},
+\code{\link{mc_get_tx_out_data}()},
+\code{\link{mc_get_wallet_transaction}()},
+\code{\link{mc_list_address_transactions}()},
+\code{\link{mc_list_wallet_transactions}()},
 \code{\link{mc_send_asset}()},
 \code{\link{mc_send_asset_from}()},
 \code{\link{mc_send_from}()},

@@ -23,9 +23,19 @@ A data frame containing UTXO details, including \code{txid}, \code{vout},
 Returns a list of all unspent outputs (UTXOs) available in the wallet.
 }
 \seealso{
-Other MultiChain UTXO Management: 
+Other wallet: 
+\code{\link{mc_backup_wallet}()},
+\code{\link{mc_change_wallet_passphrase}()},
 \code{\link{mc_combine_unspent}()},
+\code{\link{mc_dump_privkey}()},
+\code{\link{mc_dump_wallet}()},
+\code{\link{mc_encrypt_wallet}()},
+\code{\link{mc_get_wallet_info}()},
+\code{\link{mc_import_privkey}()},
+\code{\link{mc_import_wallet}()},
 \code{\link{mc_list_lock_unspent}()},
-\code{\link{mc_lock_unspent}()}
+\code{\link{mc_lock_unspent}()},
+\code{\link{mc_lock_wallet}()},
+\code{\link{mc_unlock_wallet}()}
 }
-\concept{MultiChain UTXO Management}
+\concept{wallet}

@@ -24,7 +24,7 @@ Instructs the MultiChain node to stop tracking one or more asset(s) or stream(s)
 \seealso{
 \code{\link{mc_subscribe}}
 
-Other MultiChain Entity Management: 
+Other subscriptions: 
 \code{\link{mc_subscribe}()}
 }
-\concept{MultiChain Entity Management}
+\concept{subscriptions}

@@ -34,9 +34,20 @@ Specifically retrieves balances for tokens (sub-assets or individual units)
 associated with a parent asset.
 }
 \seealso{
-Other MultiChain Balances: 
+Other transactions: 
 \code{\link{mc_get_address_balances}()},
+\code{\link{mc_get_address_transaction}()},
 \code{\link{mc_get_multi_balances}()},
-\code{\link{mc_get_total_balances}()}
+\code{\link{mc_get_total_balances}()},
+\code{\link{mc_get_tx_out_data}()},
+\code{\link{mc_get_wallet_transaction}()},
+\code{\link{mc_list_address_transactions}()},
+\code{\link{mc_list_wallet_transactions}()},
+\code{\link{mc_send}()},
+\code{\link{mc_send_asset}()},
+\code{\link{mc_send_asset_from}()},
+\code{\link{mc_send_from}()},
+\code{\link{mc_send_with_data}()},
+\code{\link{mc_send_with_data_from}()}
 }
-\concept{MultiChain Balances}
+\concept{transactions}

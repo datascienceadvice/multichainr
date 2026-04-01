@@ -22,9 +22,20 @@ A data frame containing asset names, amounts, and other balance details.
 Returns a list of all asset balances for a given address in the node's wallet.
 }
 \seealso{
-Other MultiChain Balances: 
+Other transactions: 
+\code{\link{mc_get_address_transaction}()},
 \code{\link{mc_get_multi_balances}()},
 \code{\link{mc_get_token_balances}()},
-\code{\link{mc_get_total_balances}()}
+\code{\link{mc_get_total_balances}()},
+\code{\link{mc_get_tx_out_data}()},
+\code{\link{mc_get_wallet_transaction}()},
+\code{\link{mc_list_address_transactions}()},
+\code{\link{mc_list_wallet_transactions}()},
+\code{\link{mc_send}()},
+\code{\link{mc_send_asset}()},
+\code{\link{mc_send_asset_from}()},
+\code{\link{mc_send_from}()},
+\code{\link{mc_send_with_data}()},
+\code{\link{mc_send_with_data_from}()}
 }
-\concept{MultiChain Balances}
+\concept{transactions}

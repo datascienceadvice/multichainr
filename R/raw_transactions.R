@@ -39,13 +39,11 @@
 #' @family raw transactions
 #' @export
 mc_create_raw_transaction <- function(conn, inputs, outputs, data = list(), action = "") {
-  # Принудительно vout к integer в каждом входе
   inputs <- lapply(inputs, function(x) {
     x$vout <- as.integer(x$vout)
     x
   })
   
-  # Обработка метаданных в HEX
   if (length(data) > 0) {
     data <- lapply(data, function(d) {
       if (is.list(d)) d <- jsonlite::toJSON(d, auto_unbox = TRUE)

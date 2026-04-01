@@ -25,7 +25,7 @@ This is often required before you can retrieve items or balances for specific en
 \seealso{
 \code{\link{mc_unsubscribe}}
 
-Other MultiChain Entity Management: 
+Other subscriptions: 
 \code{\link{mc_unsubscribe}()}
 }
-\concept{MultiChain Entity Management}
+\concept{subscriptions}

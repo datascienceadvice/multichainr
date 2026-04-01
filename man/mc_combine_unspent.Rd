@@ -38,9 +38,19 @@ into a single output. This is used to improve wallet performance and reduce
 the size of the wallet's UTXO set.
 }
 \seealso{
-Other MultiChain UTXO Management: 
+Other wallet: 
+\code{\link{mc_backup_wallet}()},
+\code{\link{mc_change_wallet_passphrase}()},
+\code{\link{mc_dump_privkey}()},
+\code{\link{mc_dump_wallet}()},
+\code{\link{mc_encrypt_wallet}()},
+\code{\link{mc_get_wallet_info}()},
+\code{\link{mc_import_privkey}()},
+\code{\link{mc_import_wallet}()},
 \code{\link{mc_list_lock_unspent}()},
 \code{\link{mc_list_unspent}()},
-\code{\link{mc_lock_unspent}()}
+\code{\link{mc_lock_unspent}()},
+\code{\link{mc_lock_wallet}()},
+\code{\link{mc_unlock_wallet}()}
 }
-\concept{MultiChain UTXO Management}
+\concept{wallet}

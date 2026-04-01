@@ -76,7 +76,6 @@ test_that("mc_rpc throw error on wrong object", {
 test_that("mc_rpc handles rpc node error correctly", {
   conn <- mc_connect(port = 8570, user = "u", password = "p")
   
-  # Симулируем ответ от MultiChain, содержащий поле error
   fake_error_res <- list(
     result = NULL,
     error = list(code = -32601, message = "Method not found"),
@@ -86,7 +85,7 @@ test_that("mc_rpc handles rpc node error correctly", {
   httr2::with_mocked_responses(
     function(req) {
       httr2::response(
-        status_code = 200, # RPC часто шлет 200 даже при ошибках логики
+        status_code = 200,
         headers = list("Content-Type" = "application/json"),
         body = charToRaw(jsonlite::toJSON(fake_error_res, auto_unbox = TRUE))
       )

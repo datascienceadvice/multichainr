@@ -40,7 +40,6 @@ test_that("mc_get_address_transaction returns transaction details as list", {
 })
 
 test_that("mc_get_multi_balances returns a complex list", {
-  # getmultibalances возвращает объект, где ключи - адреса
   fake_body <- '{"result":{"1ADDR":[{"name":"asset1","qty":50}],"1OTHER":[{"name":"asset1","qty":20}]},"error":null,"id":1}'
   
   httr2::with_mocked_responses(

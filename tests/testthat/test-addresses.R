@@ -1,7 +1,6 @@
 conn_mock <- mc_connect(port = 8570, user = "u", password = "p")
 
 test_that("mc_get_new_address returns a string address", {
-  # Используем готовую строку, чтобы jsonlite не превратил NULL в []
   fake_body <- '{"result":"1ABC1234567890","error":null,"id":1}'
   
   httr2::with_mocked_responses(
@@ -38,7 +37,6 @@ test_that("mc_get_addresses: simple mode", {
 })
 
 test_that("mc_get_addresses: verbose mode", {
-  # Здесь результат - список объектов
   fake_body <- '{"result":[{"address":"addr1","ismine":true}],"error":null,"id":1}'
   
   httr2::with_mocked_responses(

@@ -11,7 +11,7 @@
 #' 
 #' @return Returns \code{NULL} invisibly on success, or an error if the RPC call fails.
 #' 
-#' @family MultiChain Entity Management
+#' @family subscriptions
 #' @seealso \code{\link{mc_unsubscribe}}
 #' 
 #' @export
@@ -34,7 +34,7 @@ mc_subscribe <- function(conn, entities, rescan = TRUE) {
 #' 
 #' @return Returns \code{NULL} invisibly on success, or an error if the RPC call fails.
 #' 
-#' @family MultiChain Entity Management
+#' @family subscriptions
 #' @seealso \code{\link{mc_subscribe}}
 #' 
 #' @export

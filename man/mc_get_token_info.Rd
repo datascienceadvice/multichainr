@@ -7,14 +7,37 @@
 mc_get_token_info(conn, asset, token, verbose = FALSE)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{asset}{Parent asset name, ref or issuance txid.}
+\item{asset}{Character string. Parent asset name, reference, or issuance
+transaction ID.}
 
-\item{token}{Token name or index.}
+\item{token}{Character string. Token name or index (e.g., \code{"token0"}).}
 
-\item{verbose}{If TRUE, returns detailed information.}
+\item{verbose}{Logical. If \code{TRUE}, returns detailed information,
+including token details. Default is \code{FALSE}.}
+}
+\value{
+A list with token information, such as name, quantity, and
+(if \code{verbose}) custom fields.
 }
 \description{
-Get information about a specific token (MultiChain 2.2.1+)
+Retrieves details about a token (non‑fungible) within a parent asset.
+This function requires MultiChain version 2.2.1 or later.
 }
+\examples{
+\dontrun{
+# Get basic info about token "nft1" in asset "art"
+token_info <- mc_get_token_info(conn, "art", "nft1")
+}
+
+}
+\seealso{
+\code{\link{mc_issue_token}} to issue tokens,
+\code{\link{mc_list_assets}} to list parent assets.
+
+Other token operations: 
+\code{\link{mc_issue_token}()},
+\code{\link{mc_issue_token_from}()}
+}
+\concept{token operations}

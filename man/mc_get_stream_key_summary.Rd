@@ -7,8 +7,32 @@
 mc_get_stream_key_summary(conn, stream, key, mode = "jsonobjectmerge")
 }
 \arguments{
-\item{mode}{Default "jsonobjectmerge". Can include "recursive", "noupdate", etc.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{stream}{Character string. Stream name, reference, or txid.}
+
+\item{key}{Character string. The key to summarize.}
+
+\item{mode}{Character string. Merge mode (default \code{"jsonobjectmerge"}).
+Other options include \code{"recursive"}, \code{"noupdate"}, etc.}
+}
+\value{
+A JSON object (list) representing the merged summary.
 }
 \description{
-Get summary of JSON objects in a stream for a specific key
+Aggregates JSON objects published under a specific key, merging them
+according to the specified mode.
 }
+\examples{
+\dontrun{
+summary <- mc_get_stream_key_summary(conn, "mystream", "key", mode = "jsonobjectmerge")
+}
+
+}
+\seealso{
+\code{\link{mc_get_stream_publisher_summary}}
+
+Other stream summaries: 
+\code{\link{mc_get_stream_publisher_summary}()}
+}
+\concept{stream summaries}

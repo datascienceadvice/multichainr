@@ -35,7 +35,6 @@ test_that("mc_verify_message returns logical TRUE/FALSE", {
     }
   )
   
-  # Тест провальной проверки
   httr2::with_mocked_responses(
     function(req) {
       httr2::response(status_code = 200, body = charToRaw(fake_body_false))

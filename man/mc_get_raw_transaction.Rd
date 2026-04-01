@@ -7,10 +7,38 @@
 mc_get_raw_transaction(conn, txid, verbose = FALSE)
 }
 \arguments{
-\item{txid}{Transaction ID.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{verbose}{If TRUE, returns a detailed list.}
+\item{txid}{Character string. Transaction ID.}
+
+\item{verbose}{Logical. If \code{TRUE}, returns a parsed transaction object;
+if \code{FALSE}, returns the raw transaction hex. Default is \code{FALSE}.}
+}
+\value{
+If \code{verbose = FALSE}, a character string (hex). If
+\code{verbose = TRUE}, a list with transaction details.
 }
 \description{
-Get a raw transaction from the blockchain
+Retrieves a transaction from the blockchain by its transaction ID. If
+\code{verbose = TRUE}, returns a detailed decoded transaction; if
+\code{FALSE} (default), returns the raw transaction in hexadecimal.
 }
+\examples{
+\dontrun{
+# Get raw hex of a transaction
+raw <- mc_get_raw_transaction(conn, "abc...")
+
+# Get decoded transaction
+tx <- mc_get_raw_transaction(conn, "abc...", verbose = TRUE)
+}
+
+}
+\seealso{
+\code{\link{mc_get_tx_out}} to inspect a specific output.
+
+Other mempool & transactions: 
+\code{\link{mc_get_mempool_info}()},
+\code{\link{mc_get_raw_mempool}()},
+\code{\link{mc_get_tx_out}()}
+}
+\concept{mempool & transactions}

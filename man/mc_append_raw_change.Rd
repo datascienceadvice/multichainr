@@ -7,14 +7,40 @@
 mc_append_raw_change(conn, tx_hex, address, native_fee = NULL)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{tx_hex}{Hex string of the raw transaction.}
+\item{tx_hex}{Character string. The raw transaction hex to which change is added.}
 
-\item{address}{Address to receive the change.}
+\item{address}{Character string. The address that will receive the change.}
 
-\item{native_fee}{Optional native fee amount.}
+\item{native_fee}{Optional numeric. Native currency fee to be deducted from
+the change. If provided, the change output is reduced accordingly.}
+}
+\value{
+A character string containing the updated raw transaction hex.
 }
 \description{
-Add a change output to a raw transaction
+Appends a change output to a raw transaction. This is useful when the
+transaction inputs exceed the required output amounts; the change is sent
+back to the specified address.
 }
+\examples{
+\dontrun{
+# Add change to a raw transaction
+updated_hex <- mc_append_raw_change(conn, tx_hex, "1A...")
+}
+
+}
+\seealso{
+\code{\link{mc_append_raw_data}}, \code{\link{mc_append_raw_transaction}}
+
+Other raw transactions: 
+\code{\link{mc_append_raw_data}()},
+\code{\link{mc_append_raw_transaction}()},
+\code{\link{mc_create_raw_send_from}()},
+\code{\link{mc_create_raw_transaction}()},
+\code{\link{mc_decode_raw_transaction}()},
+\code{\link{mc_send_raw_transaction}()},
+\code{\link{mc_sign_raw_transaction}()}
+}
+\concept{raw transactions}

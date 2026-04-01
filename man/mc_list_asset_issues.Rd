@@ -7,16 +7,45 @@
 mc_list_asset_issues(conn, asset, verbose = FALSE, count = NULL, start = NULL)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{asset}{Asset name, ref or txid.}
+\item{asset}{Character string. Asset name, reference, or issuance ID.}
 
-\item{verbose}{If TRUE, includes issuers and custom fields.}
+\item{verbose}{Logical. If \code{TRUE}, includes details about issuers
+and custom fields. Default is \code{FALSE}.}
 
-\item{count}{Number of issuances to return.}
+\item{count}{Integer (optional). Maximum number of issuances to return.}
 
-\item{start}{Offset (negative for most recent).}
+\item{start}{Integer (optional). Offset (positive for forward, negative
+for backward from the most recent). Use a negative value to get the
+most recent issuances first.}
+}
+\value{
+A data frame (converted via \code{rpc_res_to_df}) with one row per
+issuance. Columns typically include \code{txid}, \code{issuer}, \code{quantity},
+\code{units}, etc.
 }
 \description{
-List issuance events for an asset
+Returns a list of all issuance transactions (initial and subsequent)
+for a given asset.
 }
+\examples{
+\dontrun{
+# Get all issuances of "mycoin"
+issues <- mc_list_asset_issues(conn, "mycoin")
+
+# Get the most recent 5 issuances with details
+recent <- mc_list_asset_issues(conn, "mycoin", verbose = TRUE,
+                               count = 5, start = -5)
+}
+
+}
+\seealso{
+\code{\link{mc_list_assets}} to list assets,
+\code{\link{mc_get_asset_info}} for asset summary.
+
+Other asset information: 
+\code{\link{mc_get_asset_info}()},
+\code{\link{mc_list_assets}()}
+}
+\concept{asset information}

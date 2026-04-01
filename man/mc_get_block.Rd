@@ -7,12 +7,51 @@
 mc_get_block(conn, hash_or_height, verbose = 1)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{hash_or_height}{Block hash or height.}
+\item{hash_or_height}{Either a character string (block hash) or an integer
+(block height).}
 
-\item{verbose}{Verbosity level (0 to 4). Default 1.}
+\item{verbose}{Integer. Verbosity level from 0 to 4. Default is \code{1}.
+\itemize{
+\item \code{0}: returns only the block hash as a string.
+\item \code{1}: returns a list with basic block information.
+\item \code{2–4}: include additional details (transactions, etc.).
+}}
+}
+\value{
+Depends on \code{verbose}:
+\itemize{
+\item If \code{verbose = 0}: a character string with the block hash.
+\item If \code{verbose >= 1}: a list containing block details (height, time,
+transactions, etc.).
+}
 }
 \description{
-Get block information
+Retrieves detailed information about a specific block. The block can be
+identified either by its hash (string) or height (integer). The verbosity
+level controls how much detail is returned.
 }
+\examples{
+\dontrun{
+# Get block by height
+block <- mc_get_block(conn, 123456)
+
+# Get block by hash with full transaction details
+block <- mc_get_block(conn, "0000...", verbose = 2)
+}
+
+}
+\seealso{
+\code{\link{mc_get_block_hash}} to obtain a block hash from height,
+\code{\link{mc_list_blocks}} to list multiple blocks.
+
+Other blockchain information: 
+\code{\link{mc_get_block_hash}()},
+\code{\link{mc_get_blockchain_info}()},
+\code{\link{mc_get_chain_totals}()},
+\code{\link{mc_get_last_block_info}()},
+\code{\link{mc_list_blocks}()},
+\code{\link{mc_list_miners}()}
+}
+\concept{blockchain information}

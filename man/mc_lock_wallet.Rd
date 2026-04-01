@@ -6,6 +6,26 @@
 \usage{
 mc_lock_wallet(conn)
 }
-\description{
-Immediately lock the wallet
+\arguments{
+\item{conn}{A connection object to the MultiChain node.}
 }
+\value{
+Returns \code{NULL} on success.
+}
+\description{
+Removes the wallet encryption key from memory, requiring a passphrase for
+further private key operations.
+}
+\seealso{
+Other MultiChain Wallet Management: 
+\code{\link{mc_backup_wallet}()},
+\code{\link{mc_change_wallet_passphrase}()},
+\code{\link{mc_dump_privkey}()},
+\code{\link{mc_dump_wallet}()},
+\code{\link{mc_encrypt_wallet}()},
+\code{\link{mc_get_wallet_info}()},
+\code{\link{mc_import_privkey}()},
+\code{\link{mc_import_wallet}()},
+\code{\link{mc_unlock_wallet}()}
+}
+\concept{MultiChain Wallet Management}

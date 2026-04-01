@@ -6,6 +6,37 @@
 \usage{
 mc_run_tx_filter(conn, filter, tx)
 }
-\description{
-Run an existing transaction filter against a transaction
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{filter}{Character string. Filter name or transaction ID.}
+
+\item{tx}{Character string. Transaction ID or hex representation.}
 }
+\value{
+The output of the filter (e.g., boolean, transformed transaction).
+}
+\description{
+Executes an existing transaction filter on a given transaction, without
+performing a blockchain operation.
+}
+\examples{
+\dontrun{
+result <- mc_run_tx_filter(conn, "myfilter", "txid...")
+}
+
+}
+\seealso{
+\code{\link{mc_test_tx_filter}}, \code{\link{mc_create_tx_filter}}
+
+Other filters: 
+\code{\link{mc_create_stream_filter}()},
+\code{\link{mc_create_tx_filter}()},
+\code{\link{mc_get_filter_code}()},
+\code{\link{mc_list_stream_filters}()},
+\code{\link{mc_list_tx_filters}()},
+\code{\link{mc_run_stream_filter}()},
+\code{\link{mc_test_stream_filter}()},
+\code{\link{mc_test_tx_filter}()}
+}
+\concept{filters}

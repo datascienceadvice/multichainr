@@ -13,6 +13,42 @@ mc_list_asset_transactions(
   local_ordering = FALSE
 )
 }
-\description{
-List transactions involving a subscribed asset
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{asset}{Character string. Subscribed asset name, reference, or issuance ID.}
+
+\item{verbose}{Logical. If \code{TRUE}, returns detailed information
+about each transaction.}
+
+\item{count}{Integer. Number of transactions to return (default 10).}
+
+\item{start}{Integer (optional). Offset (negative for most recent).}
+
+\item{local_ordering}{Logical. If \code{TRUE}, uses local node's
+transaction ordering (default \code{FALSE}).}
 }
+\value{
+A data frame (via \code{rpc_res_to_df}) with transaction details.
+}
+\description{
+Returns a list of recent transactions that affect a subscribed asset.
+}
+\examples{
+\dontrun{
+# Get the 10 most recent transactions
+txs <- mc_list_asset_transactions(conn, "mycoin")
+
+# Get next 5 transactions with details
+more_txs <- mc_list_asset_transactions(conn, "mycoin", verbose = TRUE,
+                                       count = 5, start = 10)
+}
+
+}
+\seealso{
+\code{\link{mc_get_asset_transaction}} for a single transaction.
+
+Other asset transactions: 
+\code{\link{mc_get_asset_transaction}()}
+}
+\concept{asset transactions}

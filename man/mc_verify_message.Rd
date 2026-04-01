@@ -7,17 +7,37 @@
 mc_verify_message(conn, address, signature, message)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{address}{The address to verify against.}
+\item{address}{Character string. The address that allegedly signed the message.}
 
-\item{signature}{The base64-encoded signature (from mc_sign_message).}
+\item{signature}{Character string. The base64‑encoded signature (as returned
+by \code{\link{mc_sign_message}}).}
 
-\item{message}{The original text message.}
+\item{message}{Character string. The original text message.}
 }
 \value{
-Logical TRUE if the signature is valid, FALSE otherwise.
+A logical value: \code{TRUE} if the signature is valid,
+\code{FALSE} otherwise.
 }
 \description{
-Checks if a message was signed by the owner of a specific address.
+Checks whether a message was signed by the owner of a given address.
+The signature must have been created by \code{\link{mc_sign_message}}.
 }
+\examples{
+\dontrun{
+# Sign a message
+sig <- mc_sign_message(conn, "1A...", "Hello")
+# Verify it
+valid <- mc_verify_message(conn, "1A...", sig, "Hello")
+print(valid)  # should be TRUE
+}
+
+}
+\seealso{
+\code{\link{mc_sign_message}} to create a signature.
+
+Other cryptography: 
+\code{\link{mc_sign_message}()}
+}
+\concept{cryptography}

@@ -12,14 +12,24 @@ mc_get_total_balances(
 )
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object to the MultiChain node.}
 
-\item{minconf}{Minimum confirmations (default 1).}
+\item{minconf}{Integer. Minimum confirmations (default \code{1}).}
 
-\item{include_watch_only}{Include watch-only addresses (default FALSE).}
+\item{include_watch_only}{Logical. Include watch-only addresses (default \code{FALSE}).}
 
-\item{include_locked}{Include locked outputs (default FALSE).}
+\item{include_locked}{Logical. Include locked outputs (default \code{FALSE}).}
+}
+\value{
+A data frame summarizing total balances for each asset.
 }
 \description{
-Get total wallet balances
+Returns the total balance of all assets across all addresses in the wallet.
 }
+\seealso{
+Other MultiChain Balances: 
+\code{\link{mc_get_address_balances}()},
+\code{\link{mc_get_multi_balances}()},
+\code{\link{mc_get_token_balances}()}
+}
+\concept{MultiChain Balances}

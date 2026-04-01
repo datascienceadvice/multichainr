@@ -15,20 +15,42 @@ mc_issue_token(
 )
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{address}{Recipient address.}
+\item{address}{Character string. Address that will receive the tokens.}
 
-\item{asset}{Parent asset name, ref or txid.}
+\item{asset}{Character string. Parent asset name, reference, or issuance ID.}
 
-\item{token}{Token name.}
+\item{token}{Character string. Token name (must be unique within the asset).}
 
-\item{quantity}{Amount of tokens.}
+\item{quantity}{Numeric. Number of token units to issue (usually \code{1}).}
 
-\item{native_amount}{Optional native currency amount.}
+\item{native_amount}{Numeric (optional). Amount of native currency to send.}
 
-\item{token_details}{Optional list of token details.}
+\item{token_details}{List (optional). Custom details for the token
+(e.g., \code{list(description = "My NFT")}).}
+}
+\value{
+A character string containing the transaction ID.
 }
 \description{
-Issue tokens for a non-fungible asset (NFT)
+Creates one or more tokens (non‑fungible items) under a parent asset.
+The parent asset must be non‑fungible (e.g., issued with \code{type = "nonfungible"}).
 }
+\examples{
+\dontrun{
+# Issue a token "painting1" under asset "art"
+txid <- mc_issue_token(conn, "1A...", "art", "painting1", quantity = 1,
+                       token_details = list(artist = "Monet", year = 2025))
+}
+
+}
+\seealso{
+\code{\link{mc_get_token_info}} to query token details,
+\code{\link{mc_issue_token_from}} for using a specific sender address.
+
+Other token operations: 
+\code{\link{mc_get_token_info}()},
+\code{\link{mc_issue_token_from}()}
+}
+\concept{token operations}

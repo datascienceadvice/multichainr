@@ -15,20 +15,54 @@ mc_issue(
 )
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{address}{Wallet address to receive the issued assets.}
+\item{address}{Character string. Wallet address that will receive the
+issued assets.}
 
-\item{name}{Asset name string or list of parameters (open, restrict, fungible, etc.).}
+\item{name}{Either a character string (asset name) or a list of asset
+parameters (e.g., \code{list(name = "myasset", open = TRUE)}). See
+MultiChain documentation for supported parameters.}
 
-\item{quantity}{Total amount to issue.}
+\item{quantity}{Numeric. Total amount to issue. For non‑fungible assets,
+this is typically \code{1}.}
 
-\item{units}{Smallest divisible unit (e.g., 0.01).}
+\item{units}{Numeric. The smallest divisible unit (e.g., \code{0.01} means
+the asset is divisible to two decimal places). Default is \code{1}
+(indivisible).}
 
-\item{native_amount}{Optional native currency amount to send.}
+\item{native_amount}{Numeric (optional). Amount of native currency (coins)
+to send together with the asset issuance.}
 
-\item{custom_fields}{Optional list of custom fields.}
+\item{custom_fields}{List (optional). Custom fields to attach to the asset.}
+}
+\value{
+A character string containing the transaction ID of the issuance.
 }
 \description{
-Issue new asset
+Creates a new asset on the MultiChain blockchain. The asset can be
+fungible or non‑fungible, and its properties (e.g., open/restricted,
+divisible) are specified via the \code{name} parameter.
 }
+\examples{
+\dontrun{
+# Issue a simple fungible asset
+txid <- mc_issue(conn, "1A...", "mycoin", quantity = 1000, units = 0.01)
+
+# Issue a restricted, non‑fungible asset with custom fields
+params <- list(name = "artwork", open = FALSE, restrict = TRUE)
+txid <- mc_issue(conn, "1A...", params, quantity = 1, units = 1,
+                 custom_fields = list(author = "Picasso"))
+}
+
+}
+\seealso{
+\code{\link{mc_issue_from}} to issue from a specific address,
+\code{\link{mc_issue_more}} to increase supply of a fungible asset.
+
+Other asset issuance: 
+\code{\link{mc_issue_from}()},
+\code{\link{mc_issue_more}()},
+\code{\link{mc_issue_more_from}()}
+}
+\concept{asset issuance}

@@ -7,16 +7,47 @@
 mc_grant_with_data(conn, to_address, permissions, data, native_amount = 0)
 }
 \arguments{
-\item{conn}{A multichain_conn object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{to_address}{Target wallet address.}
+\item{to_address}{Character string. The address receiving the permissions.}
 
-\item{permissions}{Permission string.}
+\item{permissions}{Character string. Comma‑separated list of permissions.}
 
-\item{data}{Data string or list (will be converted to hex).}
+\item{data}{Data to embed. Can be a character string (will be hex‑encoded),
+a list (converted to JSON then hex), or raw binary.}
 
-\item{native_amount}{Optional native currency amount.}
+\item{native_amount}{Numeric. Amount of native currency to send (default 0).}
+}
+\value{
+A character string containing the transaction ID.
 }
 \description{
-Grant permissions with metadata
+Grants permissions and attaches arbitrary data (metadata) to the transaction.
+The data can be text, JSON, or any hex‑encoded value.
 }
+\examples{
+\dontrun{
+# Grant with a text note
+txid <- mc_grant_with_data(conn, "1A...", "send",
+                           data = "Welcome to the network!")
+
+# Grant with JSON metadata
+metadata <- list(reason = "partnership", level = "full")
+txid <- mc_grant_with_data(conn, "1A...", "connect,send",
+                           data = metadata, native_amount = 0.1)
+}
+
+}
+\seealso{
+\code{\link{mc_grant_with_data_from}} to specify the grantor.
+
+Other permissions: 
+\code{\link{mc_grant}()},
+\code{\link{mc_grant_from}()},
+\code{\link{mc_grant_with_data_from}()},
+\code{\link{mc_list_permissions}()},
+\code{\link{mc_revoke}()},
+\code{\link{mc_revoke_from}()},
+\code{\link{mc_verify_permission}()}
+}
+\concept{permissions}

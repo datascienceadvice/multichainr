@@ -7,12 +7,31 @@
 mc_update(conn, asset, params)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{asset}{Asset name, ref or txid.}
+\item{asset}{Character string. Asset name, reference, or issuance ID.}
 
-\item{params}{List, e.g., list(open = FALSE).}
+\item{params}{A list of parameters to update, typically
+\code{list(open = FALSE)} to close further issuances.}
+}
+\value{
+A character string containing the transaction ID.
 }
 \description{
-Update asset status (open/closed)
+Changes the status of an asset (e.g., to open or close further issuances).
+The asset must have been created with the ability to be updated.
 }
+\examples{
+\dontrun{
+# Close the asset "mycoin" to prevent further issuances
+txid <- mc_update(conn, "mycoin", list(open = FALSE))
+}
+
+}
+\seealso{
+\code{\link{mc_update_from}} to update from a specific address.
+
+Other asset management: 
+\code{\link{mc_update_from}()}
+}
+\concept{asset management}

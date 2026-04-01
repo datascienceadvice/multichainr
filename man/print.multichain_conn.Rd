@@ -7,10 +7,24 @@
 \method{print}{multichain_conn}(x, ...)
 }
 \arguments{
-\item{x}{A multichain_conn object.}
+\item{x}{An object of class \code{"multichain_conn"}.}
 
-\item{...}{Additional arguments passed to print.}
+\item{...}{Additional arguments passed to \code{print} (ignored).}
+}
+\value{
+Invisibly returns the object \code{x}.
 }
 \description{
-Print MultiChain connection
+S3 method for printing \code{multichain_conn} objects. Hides the password
+for security.
+}
+\examples{
+\dontrun{
+conn <- mc_connect(config)
+print(conn)   # or simply conn
+}
+
+}
+\seealso{
+\code{\link{mc_connect}} for creating connections.
 }

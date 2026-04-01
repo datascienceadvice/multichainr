@@ -7,11 +7,30 @@
 mc_get_chunk_queue_totals(conn)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 }
 \value{
-A list of statistics (delivered, undelivered, timeouts, etc.).
+A list with cumulative statistics:
+\item{delivered}{Number of chunks successfully delivered.}
+\item{undelivered}{Number of chunks not yet delivered.}
+\item{timeouts}{Number of delivery timeouts.}
+\item{...}{Other totals.}
 }
 \description{
-Get cumulative statistics on off-chain chunk requests
+Returns total counts of chunk deliveries, failures, and timeouts
+since the node started.
 }
+\examples{
+\dontrun{
+totals <- mc_get_chunk_queue_totals(conn)
+print(totals)
+}
+
+}
+\seealso{
+\code{\link{mc_get_chunk_queue_info}} for current queue state.
+
+Other off-chain data: 
+\code{\link{mc_get_chunk_queue_info}()}
+}
+\concept{off-chain data}

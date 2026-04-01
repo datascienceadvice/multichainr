@@ -7,10 +7,26 @@
 mc_dump_wallet(conn, filename)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object to the MultiChain node.}
 
-\item{filename}{Full path for the text file on the node's machine.}
+\item{filename}{Character. Full path for the text file on the node's machine.}
+}
+\value{
+Returns \code{NULL} on success.
 }
 \description{
-Dump all private keys to a file
+Exports all wallet private keys into a human-readable text file.
 }
+\seealso{
+Other MultiChain Wallet Management: 
+\code{\link{mc_backup_wallet}()},
+\code{\link{mc_change_wallet_passphrase}()},
+\code{\link{mc_dump_privkey}()},
+\code{\link{mc_encrypt_wallet}()},
+\code{\link{mc_get_wallet_info}()},
+\code{\link{mc_import_privkey}()},
+\code{\link{mc_import_wallet}()},
+\code{\link{mc_lock_wallet}()},
+\code{\link{mc_unlock_wallet}()}
+}
+\concept{MultiChain Wallet Management}

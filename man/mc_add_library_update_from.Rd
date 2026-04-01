@@ -6,6 +6,36 @@
 \usage{
 mc_add_library_update_from(conn, from_address, library, updatename, js_code)
 }
-\description{
-Add an update to a library from a specific address
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{from_address}{Character string. Address that pays for and issues the update.}
+
+\item{library}{Character string. Library name or transaction ID.}
+
+\item{updatename}{Character string. Name of this update.}
+
+\item{js_code}{Character string. The new JavaScript code (or patch).}
 }
+\value{
+A list containing the result of the RPC call (usually transaction ID).
+}
+\description{
+Similar to \code{\link{mc_add_library_update}}, but allows specifying the
+sending address.
+}
+\examples{
+\dontrun{
+mc_add_library_update_from(conn, "1A...", "math", "v2", "function add(a, b) { return a + b; }")
+}
+
+}
+\seealso{
+Other libraries: 
+\code{\link{mc_add_library_update}()},
+\code{\link{mc_create_library}()},
+\code{\link{mc_get_library_code}()},
+\code{\link{mc_list_libraries}()},
+\code{\link{mc_test_library}()}
+}
+\concept{libraries}

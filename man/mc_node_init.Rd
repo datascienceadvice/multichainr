@@ -2,13 +2,35 @@
 % Please edit documentation in R/node_local.R
 \name{mc_node_init}
 \alias{mc_node_init}
-\title{Initialize new MultiChain blockchain}
+\title{Initialize a new MultiChain blockchain}
 \usage{
 mc_node_init(chain_name)
 }
 \arguments{
-\item{chain_name}{Name of the blockchain to create.}
+\item{chain_name}{Character string. Name of the blockchain to create.}
+}
+\value{
+Invisibly returns the output of the \verb{multichain-util create} command
+(a character vector). If the creation fails, the function stops with an
+error.
 }
 \description{
-Initialize new MultiChain blockchain
+Creates a new blockchain using the \code{multichain-util} command. The new
+blockchain is set up in the MultiChain data directory (platform‑specific).
 }
+\examples{
+\dontrun{
+# Create a blockchain called "my_chain"
+mc_node_init("my_chain")
+}
+
+}
+\seealso{
+\code{\link{mc_node_start}} to start the created node,
+\code{\link{mc_node_stop}} to stop it.
+
+Other node operations: 
+\code{\link{mc_node_start}()},
+\code{\link{mc_node_stop}()}
+}
+\concept{node operations}

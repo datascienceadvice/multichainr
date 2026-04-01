@@ -6,6 +6,40 @@
 \usage{
 mc_run_stream_filter(conn, filter, tx, vout = NULL)
 }
-\description{
-Run an existing stream filter against an item
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{filter}{Character string. Filter name or transaction ID.}
+
+\item{tx}{Character string. Transaction ID or hex representation.}
+
+\item{vout}{Optional integer. Output index if the stream item is in a
+transaction output.}
 }
+\value{
+The output of the filter.
+}
+\description{
+Executes an existing stream filter on a specific stream item (transaction
+and optional vout).
+}
+\examples{
+\dontrun{
+result <- mc_run_stream_filter(conn, "myfilter", "txid...", vout = 0)
+}
+
+}
+\seealso{
+\code{\link{mc_test_stream_filter}}, \code{\link{mc_create_stream_filter}}
+
+Other filters: 
+\code{\link{mc_create_stream_filter}()},
+\code{\link{mc_create_tx_filter}()},
+\code{\link{mc_get_filter_code}()},
+\code{\link{mc_list_stream_filters}()},
+\code{\link{mc_list_tx_filters}()},
+\code{\link{mc_run_tx_filter}()},
+\code{\link{mc_test_stream_filter}()},
+\code{\link{mc_test_tx_filter}()}
+}
+\concept{filters}

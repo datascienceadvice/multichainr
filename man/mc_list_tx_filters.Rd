@@ -6,6 +6,35 @@
 \usage{
 mc_list_tx_filters(conn, filters = "*", verbose = FALSE)
 }
-\description{
-List transaction filters
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{filters}{Character vector of filter names/IDs, or \code{"*"} (default)
+for all filters.}
+
+\item{verbose}{Logical. If \code{TRUE}, returns detailed information.}
 }
+\value{
+A data frame (via \code{rpc_res_to_df}) with filter information.
+}
+\description{
+Returns a list of transaction filters on the blockchain.
+}
+\examples{
+\dontrun{
+tx_filters <- mc_list_tx_filters(conn)
+}
+
+}
+\seealso{
+Other filters: 
+\code{\link{mc_create_stream_filter}()},
+\code{\link{mc_create_tx_filter}()},
+\code{\link{mc_get_filter_code}()},
+\code{\link{mc_list_stream_filters}()},
+\code{\link{mc_run_stream_filter}()},
+\code{\link{mc_run_tx_filter}()},
+\code{\link{mc_test_stream_filter}()},
+\code{\link{mc_test_tx_filter}()}
+}
+\concept{filters}

@@ -7,16 +7,41 @@
 mc_publish_multi_from(conn, from_address, stream, items, options = NULL)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{from_address}{Address used to publish the items.}
+\item{from_address}{Character string. Address that will publish the items.}
 
-\item{stream}{Default stream.}
+\item{stream}{Character string. Default stream.}
 
-\item{items}{List of lists.}
+\item{items}{List of item objects.}
 
-\item{options}{Optional default "offchain" string.}
+\item{options}{Optional default \code{"offchain"} string.}
+}
+\value{
+A character string containing the transaction ID.
 }
 \description{
-Publish multiple items from a specific address
+Publishes multiple items in one transaction from a specified address.
 }
+\examples{
+\dontrun{
+items <- list(list(key = "k1", data = "value1"))
+txid <- mc_publish_multi_from(conn, "1A...", "mystream", items)
+}
+
+}
+\seealso{
+\code{\link{mc_publish_multi}}
+
+Other stream items: 
+\code{\link{mc_get_stream_item}()},
+\code{\link{mc_list_stream_block_items}()},
+\code{\link{mc_list_stream_items}()},
+\code{\link{mc_list_stream_key_items}()},
+\code{\link{mc_list_stream_publisher_items}()},
+\code{\link{mc_list_stream_tx_items}()},
+\code{\link{mc_publish}()},
+\code{\link{mc_publish_from}()},
+\code{\link{mc_publish_multi}()}
+}
+\concept{stream items}

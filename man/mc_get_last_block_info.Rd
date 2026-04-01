@@ -7,8 +7,35 @@
 mc_get_last_block_info(conn, skip = 0)
 }
 \arguments{
-\item{skip}{Number of blocks to skip back (default 0).}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{skip}{Integer. Number of blocks to skip back from the tip.
+\code{skip = 0} returns the latest block, \code{skip = 1} returns the
+previous block, etc. Default is \code{0}.}
+}
+\value{
+A list with block information (similar to \code{\link{mc_get_block}}).
 }
 \description{
-Get information about the last block
+Retrieves details of the most recent block, optionally skipping back
+by a number of blocks.
 }
+\examples{
+\dontrun{
+latest <- mc_get_last_block_info(conn)
+previous <- mc_get_last_block_info(conn, skip = 1)
+}
+
+}
+\seealso{
+\code{\link{mc_get_block}} for general block retrieval.
+
+Other blockchain information: 
+\code{\link{mc_get_block}()},
+\code{\link{mc_get_block_hash}()},
+\code{\link{mc_get_blockchain_info}()},
+\code{\link{mc_get_chain_totals}()},
+\code{\link{mc_list_blocks}()},
+\code{\link{mc_list_miners}()}
+}
+\concept{blockchain information}

@@ -64,4 +64,3 @@ test_that("mc_send_with_data returns txid and handles metadata", {
     }
   )
 })
-

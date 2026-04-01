@@ -7,14 +7,41 @@
 mc_prepare_lock_unspent_from(conn, from_address, amounts, lock = TRUE)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{from_address}{Sender address.}
+\item{from_address}{Character string. The address that will provide the
+assets/native currency.}
 
-\item{amounts}{List of assets or numeric amount.}
+\item{amounts}{A list specifying the assets or native currency to lock.}
 
-\item{lock}{If TRUE (default), the output is locked.}
+\item{lock}{Logical. If \code{TRUE} (default), the output is locked for
+automatic spending.}
+}
+\value{
+A list with \code{txid} and \code{vout}.
 }
 \description{
-Prepare an unspent output from a specific address
+Similar to \code{\link{mc_prepare_lock_unspent}}, but allows specifying
+the source address from which to lock the outputs. This is useful when
+the node has multiple addresses and you want to control which address's
+funds are used.
 }
+\examples{
+\dontrun{
+locked <- mc_prepare_lock_unspent_from(conn, "1A...",
+                                       amounts = list(myasset = 5))
+}
+
+}
+\seealso{
+\code{\link{mc_prepare_lock_unspent}}
+
+Other atomic exchange: 
+\code{\link{mc_append_raw_exchange}()},
+\code{\link{mc_complete_raw_exchange}()},
+\code{\link{mc_create_raw_exchange}()},
+\code{\link{mc_decode_raw_exchange}()},
+\code{\link{mc_disable_raw_transaction}()},
+\code{\link{mc_prepare_lock_unspent}()}
+}
+\concept{atomic exchange}

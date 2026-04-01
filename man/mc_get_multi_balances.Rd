@@ -14,18 +14,28 @@ mc_get_multi_balances(
 )
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object to the MultiChain node.}
 
-\item{addresses}{Vector of addresses or "\emph{" for all (default "}").}
+\item{addresses}{A vector of addresses, or \code{"*"} for all addresses in the wallet (default \code{"*"}).}
 
-\item{assets}{Vector of asset names/refs or "\emph{" for all (default "}").}
+\item{assets}{A vector of asset names/refs, or \code{"*"} for all assets (default \code{"*"}).}
 
-\item{minconf}{Minimum confirmations (default 1).}
+\item{minconf}{Integer. Minimum confirmations (default \code{1}).}
 
-\item{include_watch_only}{Include watch-only addresses (default FALSE).}
+\item{include_watch_only}{Logical. Include watch-only addresses (default \code{FALSE}).}
 
-\item{include_locked}{Include locked unspent outputs (default FALSE).}
+\item{include_locked}{Logical. Include locked unspent outputs (default \code{FALSE}).}
+}
+\value{
+A list or data frame of balances, indexed by address and asset.
 }
 \description{
-Get balances for multiple addresses and assets
+Returns a breakdown of balances across a set of addresses and/or assets.
 }
+\seealso{
+Other MultiChain Balances: 
+\code{\link{mc_get_address_balances}()},
+\code{\link{mc_get_token_balances}()},
+\code{\link{mc_get_total_balances}()}
+}
+\concept{MultiChain Balances}

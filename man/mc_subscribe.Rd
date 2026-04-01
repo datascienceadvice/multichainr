@@ -2,20 +2,30 @@
 % Please edit documentation in R/subscriptions.R
 \name{mc_subscribe}
 \alias{mc_subscribe}
-\title{Subscribe to assets or streams}
+\title{Subscribe to MultiChain assets or streams}
 \usage{
 mc_subscribe(conn, entities, rescan = TRUE)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object to the MultiChain node (typically created via \code{mc_connect}).}
 
-\item{entities}{A single name/ref/txid or a vector of them.}
+\item{entities}{A character string or vector of strings representing asset/stream names,
+references, or transaction IDs (txids).}
 
-\item{rescan}{If TRUE (default), the node reindexes all items from the creation of the entities.}
+\item{rescan}{Logical. If \code{TRUE} (default), the node reindexes all items from the
+point of creation of the entities. If \code{FALSE}, only new items will be tracked.}
 }
 \value{
-NULL on success.
+Returns \code{NULL} invisibly on success, or an error if the RPC call fails.
 }
 \description{
-Instructs the node to start tracking one or more asset(s) or stream(s).
+Instructs the MultiChain node to start tracking one or more asset(s) or stream(s).
+This is often required before you can retrieve items or balances for specific entities.
 }
+\seealso{
+\code{\link{mc_unsubscribe}}
+
+Other MultiChain Entity Management: 
+\code{\link{mc_unsubscribe}()}
+}
+\concept{MultiChain Entity Management}

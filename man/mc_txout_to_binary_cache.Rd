@@ -14,21 +14,49 @@ mc_txout_to_binary_cache(
 )
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{identifier}{Target cache item identifier (must be empty).}
+\item{identifier}{Character string. Target cache item identifier.
+The cache item must be empty (created but not yet written to).}
 
-\item{txid}{Transaction ID.}
+\item{txid}{Character string. Transaction ID containing the output.}
 
-\item{vout}{Output index.}
+\item{vout}{Integer. Output index (vout) of the transaction to extract.}
 
-\item{count_bytes}{Optional number of bytes to extract.}
+\item{count_bytes}{Integer (optional). Number of bytes to extract.
+If \code{NULL} (default), the entire output data is copied.}
 
-\item{start_byte}{Optional offset in bytes.}
+\item{start_byte}{Integer (optional). Byte offset from which to start copying.
+Default is \code{0} (beginning of the output data).}
 }
 \value{
-The resulting size of the cache item.
+Integer. The resulting size of the cache item after extraction.
 }
 \description{
-Copies data from a blockchain transaction output directly into a binary cache item.
+Copies data directly from a blockchain transaction output into a binary cache
+item. This is efficient for retrieving binary data stored in a transaction
+(e.g., via \code{\link{mc_publish}}) without having to decode it in R.
 }
+\examples{
+\dontrun{
+# Create an empty cache item
+id <- mc_create_binary_cache(conn)
+
+# Copy the entire data from a transaction output
+size <- mc_txout_to_binary_cache(conn, id, txid = "abc...", vout = 0)
+
+# Copy only the first 100 bytes
+size <- mc_txout_to_binary_cache(conn, id, txid = "abc...", vout = 0,
+                                 count_bytes = 100)
+}
+
+}
+\seealso{
+\code{\link{mc_create_binary_cache}}, \code{\link{mc_append_binary_cache}}
+
+Other binary cache: 
+\code{\link{mc_append_binary_cache}()},
+\code{\link{mc_create_binary_cache}()},
+\code{\link{mc_delete_binary_cache}()}
+}
+\concept{binary cache}

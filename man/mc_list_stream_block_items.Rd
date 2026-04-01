@@ -14,8 +14,44 @@ mc_list_stream_block_items(
 )
 }
 \arguments{
-\item{blocks}{Vector of heights, hashes or timestamps.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{stream}{Character string. Stream name, reference, or txid.}
+
+\item{blocks}{A vector of block heights, block hashes, or timestamps.}
+
+\item{verbose}{Logical. If \code{TRUE}, returns detailed information.}
+
+\item{count}{Optional integer. Number of items to return.}
+
+\item{start}{Optional integer. Offset.}
+}
+\value{
+A data frame (via \code{rpc_res_to_df}) with items.
 }
 \description{
-List items in a specific block or blocks
+Returns stream items that were published in one or more blocks.
 }
+\examples{
+\dontrun{
+# Items in block height 100
+items <- mc_list_stream_block_items(conn, "mystream", 100)
+
+# Items in multiple blocks
+items <- mc_list_stream_block_items(conn, "mystream", c(100, 101, 102))
+}
+
+}
+\seealso{
+Other stream items: 
+\code{\link{mc_get_stream_item}()},
+\code{\link{mc_list_stream_items}()},
+\code{\link{mc_list_stream_key_items}()},
+\code{\link{mc_list_stream_publisher_items}()},
+\code{\link{mc_list_stream_tx_items}()},
+\code{\link{mc_publish}()},
+\code{\link{mc_publish_from}()},
+\code{\link{mc_publish_multi}()},
+\code{\link{mc_publish_multi_from}()}
+}
+\concept{stream items}

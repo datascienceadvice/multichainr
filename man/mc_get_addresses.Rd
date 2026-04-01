@@ -7,10 +7,40 @@
 mc_get_addresses(conn, verbose = FALSE)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{verbose}{If TRUE, returns detailed information about addresses.}
+\item{verbose}{Logical. If \code{TRUE}, returns a list with detailed
+information for each address. If \code{FALSE} (default), returns a
+character vector of addresses.}
+}
+\value{
+If \code{verbose = FALSE}: a character vector of addresses.
+If \code{verbose = TRUE}: a list (or data frame) with details.
 }
 \description{
-Returns all addresses owned by the current node.
+Returns all addresses owned by the current node. If \code{verbose = TRUE},
+detailed information (including balances and transactions) is returned.
 }
+\examples{
+\dontrun{
+# Get all addresses (simple list)
+addresses <- mc_get_addresses(conn)
+
+# Get detailed information
+details <- mc_get_addresses(conn, verbose = TRUE)
+}
+
+}
+\seealso{
+\code{\link{mc_list_addresses}} for more flexible listing options.
+
+Other address operations: 
+\code{\link{mc_add_multisig_address}()},
+\code{\link{mc_create_keypairs}()},
+\code{\link{mc_create_multisig}()},
+\code{\link{mc_get_new_address}()},
+\code{\link{mc_import_address}()},
+\code{\link{mc_list_addresses}()},
+\code{\link{mc_validate_address}()}
+}
+\concept{address operations}

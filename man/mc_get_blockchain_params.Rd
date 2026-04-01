@@ -7,12 +7,31 @@
 mc_get_blockchain_params(conn)
 }
 \arguments{
-\item{conn}{A multichain_conn object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 }
 \value{
-A list containing blockchain configuration parameters (e.g., protocol version,
-target block time, maximum block size, etc.).
+A list containing blockchain configuration parameters, such as:
+\item{protocolversion}{Protocol version.}
+\item{targetblocktime}{Target time between blocks (seconds).}
+\item{maxblocksize}{Maximum block size (bytes).}
+\item{...}{Other chain-specific parameters.}
 }
 \description{
-Returns an object containing the parameters used to initialize this blockchain.
+Returns the parameters that were used to initialize this blockchain.
+These are fixed at chain creation and cannot be changed later.
 }
+\examples{
+\dontrun{
+params <- mc_get_blockchain_params(conn)
+print(params$targetblocktime)
+}
+
+}
+\seealso{
+\code{\link{mc_get_runtime_params}} for modifiable parameters.
+
+Other node configuration: 
+\code{\link{mc_get_runtime_params}()},
+\code{\link{mc_set_runtime_param}()}
+}
+\concept{node configuration}

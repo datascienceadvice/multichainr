@@ -13,19 +13,48 @@ mc_sign_raw_transaction(
 )
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{tx_hex}{Raw transaction hex.}
+\item{tx_hex}{Character string. The raw transaction hex to sign.}
 
-\item{parents}{Optional list of parent outputs for signing.}
+\item{parents}{Optional list of parent outputs for signing, each containing
+\code{txid}, \code{vout}, and \code{scriptPubKey}.}
 
-\item{private_keys}{Optional vector of private keys (WIF).}
+\item{private_keys}{Optional character vector of private keys in Wallet Import
+Format (WIF). If provided, these are used instead of the node's wallet.}
 
-\item{sighashtype}{Signature hash type (default "ALL").}
+\item{sighashtype}{Character string. Signature hash type (default \code{"ALL"}).}
 }
 \value{
-A list with "hex" and "complete" (logical).
+A list with two elements:
+\item{hex}{The signed raw transaction hex (if all inputs are signed).}
+\item{complete}{Logical; \code{TRUE} if all inputs are signed.}
 }
 \description{
-Sign a raw transaction
+Signs a raw transaction using the node's wallet or provided private keys.
+Returns the signed hex and a boolean indicating whether all inputs are signed.
 }
+\examples{
+\dontrun{
+# Sign using the node's wallet
+signed <- mc_sign_raw_transaction(conn, tx_hex)
+
+# Sign with explicit private keys
+signed <- mc_sign_raw_transaction(conn, tx_hex,
+                                  private_keys = c("L5...", "K3..."))
+}
+
+}
+\seealso{
+\code{\link{mc_send_raw_transaction}}, \code{\link{mc_create_raw_transaction}}
+
+Other raw transactions: 
+\code{\link{mc_append_raw_change}()},
+\code{\link{mc_append_raw_data}()},
+\code{\link{mc_append_raw_transaction}()},
+\code{\link{mc_create_raw_send_from}()},
+\code{\link{mc_create_raw_transaction}()},
+\code{\link{mc_decode_raw_transaction}()},
+\code{\link{mc_send_raw_transaction}()}
+}
+\concept{raw transactions}

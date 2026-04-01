@@ -7,11 +7,29 @@
 mc_create_binary_cache(conn)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 }
 \value{
-A string identifier (filename).
+A character string identifier (filename) for the newly created cache item.
 }
 \description{
-Creates an empty item (file) in the node's binary cache and returns its identifier.
+Creates an empty item (file) in the node's binary cache and returns its
+unique identifier. Binary cache items are temporary storage for binary data
+that can be used in transactions or passed between nodes.
 }
+\examples{
+\dontrun{
+id <- mc_create_binary_cache(conn)
+}
+
+}
+\seealso{
+\code{\link{mc_append_binary_cache}} to add data,
+\code{\link{mc_delete_binary_cache}} to remove.
+
+Other binary cache: 
+\code{\link{mc_append_binary_cache}()},
+\code{\link{mc_delete_binary_cache}()},
+\code{\link{mc_txout_to_binary_cache}()}
+}
+\concept{binary cache}

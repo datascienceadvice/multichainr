@@ -12,6 +12,39 @@ mc_list_variables(
   start = NULL
 )
 }
-\description{
-List variables created on the blockchain
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{variables}{Character vector of variable names/IDs, or \code{"*"} (default)
+for all variables.}
+
+\item{verbose}{Logical. If \code{TRUE}, returns detailed information.}
+
+\item{count}{Optional integer. Maximum number of variables to return.}
+
+\item{start}{Optional integer. Offset for pagination.}
 }
+\value{
+A data frame (via \code{rpc_res_to_df}) with variable information.
+}
+\description{
+Returns a list of variables, with optional filtering, verbosity, and pagination.
+}
+\examples{
+\dontrun{
+all_vars <- mc_list_variables(conn)
+first_10 <- mc_list_variables(conn, count = 10)
+}
+
+}
+\seealso{
+Other variables: 
+\code{\link{mc_create_variable}()},
+\code{\link{mc_create_variable_from}()},
+\code{\link{mc_get_variable_history}()},
+\code{\link{mc_get_variable_info}()},
+\code{\link{mc_get_variable_value}()},
+\code{\link{mc_set_variable_value}()},
+\code{\link{mc_set_variable_value_from}()}
+}
+\concept{variables}

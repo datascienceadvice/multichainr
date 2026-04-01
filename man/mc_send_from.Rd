@@ -14,18 +14,44 @@ mc_send_from(
 )
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{from_address}{Sender address.}
+\item{from_address}{Character string. Sender address.}
 
-\item{to_address}{Recipient address.}
+\item{to_address}{Character string. Recipient address.}
 
-\item{amounts}{Numeric (native) or list of assets/metadata.}
+\item{amounts}{Either a numeric value (native) or a named list of assets.}
 
-\item{comment}{Optional comment.}
+\item{comment}{Character string. Optional transaction comment.}
 
-\item{comment_to}{Optional comment-to.}
+\item{comment_to}{Character string. Optional comment‑to field.}
+}
+\value{
+A character string containing the transaction ID.
 }
 \description{
-Send payment from a specific address
+Sends a payment (native currency or assets) from a specific sender address.
+This is the counterpart of \code{\link{mc_send}} for multi‑asset transactions
+with a chosen source address.
 }
+\examples{
+\dontrun{
+# Send 2 native coins from one address to another
+txid <- mc_send_from(conn, "1A...", "1B...", 2)
+
+# Send assets from a specific address
+txid <- mc_send_from(conn, "1A...", "1B...", list(myasset = 100, other = 50))
+}
+
+}
+\seealso{
+\code{\link{mc_send}}, \code{\link{mc_send_asset_from}}.
+
+Other transactions: 
+\code{\link{mc_send}()},
+\code{\link{mc_send_asset}()},
+\code{\link{mc_send_asset_from}()},
+\code{\link{mc_send_with_data}()},
+\code{\link{mc_send_with_data_from}()}
+}
+\concept{transactions}

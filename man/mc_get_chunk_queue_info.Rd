@@ -7,11 +7,29 @@
 mc_get_chunk_queue_info(conn)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 }
 \value{
-A list containing chunk counts and byte sizes.
+A list containing:
+\item{chunk_count}{Number of chunks currently queued.}
+\item{byte_count}{Total size in bytes of queued chunks.}
+\item{...}{Other queue statistics.}
 }
 \description{
-Get information about off-chain chunk queue
+Returns details about the node's off‑chain chunk queue, which handles
+the transmission of large data items that are split into chunks.
 }
+\examples{
+\dontrun{
+queue_info <- mc_get_chunk_queue_info(conn)
+cat("Chunks pending:", queue_info$chunk_count)
+}
+
+}
+\seealso{
+\code{\link{mc_get_chunk_queue_totals}} for cumulative statistics.
+
+Other off-chain data: 
+\code{\link{mc_get_chunk_queue_totals}()}
+}
+\concept{off-chain data}

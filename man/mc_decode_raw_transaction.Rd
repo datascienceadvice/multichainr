@@ -6,6 +6,35 @@
 \usage{
 mc_decode_raw_transaction(conn, tx_hex)
 }
-\description{
-Decode a raw transaction hex
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{tx_hex}{Character string. The raw transaction hex to decode.}
 }
+\value{
+A list with decoded transaction information (inputs, outputs, etc.).
+}
+\description{
+Parses a raw transaction hex string into a human‑readable structure,
+showing inputs, outputs, amounts, metadata, and other transaction details.
+}
+\examples{
+\dontrun{
+decoded <- mc_decode_raw_transaction(conn, tx_hex)
+print(decoded$vin)
+}
+
+}
+\seealso{
+\code{\link{mc_get_raw_transaction}}
+
+Other raw transactions: 
+\code{\link{mc_append_raw_change}()},
+\code{\link{mc_append_raw_data}()},
+\code{\link{mc_append_raw_transaction}()},
+\code{\link{mc_create_raw_send_from}()},
+\code{\link{mc_create_raw_transaction}()},
+\code{\link{mc_send_raw_transaction}()},
+\code{\link{mc_sign_raw_transaction}()}
+}
+\concept{raw transactions}

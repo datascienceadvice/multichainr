@@ -1,15 +1,19 @@
-#' Combine unspent outputs
+#' Combine unspent outputs (UTXOs)
 #' 
-#' Sends transactions to combine many small UTXOs into one to improve wallet performance.
+#' Sends transactions to combine many small unspent transaction outputs (UTXOs) 
+#' into a single output. This is used to improve wallet performance and reduce 
+#' the size of the wallet's UTXO set.
 #' 
-#' @param conn Connection object.
-#' @param addresses Vector of addresses or "*" (default "*").
-#' @param minconf Minimum confirmations (default 1).
-#' @param maxcombines Maximum transactions to create (default 100).
-#' @param mininputs Minimum inputs per transaction (default 2).
-#' @param maxinputs Maximum inputs per transaction (default 100).
-#' @param maxtime Maximum seconds to spend combining (default 15).
-#' @return A character vector of transaction IDs created.
+#' @param conn A connection object to the MultiChain node.
+#' @param addresses A vector of addresses, or \code{"*"} for all addresses (default \code{"*"}).
+#' @param minconf Integer. Minimum confirmations (default \code{1}).
+#' @param maxcombines Integer. Maximum number of transactions to create (default \code{100}).
+#' @param mininputs Integer. Minimum number of inputs per transaction (default \code{2}).
+#' @param maxinputs Integer. Maximum number of inputs per transaction (default \code{100}).
+#' @param maxtime Integer. Maximum seconds to spend combining (default \code{15}).
+#' 
+#' @return A character vector of the transaction IDs (txids) created.
+#' @family MultiChain UTXO Management
 #' @export
 mc_combine_unspent <- function(conn, addresses = "*", minconf = 1, maxcombines = 100, 
                                mininputs = 2, maxinputs = 100, maxtime = 15) {
@@ -27,8 +31,13 @@ mc_combine_unspent <- function(conn, addresses = "*", minconf = 1, maxcombines =
 
 #' List locked unspent outputs
 #' 
-#' @param conn Connection object.
-#' @return A data frame of locked outputs (txid and vout).
+#' Returns a list of unspent transaction outputs that have been temporarily 
+#' locked by \code{\link{mc_lock_unspent}}.
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' 
+#' @return A data frame containing columns for \code{txid} and \code{vout}.
+#' @family MultiChain UTXO Management
 #' @export
 mc_list_lock_unspent <- function(conn) {
   res <- mc_rpc(conn, "listlockunspent")
@@ -37,11 +46,16 @@ mc_list_lock_unspent <- function(conn) {
 
 #' List unspent transaction outputs
 #' 
-#' @param conn Connection object.
-#' @param minconf Minimum confirmations (default 1).
-#' @param maxconf Maximum confirmations (default 999999).
-#' @param addresses Optional vector of addresses to filter.
-#' @return A data frame containing UTXO details, including assets and permissions.
+#' Returns a list of all unspent outputs (UTXOs) available in the wallet.
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' @param minconf Integer. Minimum confirmations (default \code{1}).
+#' @param maxconf Integer. Maximum confirmations (default \code{999999}).
+#' @param addresses Optional character vector of addresses to filter the results.
+#' 
+#' @return A data frame containing UTXO details, including \code{txid}, \code{vout}, 
+#'   \code{address}, \code{amount}, and associated asset/permission data.
+#' @family MultiChain UTXO Management
 #' @export
 mc_list_unspent <- function(conn, minconf = 1, maxconf = 999999, addresses = NULL) {
   params <- list(as.integer(minconf), as.integer(maxconf))
@@ -53,10 +67,17 @@ mc_list_unspent <- function(conn, minconf = 1, maxconf = 999999, addresses = NUL
 
 #' Lock or unlock unspent outputs
 #' 
-#' @param conn Connection object.
-#' @param unlock Logical. If TRUE, unlocks; if FALSE, locks.
-#' @param outputs Optional list of outputs to (un)lock: list(list(txid="id", vout=0), ...).
-#' @return Logical TRUE on success.
+#' Prevents specific UTXOs from being spent in automated transactions, or 
+#' releases them if they were previously locked.
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' @param unlock Logical. If \code{TRUE}, unlocks the outputs; if \code{FALSE}, locks them.
+#' @param outputs Optional list of outputs to (un)lock. Expected format: 
+#'   \code{list(list(txid="id", vout=0), ...)}. If empty and \code{unlock=TRUE}, 
+#'   all outputs are unlocked.
+#' 
+#' @return Logical \code{TRUE} on success.
+#' @family MultiChain UTXO Management
 #' @export
 mc_lock_unspent <- function(conn, unlock, outputs = NULL) {
   params <- list(as.logical(unlock))
@@ -66,51 +87,89 @@ mc_lock_unspent <- function(conn, unlock, outputs = NULL) {
 }
 
 #' Backup the wallet file
-#' @param conn Connection object.
-#' @param filename Full path and name for the backup file on the node's machine.
+#' 
+#' Safely copies the \code{wallet.dat} file to a specified destination.
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' @param filename Character. The full path and filename for the backup. 
+#'   \strong{Note:} This path is relative to the machine where the MultiChain node is running.
+#' 
+#' @return Returns \code{NULL} on success.
+#' @family MultiChain Wallet Management
 #' @export
 mc_backup_wallet <- function(conn, filename) {
   mc_rpc(conn, "backupwallet", list(filename))
 }
 
 #' Dump a private key for an address
-#' @param conn Connection object.
-#' @param address The wallet address.
-#' @return The private key in WIF format.
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' @param address Character. The wallet address for which to retrieve the private key.
+#' 
+#' @return Character. The private key in Wallet Import Format (WIF).
+#' @family MultiChain Wallet Management
 #' @export
 mc_dump_privkey <- function(conn, address) {
   mc_rpc(conn, "dumpprivkey", list(address))
 }
 
 #' Dump all private keys to a file
-#' @param conn Connection object.
-#' @param filename Full path for the text file on the node's machine.
+#' 
+#' Exports all wallet private keys into a human-readable text file.
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' @param filename Character. Full path for the text file on the node's machine.
+#' 
+#' @return Returns \code{NULL} on success.
+#' @family MultiChain Wallet Management
 #' @export
 mc_dump_wallet <- function(conn, filename) {
   mc_rpc(conn, "dumpwallet", list(filename))
 }
 
-#' Encrypt the wallet for the first time
+#' Encrypt the wallet
 #' 
-#' WARNING: MultiChain will stop after this and must be restarted.
-#' @param conn Connection object.
-#' @param passphrase The new wallet password.
+#' Encrypts the wallet with a passphrase for the first time.
+#' 
+#' @section Warning:
+#' MultiChain will shut down after this command is successful. You must 
+#' manually restart the node to continue operations.
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' @param passphrase Character. The new wallet password.
+#' 
+#' @return Returns a message indicating the node is shutting down.
+#' @family MultiChain Wallet Management
 #' @export
 mc_encrypt_wallet <- function(conn, passphrase) {
   mc_rpc(conn, "encryptwallet", list(passphrase))
 }
 
 #' Get general wallet information
+#' 
+#' Returns metadata about the wallet, such as version, balance, and encryption status.
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' 
+#' @return A list of wallet information.
+#' @family MultiChain Wallet Management
 #' @export
 mc_get_wallet_info <- function(conn) {
   mc_rpc(conn, "getwalletinfo")
 }
 
 #' Import one or more private keys
-#' @param conn Connection object.
-#' @param privkeys A single private key string or a vector of strings.
-#' @param label Optional label for the addresses.
-#' @param rescan If TRUE (default), rescans the whole chain. Can be an integer block height.
+#' 
+#' Adds private keys to the node's wallet.
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' @param privkeys A character string or vector of private keys (WIF format).
+#' @param label Optional character string. A label to assign to the addresses.
+#' @param rescan Logical or Integer. If \code{TRUE}, rescans the entire blockchain. 
+#'   Can also be an integer representing the block height to start scanning from.
+#' 
+#' @return Returns \code{NULL} on success.
+#' @family MultiChain Wallet Management
 #' @export
 mc_import_privkey <- function(conn, privkeys, label = "", rescan = TRUE) {
   keys_param <- if (length(privkeys) > 1) as.list(privkeys) else privkeys
@@ -118,30 +177,57 @@ mc_import_privkey <- function(conn, privkeys, label = "", rescan = TRUE) {
 }
 
 #' Import keys from a wallet dump file
-#' @param conn Connection object.
-#' @param filename Path to the dump file.
-#' @param rescan Block number to start rescanning from (default 0).
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' @param filename Character. Path to the dump file on the node's machine.
+#' @param rescan Integer. The block number to start rescanning from (default \code{0}).
+#' 
+#' @return Returns \code{NULL} on success.
+#' @family MultiChain Wallet Management
 #' @export
 mc_import_wallet <- function(conn, filename, rescan = 0) {
   mc_rpc(conn, "importwallet", list(filename, as.integer(rescan)))
 }
 
 #' Immediately lock the wallet
+#' 
+#' Removes the wallet encryption key from memory, requiring a passphrase for 
+#' further private key operations.
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' 
+#' @return Returns \code{NULL} on success.
+#' @family MultiChain Wallet Management
 #' @export
 mc_lock_wallet <- function(conn) {
   mc_rpc(conn, "walletlock")
 }
 
 #' Unlock the wallet with a passphrase
-#' @param conn Connection object.
-#' @param passphrase The wallet password.
-#' @param timeout Time in seconds to keep the wallet unlocked.
+#' 
+#' Stores the wallet decryption key in memory for a specified duration.
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' @param passphrase Character. The wallet password.
+#' @param timeout Integer. Time in seconds to keep the wallet unlocked.
+#' 
+#' @return Returns \code{NULL} on success.
+#' @family MultiChain Wallet Management
 #' @export
 mc_unlock_wallet <- function(conn, passphrase, timeout) {
   mc_rpc(conn, "walletpassphrase", list(passphrase, as.integer(timeout)))
 }
 
 #' Change the wallet passphrase
+#' 
+#' Changes the encryption password of the wallet.
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' @param old_passphrase Character. The current password.
+#' @param new_passphrase Character. The new password.
+#' 
+#' @return Returns \code{NULL} on success.
+#' @family MultiChain Wallet Management
 #' @export
 mc_change_wallet_passphrase <- function(conn, old_passphrase, new_passphrase) {
   mc_rpc(conn, "walletpassphrasechange", list(old_passphrase, new_passphrase))

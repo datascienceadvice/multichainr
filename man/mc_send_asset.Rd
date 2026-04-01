@@ -15,20 +15,46 @@ mc_send_asset(
 )
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{address}{Recipient address.}
+\item{address}{Character string. Recipient address.}
 
-\item{asset}{Asset name, ref or txid.}
+\item{asset}{Character string. Asset name, reference, or issuance transaction ID.}
 
-\item{quantity}{Amount of asset to send.}
+\item{quantity}{Numeric. Amount of the asset to send.}
 
-\item{native_amount}{Optional native currency to send (default 0).}
+\item{native_amount}{Numeric. Amount of native currency to send (default 0).}
 
-\item{comment}{Optional comment.}
+\item{comment}{Character string. Optional transaction comment.}
 
-\item{comment_to}{Optional comment-to.}
+\item{comment_to}{Character string. Optional comment‑to field.}
+}
+\value{
+A character string containing the transaction ID.
 }
 \description{
-Send a single asset to an address
+Convenience function to send a single asset (or native currency) to an address.
+Equivalent to \code{\link{mc_send}} but with a simpler interface.
 }
+\examples{
+\dontrun{
+# Send 100 units of "myasset"
+txid <- mc_send_asset(conn, "1A...", "myasset", 100)
+
+# Send asset along with 0.5 native coins
+txid <- mc_send_asset(conn, "1A...", "myasset", 100, native_amount = 0.5)
+}
+
+}
+\seealso{
+\code{\link{mc_send_asset_from}} to specify sender,
+\code{\link{mc_send}} for multiple assets.
+
+Other transactions: 
+\code{\link{mc_send}()},
+\code{\link{mc_send_asset_from}()},
+\code{\link{mc_send_from}()},
+\code{\link{mc_send_with_data}()},
+\code{\link{mc_send_with_data_from}()}
+}
+\concept{transactions}

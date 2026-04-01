@@ -7,16 +7,36 @@
 mc_sign_message(conn, address_or_key, message)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{address_or_key}{A wallet address (must be in this wallet) or a private key (WIF).}
+\item{address_or_key}{Character string. Either a wallet address (must belong
+to the node's wallet) or a private key in Wallet Import Format (WIF).}
 
-\item{message}{The text message to sign.}
+\item{message}{Character string. The text message to sign.}
 }
 \value{
-A string containing the base64-encoded signature.
+A character string containing the base64‑encoded signature.
 }
 \description{
-Returns a base64-encoded digital signature which proves that the message
-was approved by the owner of the address or private key.
+Generates a base64‑encoded digital signature for a message using a private key.
+The signature proves that the message was approved by the owner of the address
+or the holder of the private key.
 }
+\examples{
+\dontrun{
+# Sign using an address in the wallet
+sig <- mc_sign_message(conn, "1A...", "Hello, MultiChain!")
+
+# Sign using a raw private key
+sig <- mc_sign_message(conn, "L5...", "Important agreement")
+}
+
+}
+\seealso{
+\code{\link{mc_verify_message}} to verify a signature,
+\code{\link{mc_get_new_address}} to generate a new address.
+
+Other cryptography: 
+\code{\link{mc_verify_message}()}
+}
+\concept{cryptography}

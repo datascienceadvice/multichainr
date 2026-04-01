@@ -1,21 +1,31 @@
-#' Get asset balances for an address
+#' Get asset balances for a specific address
 #' 
-#' @param conn Connection object.
-#' @param address Wallet address.
-#' @param minconf Minimum number of confirmations (default 1).
-#' @param include_locked Include unspent outputs which have been locked (default FALSE).
+#' Returns a list of all asset balances for a given address in the node's wallet.
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' @param address Character. The MultiChain address to query.
+#' @param minconf Integer. The minimum number of confirmations (default \code{1}).
+#' @param include_locked Logical. If \code{TRUE}, includes unspent outputs that have been locked (default \code{FALSE}).
+#' 
+#' @return A data frame containing asset names, amounts, and other balance details.
+#' @family MultiChain Balances
 #' @export
 mc_get_address_balances <- function(conn, address, minconf = 1, include_locked = FALSE) {
   res <- mc_rpc(conn, "getaddressbalances", list(address, as.integer(minconf), include_locked))
   rpc_res_to_df(res)
 }
 
-#' Get details of a transaction related to an address
+#' Get details of a transaction for a specific address
 #' 
-#' @param conn Connection object.
-#' @param address Wallet address.
-#' @param txid Transaction ID.
-#' @param verbose If TRUE, provides details of inputs and outputs.
+#' Provides information about a specific transaction, but only if it involves the specified address.
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' @param address Character. The MultiChain address to query.
+#' @param txid Character. The transaction ID.
+#' @param verbose Logical. If \code{TRUE}, provides a detailed breakdown of inputs and outputs (default \code{FALSE}).
+#' 
+#' @return A list containing transaction details.
+#' @family MultiChain Transactions
 #' @export
 mc_get_address_transaction <- function(conn, address, txid, verbose = FALSE) {
   mc_rpc(conn, "getaddresstransaction", list(address, txid, verbose))
@@ -23,12 +33,17 @@ mc_get_address_transaction <- function(conn, address, txid, verbose = FALSE) {
 
 #' Get balances for multiple addresses and assets
 #' 
-#' @param conn Connection object.
-#' @param addresses Vector of addresses or "*" for all (default "*").
-#' @param assets Vector of asset names/refs or "*" for all (default "*").
-#' @param minconf Minimum confirmations (default 1).
-#' @param include_watch_only Include watch-only addresses (default FALSE).
-#' @param include_locked Include locked unspent outputs (default FALSE).
+#' Returns a breakdown of balances across a set of addresses and/or assets.
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' @param addresses A vector of addresses, or \code{"*"} for all addresses in the wallet (default \code{"*"}).
+#' @param assets A vector of asset names/refs, or \code{"*"} for all assets (default \code{"*"}).
+#' @param minconf Integer. Minimum confirmations (default \code{1}).
+#' @param include_watch_only Logical. Include watch-only addresses (default \code{FALSE}).
+#' @param include_locked Logical. Include locked unspent outputs (default \code{FALSE}).
+#' 
+#' @return A list or data frame of balances, indexed by address and asset.
+#' @family MultiChain Balances
 #' @export
 mc_get_multi_balances <- function(conn, addresses = "*", assets = "*", minconf = 1, 
                                   include_watch_only = FALSE, include_locked = FALSE) {
@@ -39,12 +54,18 @@ mc_get_multi_balances <- function(conn, addresses = "*", assets = "*", minconf =
 
 #' Get balances for non-fungible tokens (NFTs)
 #' 
-#' @param conn Connection object.
-#' @param addresses Vector of addresses or "*" (default "*").
-#' @param assets Vector of parent asset names/refs or "*" (default "*").
-#' @param minconf Minimum confirmations (default 1).
-#' @param include_watch_only Include watch-only addresses (default FALSE).
-#' @param include_locked Include locked outputs (default FALSE).
+#' Specifically retrieves balances for tokens (sub-assets or individual units) 
+#' associated with a parent asset.
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' @param addresses A vector of addresses, or \code{"*"} (default \code{"*"}).
+#' @param assets A vector of parent asset names/refs, or \code{"*"} (default \code{"*"}).
+#' @param minconf Integer. Minimum confirmations (default \code{1}).
+#' @param include_watch_only Logical. Include watch-only addresses (default \code{FALSE}).
+#' @param include_locked Logical. Include locked outputs (default \code{FALSE}).
+#' 
+#' @return A data frame containing token-level balance details.
+#' @family MultiChain Balances
 #' @export
 mc_get_token_balances <- function(conn, addresses = "*", assets = "*", minconf = 1, 
                                   include_watch_only = FALSE, include_locked = FALSE) {
@@ -56,10 +77,15 @@ mc_get_token_balances <- function(conn, addresses = "*", assets = "*", minconf =
 
 #' Get total wallet balances
 #' 
-#' @param conn Connection object.
-#' @param minconf Minimum confirmations (default 1).
-#' @param include_watch_only Include watch-only addresses (default FALSE).
-#' @param include_locked Include locked outputs (default FALSE).
+#' Returns the total balance of all assets across all addresses in the wallet.
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' @param minconf Integer. Minimum confirmations (default \code{1}).
+#' @param include_watch_only Logical. Include watch-only addresses (default \code{FALSE}).
+#' @param include_locked Logical. Include locked outputs (default \code{FALSE}).
+#' 
+#' @return A data frame summarizing total balances for each asset.
+#' @family MultiChain Balances
 #' @export
 mc_get_total_balances <- function(conn, minconf = 1, include_watch_only = FALSE, include_locked = FALSE) {
   res <- mc_rpc(conn, "gettotalbalances", list(as.integer(minconf), include_watch_only, include_locked))
@@ -68,22 +94,32 @@ mc_get_total_balances <- function(conn, minconf = 1, include_watch_only = FALSE,
 
 #' Get details of a wallet transaction
 #' 
-#' @param conn Connection object.
-#' @param txid Transaction ID.
-#' @param include_watch_only Include watch-only addresses (default FALSE).
-#' @param verbose If TRUE, provides details of inputs and outputs.
+#' Retrieves detailed information about a transaction in the node's wallet.
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' @param txid Character. The transaction ID.
+#' @param include_watch_only Logical. Include watch-only addresses (default \code{FALSE}).
+#' @param verbose Logical. If \code{TRUE}, provides details of inputs and outputs (default \code{FALSE}).
+#' 
+#' @return A list containing detailed transaction data.
+#' @family MultiChain Transactions
 #' @export
 mc_get_wallet_transaction <- function(conn, txid, include_watch_only = FALSE, verbose = FALSE) {
   mc_rpc(conn, "getwallettransaction", list(txid, include_watch_only, verbose))
 }
 
-#' List transactions for an address
+#' List transactions for a specific address
 #' 
-#' @param conn Connection object.
-#' @param address Wallet address.
-#' @param count Number of transactions (default 10).
-#' @param skip Number of transactions to skip (default 0).
-#' @param verbose If TRUE, provides details of inputs and outputs.
+#' Returns a list of the most recent transactions involving the specified address.
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' @param address Character. The MultiChain address to query.
+#' @param count Integer. The number of transactions to return (default \code{10}).
+#' @param skip Integer. The number of transactions to skip (default \code{0}).
+#' @param verbose Logical. If \code{TRUE}, provides details of inputs and outputs (default \code{FALSE}).
+#' 
+#' @return A data frame of transaction history for the address.
+#' @family MultiChain Transactions
 #' @export
 mc_list_address_transactions <- function(conn, address, count = 10, skip = 0, verbose = FALSE) {
   res <- mc_rpc(conn, "listaddresstransactions", list(address, as.integer(count), as.integer(skip), verbose))
@@ -92,11 +128,16 @@ mc_list_address_transactions <- function(conn, address, count = 10, skip = 0, ve
 
 #' List transactions in the wallet
 #' 
-#' @param conn Connection object.
-#' @param count Number of transactions (default 10).
-#' @param skip Number of transactions to skip (default 0).
-#' @param include_watch_only Include watch-only addresses (default FALSE).
-#' @param verbose If TRUE, provides details of inputs and outputs.
+#' Returns a list of the most recent transactions in the wallet.
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' @param count Integer. The number of transactions to return (default \code{10}).
+#' @param skip Integer. The number of transactions to skip (default \code{0}).
+#' @param include_watch_only Logical. Include watch-only addresses (default \code{FALSE}).
+#' @param verbose Logical. If \code{TRUE}, provides details of inputs and outputs (default \code{FALSE}).
+#' 
+#' @return A data frame of transaction history for the wallet.
+#' @family MultiChain Transactions
 #' @export
 mc_list_wallet_transactions <- function(conn, count = 10, skip = 0, include_watch_only = FALSE, verbose = FALSE) {
   res <- mc_rpc(conn, "listwallettransactions", list(as.integer(count), as.integer(skip), include_watch_only, verbose))
@@ -105,7 +146,17 @@ mc_list_wallet_transactions <- function(conn, count = 10, skip = 0, include_watc
 
 #' Retrieve full hex data from a transaction output
 #' 
-#' Useful for retrieving large stream data that was truncated.
+#' This function is used to retrieve large data payloads (like stream data) that 
+#' may have been truncated in standard transaction calls.
+#' 
+#' @param conn A connection object to the MultiChain node.
+#' @param txid Character. The transaction ID containing the output.
+#' @param vout Integer. The index of the output (starting from 0).
+#' @param count_bytes Integer. The number of bytes to retrieve. If \code{NULL}, returns all data.
+#' @param start_byte Integer. The byte offset to start reading from (default \code{0}).
+#' 
+#' @return A list or string containing the hex data from the transaction output.
+#' @family MultiChain Transactions
 #' @export
 mc_get_tx_out_data <- function(conn, txid, vout, count_bytes = NULL, start_byte = 0) {
   params <- list(txid, as.integer(vout))

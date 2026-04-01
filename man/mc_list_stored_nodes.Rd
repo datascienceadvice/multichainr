@@ -7,13 +7,33 @@
 mc_list_stored_nodes(conn, include_old_ignores = FALSE)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{include_old_ignores}{Include old ignored nodes (default FALSE).}
+\item{include_old_ignores}{Logical. If \code{TRUE}, includes nodes that
+were previously ignored. Default is \code{FALSE}.}
 }
 \value{
-A data frame of stored nodes.
+A data frame (via \code{rpc_res_to_df}) of stored nodes.
 }
 \description{
-List known peer node addresses (MultiChain 2.3+)
+Returns a list of nodes that the node has stored in its address manager.
+This includes peers that were connected to or manually added.
 }
+\examples{
+\dontrun{
+nodes <- mc_list_stored_nodes(conn)
+}
+
+}
+\seealso{
+\code{\link{mc_store_node}} to add a node to the stored list.
+
+Other networking: 
+\code{\link{mc_add_node}()},
+\code{\link{mc_get_added_node_info}()},
+\code{\link{mc_get_network_info}()},
+\code{\link{mc_get_peer_info}()},
+\code{\link{mc_ping}()},
+\code{\link{mc_store_node}()}
+}
+\concept{networking}

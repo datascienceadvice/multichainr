@@ -16,22 +16,45 @@ mc_send_asset_from(
 )
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{from_address}{Sender address.}
+\item{from_address}{Character string. Sender address (must belong to the node's wallet).}
 
-\item{to_address}{Recipient address.}
+\item{to_address}{Character string. Recipient address.}
 
-\item{asset}{Asset name, ref or txid.}
+\item{asset}{Character string. Asset name, reference, or issuance transaction ID.}
 
-\item{quantity}{Amount of asset.}
+\item{quantity}{Numeric. Amount of the asset to send.}
 
-\item{native_amount}{Optional native currency.}
+\item{native_amount}{Numeric. Amount of native currency to send (default 0).}
 
-\item{comment}{Optional comment.}
+\item{comment}{Character string. Optional transaction comment.}
 
-\item{comment_to}{Optional comment-to.}
+\item{comment_to}{Character string. Optional comment‑to field.}
+}
+\value{
+A character string containing the transaction ID.
 }
 \description{
-Send a single asset from a specific address
+Sends an asset (or native currency) from a specific sender address.
+Useful when the node has multiple addresses and you want to control which
+address the funds are taken from.
 }
+\examples{
+\dontrun{
+# Send from a specific address
+txid <- mc_send_asset_from(conn, "1A...", "1B...", "myasset", 50)
+}
+
+}
+\seealso{
+\code{\link{mc_send_asset}}, \code{\link{mc_send_from}}.
+
+Other transactions: 
+\code{\link{mc_send}()},
+\code{\link{mc_send_asset}()},
+\code{\link{mc_send_from}()},
+\code{\link{mc_send_with_data}()},
+\code{\link{mc_send_with_data_from}()}
+}
+\concept{transactions}

@@ -7,12 +7,42 @@
 mc_test_tx_filter(conn, options, js_code, tx = NULL)
 }
 \arguments{
-\item{options}{Filter options.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{js_code}{JavaScript code.}
+\item{options}{List of filter options (similar to \code{mc_create_tx_filter}).}
 
-\item{tx}{Hex or txid of a transaction to test against.}
+\item{js_code}{Character string. JavaScript code to test.}
+
+\item{tx}{Optional character string. Hex representation or transaction ID
+of a transaction to test against. If omitted, a generic test is performed.}
+}
+\value{
+The result of the filter evaluation (typically a boolean or
+transformed transaction).
 }
 \description{
-Test a transaction filter before creation
+Tests a transaction filter's JavaScript code against a given transaction
+without permanently creating the filter.
 }
+\examples{
+\dontrun{
+result <- mc_test_tx_filter(conn, list(for = "asset1"),
+                            "function filter(tx) { return true; }",
+                            tx = "txid...")
+}
+
+}
+\seealso{
+\code{\link{mc_create_tx_filter}}, \code{\link{mc_run_tx_filter}}
+
+Other filters: 
+\code{\link{mc_create_stream_filter}()},
+\code{\link{mc_create_tx_filter}()},
+\code{\link{mc_get_filter_code}()},
+\code{\link{mc_list_stream_filters}()},
+\code{\link{mc_list_tx_filters}()},
+\code{\link{mc_run_stream_filter}()},
+\code{\link{mc_run_tx_filter}()},
+\code{\link{mc_test_stream_filter}()}
+}
+\concept{filters}

@@ -12,6 +12,39 @@ mc_get_variable_history(
   start = NULL
 )
 }
-\description{
-List historical values of a variable
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{variable}{Character string. Variable name or transaction ID.}
+
+\item{verbose}{Logical. If \code{TRUE}, returns detailed entries.}
+
+\item{count}{Integer. Number of historical entries to return (default 10).}
+
+\item{start}{Optional integer. Offset (positive for forward, negative for backward).
+If omitted, the most recent entries are returned.}
 }
+\value{
+A data frame (via \code{rpc_res_to_df}) with history entries.
+}
+\description{
+Retrieves the update history of a variable, showing previous values
+and their transaction IDs.
+}
+\examples{
+\dontrun{
+history <- mc_get_variable_history(conn, "myvar", count = 5)
+}
+
+}
+\seealso{
+Other variables: 
+\code{\link{mc_create_variable}()},
+\code{\link{mc_create_variable_from}()},
+\code{\link{mc_get_variable_info}()},
+\code{\link{mc_get_variable_value}()},
+\code{\link{mc_list_variables}()},
+\code{\link{mc_set_variable_value}()},
+\code{\link{mc_set_variable_value_from}()}
+}
+\concept{variables}

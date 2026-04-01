@@ -6,6 +6,25 @@
 \usage{
 mc_get_wallet_info(conn)
 }
-\description{
-Get general wallet information
+\arguments{
+\item{conn}{A connection object to the MultiChain node.}
 }
+\value{
+A list of wallet information.
+}
+\description{
+Returns metadata about the wallet, such as version, balance, and encryption status.
+}
+\seealso{
+Other MultiChain Wallet Management: 
+\code{\link{mc_backup_wallet}()},
+\code{\link{mc_change_wallet_passphrase}()},
+\code{\link{mc_dump_privkey}()},
+\code{\link{mc_dump_wallet}()},
+\code{\link{mc_encrypt_wallet}()},
+\code{\link{mc_import_privkey}()},
+\code{\link{mc_import_wallet}()},
+\code{\link{mc_lock_wallet}()},
+\code{\link{mc_unlock_wallet}()}
+}
+\concept{MultiChain Wallet Management}

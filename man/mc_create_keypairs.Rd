@@ -7,14 +7,42 @@
 mc_create_keypairs(conn, count = 1)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{count}{Number of key pairs to generate (default 1).}
+\item{count}{Integer. Number of key pairs to generate. Default is \code{1}.}
 }
 \value{
-A data frame with columns: address, pubkey, and privkey.
+A data frame with three columns:
+\item{address}{The public address derived from the key pair.}
+\item{pubkey}{The public key.}
+\item{privkey}{The private key (keep this secret!).}
 }
 \description{
-Generates one or more public/private key pairs. These are NOT stored
-in the node's wallet.
+Generates one or more public/private key pairs. These keys are \emph{not}
+stored in the node's wallet, so they must be kept secure by the user.
 }
+\examples{
+\dontrun{
+# Generate a single key pair
+keys <- mc_create_keypairs(conn)
+print(keys)
+
+# Generate 5 key pairs
+keys5 <- mc_create_keypairs(conn, count = 5)
+}
+
+}
+\seealso{
+\code{\link{mc_get_new_address}} to create an address stored in the
+wallet.
+
+Other address operations: 
+\code{\link{mc_add_multisig_address}()},
+\code{\link{mc_create_multisig}()},
+\code{\link{mc_get_addresses}()},
+\code{\link{mc_get_new_address}()},
+\code{\link{mc_import_address}()},
+\code{\link{mc_list_addresses}()},
+\code{\link{mc_validate_address}()}
+}
+\concept{address operations}

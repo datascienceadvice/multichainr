@@ -2,7 +2,7 @@
 % Please edit documentation in R/wallet.R
 \name{mc_combine_unspent}
 \alias{mc_combine_unspent}
-\title{Combine unspent outputs}
+\title{Combine unspent outputs (UTXOs)}
 \usage{
 mc_combine_unspent(
   conn,
@@ -15,23 +15,32 @@ mc_combine_unspent(
 )
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object to the MultiChain node.}
 
-\item{addresses}{Vector of addresses or "\emph{" (default "}").}
+\item{addresses}{A vector of addresses, or \code{"*"} for all addresses (default \code{"*"}).}
 
-\item{minconf}{Minimum confirmations (default 1).}
+\item{minconf}{Integer. Minimum confirmations (default \code{1}).}
 
-\item{maxcombines}{Maximum transactions to create (default 100).}
+\item{maxcombines}{Integer. Maximum number of transactions to create (default \code{100}).}
 
-\item{mininputs}{Minimum inputs per transaction (default 2).}
+\item{mininputs}{Integer. Minimum number of inputs per transaction (default \code{2}).}
 
-\item{maxinputs}{Maximum inputs per transaction (default 100).}
+\item{maxinputs}{Integer. Maximum number of inputs per transaction (default \code{100}).}
 
-\item{maxtime}{Maximum seconds to spend combining (default 15).}
+\item{maxtime}{Integer. Maximum seconds to spend combining (default \code{15}).}
 }
 \value{
-A character vector of transaction IDs created.
+A character vector of the transaction IDs (txids) created.
 }
 \description{
-Sends transactions to combine many small UTXOs into one to improve wallet performance.
+Sends transactions to combine many small unspent transaction outputs (UTXOs)
+into a single output. This is used to improve wallet performance and reduce
+the size of the wallet's UTXO set.
 }
+\seealso{
+Other MultiChain UTXO Management: 
+\code{\link{mc_list_lock_unspent}()},
+\code{\link{mc_list_unspent}()},
+\code{\link{mc_lock_unspent}()}
+}
+\concept{MultiChain UTXO Management}

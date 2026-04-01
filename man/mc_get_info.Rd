@@ -7,12 +7,36 @@
 mc_get_info(conn)
 }
 \arguments{
-\item{conn}{A multichain_conn object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 }
 \value{
-A list containing node parameters (version, protocol, balance, etc.).
+A list with node information, typically including:
+\item{version}{Node software version.}
+\item{protocolversion}{Protocol version.}
+\item{walletversion}{Wallet version.}
+\item{balance}{Node's wallet balance.}
+\item{blocks}{Current block height.}
+\item{timeoffset}{Time offset from network.}
+\item{connections}{Number of active connections.}
+\item{...}{Other status details.}
 }
 \description{
-Returns an object containing information about the status of the node,
-network, and blockchain.
+Returns comprehensive information about the node's status, including
+version, protocol, network connections, balance, and mining status.
 }
+\examples{
+\dontrun{
+info <- mc_get_info(conn)
+cat("Balance:", info$balance, "\n")
+cat("Blocks:", info$blocks, "\n")
+}
+
+}
+\seealso{
+\code{\link{mc_get_blockchain_info}} for blockchain-level info,
+\code{\link{mc_get_runtime_params}} for runtime settings.
+
+Other node information: 
+\code{\link{mc_get_init_status}()}
+}
+\concept{node information}

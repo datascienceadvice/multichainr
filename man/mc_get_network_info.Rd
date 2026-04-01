@@ -7,11 +7,40 @@
 mc_get_network_info(conn)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 }
 \value{
-A list containing port and local address information.
+A list containing network information, typically:
+\item{version}{Node version.}
+\item{subversion}{Node subversion string.}
+\item{protocolversion}{Protocol version.}
+\item{localservices}{Services offered by the node.}
+\item{localaddresses}{List of local IP addresses.}
+\item{timeoffset}{Time offset from network.}
+\item{connections}{Number of active connections.}
+\item{relayfee}{Minimum relay fee.}
+\item{...}{Other network parameters.}
 }
 \description{
-Get information about node's network status
+Returns details about the node's network configuration, including listening
+port, local addresses, and network‑related flags.
 }
+\examples{
+\dontrun{
+net_info <- mc_get_network_info(conn)
+cat("Listening port:", net_info$localaddresses[[1]]$port)
+}
+
+}
+\seealso{
+\code{\link{mc_get_peer_info}} for peer details.
+
+Other networking: 
+\code{\link{mc_add_node}()},
+\code{\link{mc_get_added_node_info}()},
+\code{\link{mc_get_peer_info}()},
+\code{\link{mc_list_stored_nodes}()},
+\code{\link{mc_ping}()},
+\code{\link{mc_store_node}()}
+}
+\concept{networking}

@@ -7,14 +7,49 @@
 mc_publish_multi(conn, stream, items, options = NULL)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{stream}{Default stream name, ref or txid.}
+\item{stream}{Character string. Default stream for all items (if not overridden
+per item).}
 
-\item{items}{A list of lists, each containing "key" (or "keys") and "data".}
+\item{items}{A list of item objects, each containing:
+\itemize{
+\item \code{key} or \code{keys} – the key(s) for the item.
+\item \code{data} – the data to publish.
+\item (optional) \code{stream} – override the default stream.
+}}
 
-\item{options}{Optional default "offchain" string.}
+\item{options}{Optional default \code{"offchain"} string.}
+}
+\value{
+A character string containing the transaction ID.
 }
 \description{
-Publish multiple items to a stream in one transaction
+Publishes several key‑value items in a single transaction. This is more
+efficient than publishing each item separately.
 }
+\examples{
+\dontrun{
+items <- list(
+  list(key = "k1", data = list(text = "item1")),
+  list(key = "k2", data = list(json = list(value = 2)))
+)
+txid <- mc_publish_multi(conn, "mystream", items)
+}
+
+}
+\seealso{
+\code{\link{mc_publish_multi_from}} for specifying the sender.
+
+Other stream items: 
+\code{\link{mc_get_stream_item}()},
+\code{\link{mc_list_stream_block_items}()},
+\code{\link{mc_list_stream_items}()},
+\code{\link{mc_list_stream_key_items}()},
+\code{\link{mc_list_stream_publisher_items}()},
+\code{\link{mc_list_stream_tx_items}()},
+\code{\link{mc_publish}()},
+\code{\link{mc_publish_from}()},
+\code{\link{mc_publish_multi_from}()}
+}
+\concept{stream items}

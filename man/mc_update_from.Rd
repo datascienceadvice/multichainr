@@ -6,6 +6,33 @@
 \usage{
 mc_update_from(conn, from_address, asset, params)
 }
-\description{
-Update asset status from specific address
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{from_address}{Character string. Address that pays for the transaction.}
+
+\item{asset}{Character string. Asset name, reference, or issuance ID.}
+
+\item{params}{A list of parameters to update.}
 }
+\value{
+A character string containing the transaction ID.
+}
+\description{
+Changes the status of an asset (e.g., open/close) and specifies the address
+that pays for and authorizes the update.
+}
+\examples{
+\dontrun{
+# Close the asset from a specific address
+txid <- mc_update_from(conn, "1A...", "mycoin", list(open = FALSE))
+}
+
+}
+\seealso{
+\code{\link{mc_update}} for simpler usage.
+
+Other asset management: 
+\code{\link{mc_update}()}
+}
+\concept{asset management}

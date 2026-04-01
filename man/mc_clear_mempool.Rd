@@ -7,12 +7,28 @@
 mc_clear_mempool(conn)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 }
 \value{
-NULL on success.
+Invisibly returns \code{NULL} on success.
 }
 \description{
-Removes all unconfirmed transactions from the mempool.
-Note: Must be called after mc_pause(conn, "incoming,mining").
+Removes all unconfirmed transactions from the node's memory pool (mempool).
+This function is typically used after pausing incoming and mining tasks to
+reset the mempool state. It requires the node to be paused first with
+\code{mc_pause(conn, "incoming,mining")}.
 }
+\examples{
+\dontrun{
+# Pause the node before clearing the mempool
+mc_pause(conn, "incoming,mining")
+mc_clear_mempool(conn)
+mc_resume(conn, "incoming,mining")
+}
+
+}
+\seealso{
+\code{\link{mc_pause}}, \code{\link{mc_resume}},
+\code{\link{mc_get_mempool_info}} to inspect mempool state.
+}
+\concept{mempool management}

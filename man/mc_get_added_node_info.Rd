@@ -7,15 +7,44 @@
 mc_get_added_node_info(conn, verbose = FALSE, node = NULL)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{verbose}{If TRUE, returns detailed information.}
+\item{verbose}{Logical. If \code{TRUE}, returns a data frame with detailed
+information about each added node (e.g., connected status, last connection
+time). If \code{FALSE} (default), returns a character vector of node
+addresses.}
 
-\item{node}{Optional specific node address.}
+\item{node}{Optional character string. If provided, returns information
+only for that specific node.}
 }
 \value{
-A list or data frame of added nodes.
+If \code{verbose = FALSE}: a character vector of node addresses.
+If \code{verbose = TRUE}: a data frame (via \code{rpc_res_to_df}) with
+node details.
 }
 \description{
-Get information about manually added nodes
+Returns details about nodes that were added via \code{\link{mc_add_node}}.
+Can return either a list of node addresses or detailed information.
 }
+\examples{
+\dontrun{
+# List all added nodes (addresses only)
+nodes <- mc_get_added_node_info(conn)
+
+# Get detailed information for a specific node
+details <- mc_get_added_node_info(conn, verbose = TRUE, node = "192.168.1.10:8571")
+}
+
+}
+\seealso{
+\code{\link{mc_add_node}}, \code{\link{mc_get_peer_info}}
+
+Other networking: 
+\code{\link{mc_add_node}()},
+\code{\link{mc_get_network_info}()},
+\code{\link{mc_get_peer_info}()},
+\code{\link{mc_list_stored_nodes}()},
+\code{\link{mc_ping}()},
+\code{\link{mc_store_node}()}
+}
+\concept{networking}

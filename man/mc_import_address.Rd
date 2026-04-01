@@ -7,18 +7,42 @@
 mc_import_address(conn, address, label = "", rescan = TRUE)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{address}{The wallet address to import.}
+\item{address}{Character string. The wallet address to import.}
 
-\item{label}{Optional label for the address.}
+\item{label}{Character string (optional). A label to assign to the address.
+Default is \code{""} (no label).}
 
-\item{rescan}{If TRUE (default), the node will scan the blockchain for transactions
-associated with this address.}
+\item{rescan}{Logical. If \code{TRUE} (default), the node will scan the
+blockchain for transactions associated with this address.}
 }
 \value{
-NULL on success.
+Invisibly returns \code{NULL} on success; throws an error if the
+import fails.
 }
 \description{
 Adds an address (without a private key) to the node's wallet for monitoring.
+The node will be able to see transactions involving this address, but cannot
+spend funds from it.
 }
+\examples{
+\dontrun{
+mc_import_address(conn, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+                  label = "donation", rescan = TRUE)
+}
+
+}
+\seealso{
+\code{\link{mc_validate_address}} to check address validity.
+
+Other address operations: 
+\code{\link{mc_add_multisig_address}()},
+\code{\link{mc_create_keypairs}()},
+\code{\link{mc_create_multisig}()},
+\code{\link{mc_get_addresses}()},
+\code{\link{mc_get_new_address}()},
+\code{\link{mc_list_addresses}()},
+\code{\link{mc_validate_address}()}
+}
+\concept{address operations}

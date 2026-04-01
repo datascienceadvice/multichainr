@@ -6,6 +6,29 @@
 \usage{
 mc_get_tx_out_data(conn, txid, vout, count_bytes = NULL, start_byte = 0)
 }
-\description{
-Useful for retrieving large stream data that was truncated.
+\arguments{
+\item{conn}{A connection object to the MultiChain node.}
+
+\item{txid}{Character. The transaction ID containing the output.}
+
+\item{vout}{Integer. The index of the output (starting from 0).}
+
+\item{count_bytes}{Integer. The number of bytes to retrieve. If \code{NULL}, returns all data.}
+
+\item{start_byte}{Integer. The byte offset to start reading from (default \code{0}).}
 }
+\value{
+A list or string containing the hex data from the transaction output.
+}
+\description{
+This function is used to retrieve large data payloads (like stream data) that
+may have been truncated in standard transaction calls.
+}
+\seealso{
+Other MultiChain Transactions: 
+\code{\link{mc_get_address_transaction}()},
+\code{\link{mc_get_wallet_transaction}()},
+\code{\link{mc_list_address_transactions}()},
+\code{\link{mc_list_wallet_transactions}()}
+}
+\concept{MultiChain Transactions}

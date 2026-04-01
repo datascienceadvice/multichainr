@@ -7,11 +7,19 @@
 mc_list_lock_unspent(conn)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object to the MultiChain node.}
 }
 \value{
-A data frame of locked outputs (txid and vout).
+A data frame containing columns for \code{txid} and \code{vout}.
 }
 \description{
-List locked unspent outputs
+Returns a list of unspent transaction outputs that have been temporarily
+locked by \code{\link{mc_lock_unspent}}.
 }
+\seealso{
+Other MultiChain UTXO Management: 
+\code{\link{mc_combine_unspent}()},
+\code{\link{mc_list_unspent}()},
+\code{\link{mc_lock_unspent}()}
+}
+\concept{MultiChain UTXO Management}

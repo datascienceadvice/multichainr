@@ -7,13 +7,35 @@
 mc_disable_raw_transaction(conn, tx_hex)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{tx_hex}{Hex string of the exchange transaction.}
+\item{tx_hex}{Character string. Hexadecimal representation of the exchange
+transaction to disable.}
 }
 \value{
-Transaction ID of the disabling transaction.
+Character string. Transaction ID of the disabling transaction.
 }
 \description{
-Disable an offer of exchange
+Invalidates a previously created partial exchange transaction, preventing
+it from being completed. The transaction is replaced with a disabling
+transaction that spends the locked output(s) back to the original owner(s).
 }
+\examples{
+\dontrun{
+# After creating an offer, but before completion, you may decide to cancel
+disable_txid <- mc_disable_raw_transaction(conn, offer_hex)
+}
+
+}
+\seealso{
+\code{\link{mc_prepare_lock_unspent}}
+
+Other atomic exchange: 
+\code{\link{mc_append_raw_exchange}()},
+\code{\link{mc_complete_raw_exchange}()},
+\code{\link{mc_create_raw_exchange}()},
+\code{\link{mc_decode_raw_exchange}()},
+\code{\link{mc_prepare_lock_unspent}()},
+\code{\link{mc_prepare_lock_unspent_from}()}
+}
+\concept{atomic exchange}

@@ -7,12 +7,28 @@
 mc_import_wallet(conn, filename, rescan = 0)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object to the MultiChain node.}
 
-\item{filename}{Path to the dump file.}
+\item{filename}{Character. Path to the dump file on the node's machine.}
 
-\item{rescan}{Block number to start rescanning from (default 0).}
+\item{rescan}{Integer. The block number to start rescanning from (default \code{0}).}
+}
+\value{
+Returns \code{NULL} on success.
 }
 \description{
 Import keys from a wallet dump file
 }
+\seealso{
+Other MultiChain Wallet Management: 
+\code{\link{mc_backup_wallet}()},
+\code{\link{mc_change_wallet_passphrase}()},
+\code{\link{mc_dump_privkey}()},
+\code{\link{mc_dump_wallet}()},
+\code{\link{mc_encrypt_wallet}()},
+\code{\link{mc_get_wallet_info}()},
+\code{\link{mc_import_privkey}()},
+\code{\link{mc_lock_wallet}()},
+\code{\link{mc_unlock_wallet}()}
+}
+\concept{MultiChain Wallet Management}

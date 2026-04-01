@@ -14,18 +14,46 @@ mc_grant_with_data_from(
 )
 }
 \arguments{
-\item{conn}{A multichain_conn object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{from_address}{Address from which the permissions are granted.}
+\item{from_address}{Character string. The address granting the permissions.}
 
-\item{to_address}{Target wallet address.}
+\item{to_address}{Character string. The address receiving the permissions.}
 
-\item{permissions}{Permission string.}
+\item{permissions}{Character string. Comma‑separated list of permissions.}
 
-\item{data}{Data string or list (will be converted to hex).}
+\item{data}{Data to embed (string or list, automatically hex‑encoded).}
 
-\item{native_amount}{Optional native currency amount.}
+\item{native_amount}{Numeric. Amount of native currency to send (default 0).}
+}
+\value{
+A character string containing the transaction ID.
 }
 \description{
-Grant permissions from a specific address with metadata
+Grants permissions from a specified address and includes metadata.
+Combines the capabilities of \code{\link{mc_grant_from}} and
+\code{\link{mc_grant_with_data}}.
 }
+\examples{
+\dontrun{
+# Grant from a specific admin with metadata
+txid <- mc_grant_with_data_from(conn, "admin1...", "user1...",
+                                "send,receive",
+                                data = list(note = "temporary access"),
+                                native_amount = 0.01)
+}
+
+}
+\seealso{
+\code{\link{mc_grant_with_data}}, \code{\link{mc_grant_from}}.
+
+Other permissions: 
+\code{\link{mc_grant}()},
+\code{\link{mc_grant_from}()},
+\code{\link{mc_grant_with_data}()},
+\code{\link{mc_list_permissions}()},
+\code{\link{mc_revoke}()},
+\code{\link{mc_revoke_from}()},
+\code{\link{mc_verify_permission}()}
+}
+\concept{permissions}

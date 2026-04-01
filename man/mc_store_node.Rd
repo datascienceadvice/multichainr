@@ -7,12 +7,40 @@
 mc_store_node(conn, node, command = c("tryconnect", "ignore"))
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{node}{IP address and port.}
+\item{node}{Character string. The IP address and port of the peer node.}
 
-\item{command}{One of "tryconnect" (default) or "ignore".}
+\item{command}{Character string. Action to perform:
+\itemize{
+\item \code{"tryconnect"} – store the node and try to connect to it
+(default).
+\item \code{"ignore"} – ignore the node (do not attempt connections).
+}}
+}
+\value{
+Invisibly returns \code{NULL} on success.
 }
 \description{
-Add an IP address to known peer nodes (MultiChain 2.3+)
+Stores a node address in the node's address manager. This can be used to
+manually add a peer for future connections or to ignore a node.
 }
+\examples{
+\dontrun{
+# Add a node to the address manager
+mc_store_node(conn, "192.168.1.20:8571", command = "tryconnect")
+}
+
+}
+\seealso{
+\code{\link{mc_list_stored_nodes}} to list stored nodes.
+
+Other networking: 
+\code{\link{mc_add_node}()},
+\code{\link{mc_get_added_node_info}()},
+\code{\link{mc_get_network_info}()},
+\code{\link{mc_get_peer_info}()},
+\code{\link{mc_list_stored_nodes}()},
+\code{\link{mc_ping}()}
+}
+\concept{networking}

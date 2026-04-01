@@ -14,6 +14,31 @@ mc_list_stream_keys(
   local_ordering = FALSE
 )
 }
-\description{
-List unique keys in a stream
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{stream}{Character string. Stream name, reference, or txid.}
+
+\item{keys}{Character vector of keys to filter (default \code{"*"} for all).}
+
+\item{verbose}{Logical. If \code{TRUE}, returns additional metadata per key.}
+
+\item{count}{Optional integer. Number of keys to return.}
+
+\item{start}{Optional integer. Offset.}
+
+\item{local_ordering}{Logical. Use local ordering.}
 }
+\value{
+A data frame (via \code{rpc_res_to_df}) with key information.
+}
+\description{
+Returns the set of distinct keys used in a stream, with optional pagination.
+}
+\examples{
+\dontrun{
+keys <- mc_list_stream_keys(conn, "mystream")
+}
+
+}
+\concept{stream keys}

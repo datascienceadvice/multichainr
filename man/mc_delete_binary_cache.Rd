@@ -7,13 +7,32 @@
 mc_delete_binary_cache(conn, identifier)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{identifier}{The cache item identifier to remove.}
+\item{identifier}{Character string. The cache item identifier to remove.}
 }
 \value{
-NULL on success.
+Invisibly returns \code{NULL} on success; throws an error if the
+item does not exist or cannot be deleted.
 }
 \description{
-Delete an item from the binary cache
+Removes a previously created binary cache item. Once deleted, the identifier
+becomes invalid and cannot be used further.
 }
+\examples{
+\dontrun{
+id <- mc_create_binary_cache(conn)
+# ... use the cache item ...
+mc_delete_binary_cache(conn, id)
+}
+
+}
+\seealso{
+\code{\link{mc_create_binary_cache}}, \code{\link{mc_append_binary_cache}}
+
+Other binary cache: 
+\code{\link{mc_append_binary_cache}()},
+\code{\link{mc_create_binary_cache}()},
+\code{\link{mc_txout_to_binary_cache}()}
+}
+\concept{binary cache}

@@ -7,12 +7,39 @@
 mc_append_raw_data(conn, tx_hex, data)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{tx_hex}{Raw transaction hex.}
+\item{tx_hex}{Character string. The raw transaction hex.}
 
-\item{data}{Data string or list.}
+\item{data}{Data to embed. Can be a string or a list (converted to JSON then hex).}
+}
+\value{
+A character string containing the updated raw transaction hex.
 }
 \description{
-Add metadata to a raw transaction
+Appends arbitrary data (metadata) to a raw transaction. The data is embedded
+in an output with zero native value.
 }
+\examples{
+\dontrun{
+# Add a text note
+updated_hex <- mc_append_raw_data(conn, tx_hex, "This is a note.")
+
+# Add JSON metadata
+updated_hex <- mc_append_raw_data(conn, tx_hex, list(tag = "invoice", id = 123))
+}
+
+}
+\seealso{
+\code{\link{mc_append_raw_change}}, \code{\link{mc_append_raw_transaction}}
+
+Other raw transactions: 
+\code{\link{mc_append_raw_change}()},
+\code{\link{mc_append_raw_transaction}()},
+\code{\link{mc_create_raw_send_from}()},
+\code{\link{mc_create_raw_transaction}()},
+\code{\link{mc_decode_raw_transaction}()},
+\code{\link{mc_send_raw_transaction}()},
+\code{\link{mc_sign_raw_transaction}()}
+}
+\concept{raw transactions}

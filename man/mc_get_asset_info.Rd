@@ -7,12 +7,38 @@
 mc_get_asset_info(conn, asset, verbose = FALSE)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{asset}{Asset name, ref or issuance txid.}
+\item{asset}{Character string. Asset name, reference, or issuance transaction ID.}
 
-\item{verbose}{If TRUE, returns details about individual issuances.}
+\item{verbose}{Logical. If \code{TRUE}, returns details about individual
+issuances (for fungible assets with multiple issuances). Default is \code{FALSE}.}
+}
+\value{
+A list (or data frame, depending on verbosity) containing asset
+information such as name, type, total quantity, units, etc.
 }
 \description{
-Get information about a specific asset
+Retrieves details about an asset on the MultiChain blockchain. The asset can
+be identified by its name, reference, or issuance transaction ID.
 }
+\examples{
+\dontrun{
+# Get basic info about an asset named "mycoin"
+info <- mc_get_asset_info(conn, "mycoin")
+print(info$name)
+
+# Get verbose info with issuance details
+info_verbose <- mc_get_asset_info(conn, "mycoin", verbose = TRUE)
+}
+
+}
+\seealso{
+\code{\link{mc_list_assets}} to list all assets,
+\code{\link{mc_list_asset_issues}} to list issuances.
+
+Other asset information: 
+\code{\link{mc_list_asset_issues}()},
+\code{\link{mc_list_assets}()}
+}
+\concept{asset information}

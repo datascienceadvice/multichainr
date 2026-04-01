@@ -12,8 +12,38 @@ mc_create_library(
 )
 }
 \arguments{
-\item{updatemode}{One of "none", "instant", or "approve".}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{name}{Character string. Library name (must be unique).}
+
+\item{updatemode}{Character string. How library updates are handled:
+\code{"none"} – no updates allowed; \code{"instant"} – updates take effect
+immediately; \code{"approve"} – updates require admin approval.}
+
+\item{js_code}{Character string. The JavaScript code for the library.}
+}
+\value{
+A list containing the result of the RPC call (usually transaction ID).
 }
 \description{
-Create a new library
+Creates a JavaScript library on the blockchain. Libraries contain reusable
+code that can be imported by filters.
 }
+\examples{
+\dontrun{
+js_code <- "function add(a, b) { return a + b; }"
+mc_create_library(conn, "math", updatemode = "none", js_code)
+}
+
+}
+\seealso{
+\code{\link{mc_add_library_update}}, \code{\link{mc_list_libraries}}
+
+Other libraries: 
+\code{\link{mc_add_library_update}()},
+\code{\link{mc_add_library_update_from}()},
+\code{\link{mc_get_library_code}()},
+\code{\link{mc_list_libraries}()},
+\code{\link{mc_test_library}()}
+}
+\concept{libraries}

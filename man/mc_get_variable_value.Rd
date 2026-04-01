@@ -6,6 +6,33 @@
 \usage{
 mc_get_variable_value(conn, variable)
 }
-\description{
-Retrieve the latest value of a variable
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{variable}{Character string. Variable name or transaction ID.}
 }
+\value{
+The current value (any JSON type).
+}
+\description{
+Returns the current value of a variable.
+}
+\examples{
+\dontrun{
+val <- mc_get_variable_value(conn, "myvar")
+}
+
+}
+\seealso{
+\code{\link{mc_get_variable_info}}, \code{\link{mc_get_variable_history}}
+
+Other variables: 
+\code{\link{mc_create_variable}()},
+\code{\link{mc_create_variable_from}()},
+\code{\link{mc_get_variable_history}()},
+\code{\link{mc_get_variable_info}()},
+\code{\link{mc_list_variables}()},
+\code{\link{mc_set_variable_value}()},
+\code{\link{mc_set_variable_value_from}()}
+}
+\concept{variables}

@@ -1,6 +1,28 @@
 #' Set path to MultiChain binaries
-#' 
-#' @param path Path to the folder containing multichaind and multichain-util.
+#'
+#' This function sets the global option `multichainr.path` to the directory
+#' containing the MultiChain executables (`multichaind` and `multichain-util`).
+#' All other functions that need to locate the binaries will use this option.
+#'
+#' @param path Character string. Path to the folder containing the MultiChain
+#'   executables. Must be an existing directory.
+#'
+#' @return Invisibly returns the normalized path (as set in the option) or
+#'   throws an error if the directory does not exist.
+#'
+#' @examples
+#' \dontrun{
+#' # Set path to MultiChain installation (example on Unix-like systems)
+#' mc_set_path("/usr/local/bin")
+#'
+#' # Check that the option was set correctly
+#' getOption("multichainr.path")
+#' }
+#'
+#' @seealso \code{\link{mc_get_bin_path}} for the internal path resolution,
+#'   and \code{\link{mc_connect}} for establishing a connection.
+#'
+#' @family path management
 #' @export
 mc_set_path <- function(path) {
   if (!dir.exists(path)) stop("Directory does not exist.")
@@ -8,7 +30,17 @@ mc_set_path <- function(path) {
 }
 
 #' Internal function to locate executable files
-#' @param bin_name Name of the binary (multichaind or multichain-util).
+#'
+#' Searches for a MultiChain binary (e.g., `multichaind` or `multichain-util`)
+#' first in the path set by `mc_set_path()`, then in the system `PATH`.
+#' This function is not intended to be called directly by users.
+#'
+#' @param bin_name Character string. Name of the binary (e.g., `"multichaind"`,
+#'   `"multichain-util"`). The function automatically appends `.exe` on Windows.
+#'
+#' @return Character string with the full path to the binary, or stops with an
+#'   error if the binary is not found.
+#'
 #' @keywords internal
 mc_get_bin_path <- function(bin_name) {
   if (.Platform$OS.type == "windows") {
@@ -24,17 +56,45 @@ mc_get_bin_path <- function(bin_name) {
   stop(sprintf("File '%s' not found. Use mc_set_path().", bin_name), call. = FALSE)
 }
 
-#' Get MultiChain config
-#' 
-#' @param chain_name Name of the chain.
-#' @param base_dir Optional base directory path (for testing).
+#' Get MultiChain configuration
+#'
+#' Reads the configuration parameters (RPC user, password, port) for a given
+#' blockchain from the MultiChain data directory. The function automatically
+#' determines the platform‑specific base directory, but a custom base can be
+#' supplied for testing.
+#'
+#' @param chain_name Character string. Name of the MultiChain blockchain.
+#' @param base_dir Optional character string. Base directory where MultiChain
+#'   stores blockchain data. If `NULL` (default), the platform‑specific default
+#'   is used:
+#'   * Windows: `%APPDATA%/MultiChain`
+#'   * macOS: `~/Library/Application Support/MultiChain`
+#'   * Linux/other: `~/.multichain`
+#'
+#' @return A list with four components:
+#'   \item{user}{RPC username (from `multichain.conf`).}
+#'   \item{password}{RPC password (from `multichain.conf`).}
+#'   \item{port}{RPC port number (integer).}
+#'   \item{host}{Always `"127.0.0.1"` (hard‑coded).}
+#'
+#' @examples
+#' \dontrun{
+#' # Get configuration for a chain called "my_chain"
+#' config <- mc_get_config("my_chain")
+#' print(config)
+#' }
+#'
+#' @seealso \code{\link{mc_connect}} to create a connection object using the
+#'   returned configuration.
+#'
+#' @family configuration
 #' @export
 mc_get_config <- function(chain_name, base_dir = NULL) {
   if (is.null(base_dir)) {
     home <- Sys.getenv("HOME")
     if (.Platform$OS.type == "windows") {
       base_dir <- file.path(Sys.getenv("APPDATA"), "MultiChain")
-    } else if (Sys.info()['sysname'] == "Darwin") {
+    } else if (Sys.info()["sysname"] == "Darwin") {
       base_dir <- file.path(home, "Library/Application Support/MultiChain")
     } else {
       base_dir <- file.path(home, ".multichain")
@@ -66,9 +126,27 @@ mc_get_config <- function(chain_name, base_dir = NULL) {
   return(list(user = user, password = pass, port = as.integer(port), host = "127.0.0.1"))
 }
 
-#' Initialize new MultiChain blockchain
-#' 
-#' @param chain_name Name of the blockchain to create.
+#' Initialize a new MultiChain blockchain
+#'
+#' Creates a new blockchain using the `multichain-util` command. The new
+#' blockchain is set up in the MultiChain data directory (platform‑specific).
+#'
+#' @param chain_name Character string. Name of the blockchain to create.
+#'
+#' @return Invisibly returns the output of the `multichain-util create` command
+#'   (a character vector). If the creation fails, the function stops with an
+#'   error.
+#'
+#' @examples
+#' \dontrun{
+#' # Create a blockchain called "my_chain"
+#' mc_node_init("my_chain")
+#' }
+#'
+#' @seealso \code{\link{mc_node_start}} to start the created node,
+#'   \code{\link{mc_node_stop}} to stop it.
+#'
+#' @family node operations
 #' @export
 mc_node_init <- function(chain_name) {
   bin <- mc_get_bin_path("multichain-util")
@@ -80,9 +158,31 @@ mc_node_init <- function(chain_name) {
 }
 
 #' Start a MultiChain node
-#' 
-#' @param chain_name Name of the blockchain to start.
-#' @param datadir Optional custom data directory.
+#'
+#' Launches a MultiChain node for a given blockchain. The node is started in
+#' daemon mode (`-daemon`). If a custom data directory is provided, it is passed
+#' via the `-datadir` argument.
+#'
+#' @param chain_name Character string. Name of the blockchain to start.
+#' @param datadir Optional character string. Custom data directory for the
+#'   blockchain. If `NULL` (default), the default MultiChain data location is
+#'   used.
+#'
+#' @return Invisibly returns `TRUE` after issuing the start command.
+#'
+#' @examples
+#' \dontrun{
+#' # Start the node for "my_chain"
+#' mc_node_start("my_chain")
+#'
+#' # Start with a custom data directory
+#' mc_node_start("my_chain", datadir = "/path/to/data")
+#' }
+#'
+#' @seealso \code{\link{mc_node_init}} to create the blockchain,
+#'   \code{\link{mc_node_stop}} to stop the node.
+#'
+#' @family node operations
 #' @export
 mc_node_start <- function(chain_name, datadir = NULL) {
   bin <- mc_get_bin_path("multichaind")
@@ -96,8 +196,31 @@ mc_node_start <- function(chain_name, datadir = NULL) {
 }
 
 #' Stop a MultiChain node
-#' 
-#' @param x Either a connection object or a chain name.
+#'
+#' Stops a running MultiChain node. The function accepts either a connection
+#' object (created by `mc_connect()`) or a chain name. When a chain name is
+#' provided, it first retrieves the configuration and establishes a connection
+#' automatically.
+#'
+#' @param x Either a character string (the chain name) or an object of class
+#'   `"multichain_conn"` (a connection created by `mc_connect()`).
+#'
+#' @return Invisibly returns the result of the RPC `stop` command.
+#'
+#' @examples
+#' \dontrun{
+#' # Stop by chain name
+#' mc_node_stop("my_chain")
+#'
+#' # Stop using a connection object
+#' conn <- mc_connect(mc_get_config("my_chain"))
+#' mc_node_stop(conn)
+#' }
+#'
+#' @seealso \code{\link{mc_connect}}, \code{\link{mc_rpc}},
+#'   \code{\link{mc_node_start}} to start a node.
+#'
+#' @family node operations
 #' @export
 mc_node_stop <- function(x) {
   if (is.character(x)) {

@@ -2,15 +2,37 @@
 % Please edit documentation in R/wallet.R
 \name{mc_encrypt_wallet}
 \alias{mc_encrypt_wallet}
-\title{Encrypt the wallet for the first time}
+\title{Encrypt the wallet}
 \usage{
 mc_encrypt_wallet(conn, passphrase)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object to the MultiChain node.}
 
-\item{passphrase}{The new wallet password.}
+\item{passphrase}{Character. The new wallet password.}
+}
+\value{
+Returns a message indicating the node is shutting down.
 }
 \description{
-WARNING: MultiChain will stop after this and must be restarted.
+Encrypts the wallet with a passphrase for the first time.
 }
+\section{Warning}{
+
+MultiChain will shut down after this command is successful. You must
+manually restart the node to continue operations.
+}
+
+\seealso{
+Other MultiChain Wallet Management: 
+\code{\link{mc_backup_wallet}()},
+\code{\link{mc_change_wallet_passphrase}()},
+\code{\link{mc_dump_privkey}()},
+\code{\link{mc_dump_wallet}()},
+\code{\link{mc_get_wallet_info}()},
+\code{\link{mc_import_privkey}()},
+\code{\link{mc_import_wallet}()},
+\code{\link{mc_lock_wallet}()},
+\code{\link{mc_unlock_wallet}()}
+}
+\concept{MultiChain Wallet Management}

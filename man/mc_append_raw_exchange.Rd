@@ -7,19 +7,49 @@
 mc_append_raw_exchange(conn, tx_hex, txid, vout, amounts)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{tx_hex}{Hex string of the partial exchange transaction.}
+\item{tx_hex}{Character string. Hexadecimal representation of the partial
+exchange transaction.}
 
-\item{txid}{Transaction ID of the output being added to the offer.}
+\item{txid}{Character string. Transaction ID of the output being added to
+the offer.}
 
-\item{vout}{Vout of the output being added.}
+\item{vout}{Integer. Output index (vout) of the transaction being added.}
 
-\item{amounts}{Assets/currency asked for in exchange for this addition.}
+\item{amounts}{A list specifying the assets or native currency asked for
+in exchange for this addition. Format: \code{list(asset_name = quantity, ...)}
+or a numeric value for native currency.}
 }
 \value{
-A list containing 'hex' (new partial transaction) and 'complete' (logical).
+A list with two elements:
+\item{hex}{The new partial transaction hex string.}
+\item{complete}{Logical; \code{TRUE} if the exchange is now complete.}
 }
 \description{
-Add to a raw atomic exchange transaction
+Appends a new input–output pair to a partially constructed atomic exchange
+transaction. This function is used when multiple parties are contributing
+to the exchange, each adding their own locked output and specifying what
+they want in return.
 }
+\examples{
+\dontrun{
+# Assume 'partial_hex' is a partial exchange from a previous step
+new <- mc_append_raw_exchange(conn, partial_hex,
+                              txid = "abc...", vout = 0,
+                              amounts = list(myasset = 10))
+}
+
+}
+\seealso{
+\code{\link{mc_create_raw_exchange}}, \code{\link{mc_complete_raw_exchange}}
+
+Other atomic exchange: 
+\code{\link{mc_complete_raw_exchange}()},
+\code{\link{mc_create_raw_exchange}()},
+\code{\link{mc_decode_raw_exchange}()},
+\code{\link{mc_disable_raw_transaction}()},
+\code{\link{mc_prepare_lock_unspent}()},
+\code{\link{mc_prepare_lock_unspent_from}()}
+}
+\concept{atomic exchange}

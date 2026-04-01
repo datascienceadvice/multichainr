@@ -7,12 +7,18 @@
 rpc_res_to_df(res)
 }
 \arguments{
-\item{res}{A list of objects or primitives returned by \code{\link[=mc_rpc]{mc_rpc()}}.}
+\item{res}{A list of objects or primitives returned by \code{\link{mc_rpc}}.}
 }
 \value{
-A data frame. Returns an empty data frame if the input is empty.
+A data frame. Returns an empty data frame if the input is \code{NULL} or empty.
 }
 \description{
-Convert RPC result list to data frame
+Transforms complex, potentially nested list responses from the MultiChain RPC
+into a flat or semi-flat data frame.
+}
+\details{
+If the response contains nested objects, they are preserved as list-columns
+using \code{I(list(val))}. If the input is a simple list of vectors,
+it is converted into a single-column data frame named \code{value}.
 }
 \keyword{internal}

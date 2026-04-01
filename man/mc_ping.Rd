@@ -6,9 +6,35 @@
 \usage{
 mc_ping(conn)
 }
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+}
 \value{
-NULL on success.
+Invisibly returns \code{NULL} on success.
 }
 \description{
-Measures network latency. Results can be seen in mc_get_peer_info().
+Sends a ping message to all connected peers. The ping time (latency) is
+recorded and can be viewed in the \code{pingtime} column of
+\code{\link{mc_get_peer_info}}.
 }
+\examples{
+\dontrun{
+mc_ping(conn)
+Sys.sleep(1)
+peers <- mc_get_peer_info(conn)
+print(peers$pingtime)
+}
+
+}
+\seealso{
+\code{\link{mc_get_peer_info}} to view ping times.
+
+Other networking: 
+\code{\link{mc_add_node}()},
+\code{\link{mc_get_added_node_info}()},
+\code{\link{mc_get_network_info}()},
+\code{\link{mc_get_peer_info}()},
+\code{\link{mc_list_stored_nodes}()},
+\code{\link{mc_store_node}()}
+}
+\concept{networking}

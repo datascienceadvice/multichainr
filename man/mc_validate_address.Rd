@@ -7,13 +7,43 @@
 mc_validate_address(conn, address_or_key)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{address_or_key}{A string (address, privkey, or pubkey).}
+\item{address_or_key}{Character string. An address, private key, or public key.}
 }
 \value{
-A list of details including validity, address, and ownership status.
+A list with information about the input, including:
+\item{isvalid}{Logical indicating whether the input is valid.}
+\item{address}{The canonical address (if valid).}
+\item{ismine}{Logical indicating whether the address belongs to the node.}
+\item{...}{Other fields depending on the input type (e.g., pubkey, script).}
 }
 \description{
 Returns information about a given address, private key, or public key.
+Useful for checking whether an address is valid, whether it belongs to the
+current node, and for inspecting its associated redeem script.
 }
+\examples{
+\dontrun{
+# Validate an address
+info <- mc_validate_address(conn, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa")
+print(info$isvalid)
+
+# Validate a private key (if known)
+key_info <- mc_validate_address(conn, "L5...")
+}
+
+}
+\seealso{
+\code{\link{mc_import_address}} to add an address to the wallet.
+
+Other address operations: 
+\code{\link{mc_add_multisig_address}()},
+\code{\link{mc_create_keypairs}()},
+\code{\link{mc_create_multisig}()},
+\code{\link{mc_get_addresses}()},
+\code{\link{mc_get_new_address}()},
+\code{\link{mc_import_address}()},
+\code{\link{mc_list_addresses}()}
+}
+\concept{address operations}

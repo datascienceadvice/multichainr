@@ -7,11 +7,44 @@
 mc_get_peer_info(conn)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 }
 \value{
-A data frame with peer details (latency, version, IP, etc.).
+A data frame (via \code{rpc_res_to_df}) with one row per peer.
+Common columns include:
+\item{addr}{Peer address and port.}
+\item{addrlocal}{Local address used for the connection.}
+\item{services}{Services offered.}
+\item{lastsend}{Last time a message was sent.}
+\item{lastrecv}{Last time a message was received.}
+\item{bytessent}{Total bytes sent.}
+\item{bytesrecv}{Total bytes received.}
+\item{conntime}{Connection start time.}
+\item{pingtime}{Ping time (seconds).}
+\item{version}{Peer's version.}
+\item{subver}{Peer's subversion string.}
+\item{inbound}{Whether the peer connected inbound.}
 }
 \description{
-Get information about connected peers
+Returns detailed information about each peer currently connected to the node.
 }
+\examples{
+\dontrun{
+peers <- mc_get_peer_info(conn)
+print(head(peers))
+}
+
+}
+\seealso{
+\code{\link{mc_ping}} to measure latency,
+\code{\link{mc_get_network_info}} for node network status.
+
+Other networking: 
+\code{\link{mc_add_node}()},
+\code{\link{mc_get_added_node_info}()},
+\code{\link{mc_get_network_info}()},
+\code{\link{mc_list_stored_nodes}()},
+\code{\link{mc_ping}()},
+\code{\link{mc_store_node}()}
+}
+\concept{networking}

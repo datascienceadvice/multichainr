@@ -7,12 +7,28 @@
 mc_unlock_wallet(conn, passphrase, timeout)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object to the MultiChain node.}
 
-\item{passphrase}{The wallet password.}
+\item{passphrase}{Character. The wallet password.}
 
-\item{timeout}{Time in seconds to keep the wallet unlocked.}
+\item{timeout}{Integer. Time in seconds to keep the wallet unlocked.}
+}
+\value{
+Returns \code{NULL} on success.
 }
 \description{
-Unlock the wallet with a passphrase
+Stores the wallet decryption key in memory for a specified duration.
 }
+\seealso{
+Other MultiChain Wallet Management: 
+\code{\link{mc_backup_wallet}()},
+\code{\link{mc_change_wallet_passphrase}()},
+\code{\link{mc_dump_privkey}()},
+\code{\link{mc_dump_wallet}()},
+\code{\link{mc_encrypt_wallet}()},
+\code{\link{mc_get_wallet_info}()},
+\code{\link{mc_import_privkey}()},
+\code{\link{mc_import_wallet}()},
+\code{\link{mc_lock_wallet}()}
+}
+\concept{MultiChain Wallet Management}

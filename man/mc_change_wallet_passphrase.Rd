@@ -6,6 +6,29 @@
 \usage{
 mc_change_wallet_passphrase(conn, old_passphrase, new_passphrase)
 }
-\description{
-Change the wallet passphrase
+\arguments{
+\item{conn}{A connection object to the MultiChain node.}
+
+\item{old_passphrase}{Character. The current password.}
+
+\item{new_passphrase}{Character. The new password.}
 }
+\value{
+Returns \code{NULL} on success.
+}
+\description{
+Changes the encryption password of the wallet.
+}
+\seealso{
+Other MultiChain Wallet Management: 
+\code{\link{mc_backup_wallet}()},
+\code{\link{mc_dump_privkey}()},
+\code{\link{mc_dump_wallet}()},
+\code{\link{mc_encrypt_wallet}()},
+\code{\link{mc_get_wallet_info}()},
+\code{\link{mc_import_privkey}()},
+\code{\link{mc_import_wallet}()},
+\code{\link{mc_lock_wallet}()},
+\code{\link{mc_unlock_wallet}()}
+}
+\concept{MultiChain Wallet Management}

@@ -7,12 +7,30 @@
 mc_create_upgrade(conn, name, params)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{name}{Upgrade name.}
+\item{name}{Character string. Name of the upgrade (must be unique).}
 
-\item{params}{List of parameters to upgrade (e.g., list("target-block-time" = 20)).}
+\item{params}{List of parameters to upgrade, e.g.,
+\code{list("target-block-time" = 20, "max-block-size" = 10000000)}.}
+}
+\value{
+A list containing the result of the RPC call (usually transaction ID).
 }
 \description{
-Create a blockchain upgrade
+Creates a new upgrade proposal to change blockchain parameters (e.g., target
+block time, maximum block size). Upgrades require admin approval.
 }
+\examples{
+\dontrun{
+mc_create_upgrade(conn, "speedup", list("target-block-time" = 20))
+}
+
+}
+\seealso{
+\code{\link{mc_approve_from}} to approve an upgrade.
+
+Other upgrades: 
+\code{\link{mc_list_upgrades}()}
+}
+\concept{upgrades}

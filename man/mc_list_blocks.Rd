@@ -7,10 +7,45 @@
 mc_list_blocks(conn, blocks, verbose = FALSE)
 }
 \arguments{
-\item{blocks}{Range (e.g. "100-200"), hash, height, or -n for most recent.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{verbose}{If TRUE, returns detailed information.}
+\item{blocks}{Specification of which blocks to list. Can be:
+\itemize{
+\item a single block height (integer) or hash (string),
+\item a range string like \code{"100-200"},
+\item a negative integer \code{-n} to list the \code{n} most recent blocks.
+}}
+
+\item{verbose}{Logical. If \code{TRUE}, returns detailed block information.
+Default is \code{FALSE}.}
+}
+\value{
+A data frame (converted via \code{rpc_res_to_df}) with one row per block.
 }
 \description{
-List information about specific blocks
+Retrieves information about one or more blocks. The \code{blocks} parameter
+can be a single block height/hash, a range (e.g., \code{"100-200"}),
+or \code{-\%d} to list the most recent blocks.
 }
+\examples{
+\dontrun{
+# List the last 5 blocks
+last5 <- mc_list_blocks(conn, -5)
+
+# List blocks 100 to 105
+range <- mc_list_blocks(conn, "100-105", verbose = TRUE)
+}
+
+}
+\seealso{
+\code{\link{mc_get_block}} for a single block.
+
+Other blockchain information: 
+\code{\link{mc_get_block}()},
+\code{\link{mc_get_block_hash}()},
+\code{\link{mc_get_blockchain_info}()},
+\code{\link{mc_get_chain_totals}()},
+\code{\link{mc_get_last_block_info}()},
+\code{\link{mc_list_miners}()}
+}
+\concept{blockchain information}

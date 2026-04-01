@@ -2,20 +2,29 @@
 % Please edit documentation in R/subscriptions.R
 \name{mc_unsubscribe}
 \alias{mc_unsubscribe}
-\title{Unsubscribe from assets or streams}
+\title{Unsubscribe from MultiChain assets or streams}
 \usage{
 mc_unsubscribe(conn, entities, purge = FALSE)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object to the MultiChain node.}
 
-\item{entities}{A single name/ref/txid or a vector of them.}
+\item{entities}{A character string or vector of strings representing asset/stream names,
+references, or transaction IDs (txids).}
 
-\item{purge}{If TRUE (default FALSE), any off-chain data retrieved for this stream will be purged.}
+\item{purge}{Logical. If \code{TRUE}, any off-chain data retrieved for this stream
+will be permanently purged from the node's local storage. Defaults to \code{FALSE}.}
 }
 \value{
-NULL if successful.
+Returns \code{NULL} invisibly on success, or an error if the RPC call fails.
 }
 \description{
-Instructs the node to stop tracking one or more asset(s) or stream(s).
+Instructs the MultiChain node to stop tracking one or more asset(s) or stream(s).
 }
+\seealso{
+\code{\link{mc_subscribe}}
+
+Other MultiChain Entity Management: 
+\code{\link{mc_subscribe}()}
+}
+\concept{MultiChain Entity Management}

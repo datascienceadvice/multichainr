@@ -7,15 +7,43 @@
 mc_prepare_lock_unspent(conn, amounts, lock = TRUE)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{amounts}{List of assets or numeric amount of native currency.}
+\item{amounts}{A list specifying the assets or native currency to lock.
+Format: \code{list(asset_name = quantity, ...)} or a numeric value for
+native currency.}
 
-\item{lock}{If TRUE (default), the output is locked for automatic spending.}
+\item{lock}{Logical. If \code{TRUE} (default), the output is locked for
+automatic spending (i.e., it will be used only in the exchange). If
+\code{FALSE}, the output is simply prepared but not locked.}
 }
 \value{
-A list containing 'txid' and 'vout'.
+A list with two elements:
+\item{txid}{Transaction ID of the prepared/locked output.}
+\item{vout}{Output index.}
 }
 \description{
-Prepare an unspent transaction output for exchange
+Locks one or more unspent outputs (assets or native currency) to be used
+as part of an atomic exchange. The locked output is prepared in a way that
+it can only be spent as part of an atomic exchange transaction.
 }
+\examples{
+\dontrun{
+# Lock 10 units of 'myasset' and 0.5 native currency
+locked <- mc_prepare_lock_unspent(conn, amounts = list(myasset = 10, 0.5))
+# Now use locked$txid and locked$vout in an exchange
+}
+
+}
+\seealso{
+\code{\link{mc_prepare_lock_unspent_from}}, \code{\link{mc_create_raw_exchange}}
+
+Other atomic exchange: 
+\code{\link{mc_append_raw_exchange}()},
+\code{\link{mc_complete_raw_exchange}()},
+\code{\link{mc_create_raw_exchange}()},
+\code{\link{mc_decode_raw_exchange}()},
+\code{\link{mc_disable_raw_transaction}()},
+\code{\link{mc_prepare_lock_unspent_from}()}
+}
+\concept{atomic exchange}

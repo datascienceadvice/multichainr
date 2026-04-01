@@ -2,7 +2,7 @@
 % Please edit documentation in R/transactions.R
 \name{mc_list_address_transactions}
 \alias{mc_list_address_transactions}
-\title{List transactions for an address}
+\title{List transactions for a specific address}
 \usage{
 mc_list_address_transactions(
   conn,
@@ -13,16 +13,27 @@ mc_list_address_transactions(
 )
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object to the MultiChain node.}
 
-\item{address}{Wallet address.}
+\item{address}{Character. The MultiChain address to query.}
 
-\item{count}{Number of transactions (default 10).}
+\item{count}{Integer. The number of transactions to return (default \code{10}).}
 
-\item{skip}{Number of transactions to skip (default 0).}
+\item{skip}{Integer. The number of transactions to skip (default \code{0}).}
 
-\item{verbose}{If TRUE, provides details of inputs and outputs.}
+\item{verbose}{Logical. If \code{TRUE}, provides details of inputs and outputs (default \code{FALSE}).}
+}
+\value{
+A data frame of transaction history for the address.
 }
 \description{
-List transactions for an address
+Returns a list of the most recent transactions involving the specified address.
 }
+\seealso{
+Other MultiChain Transactions: 
+\code{\link{mc_get_address_transaction}()},
+\code{\link{mc_get_tx_out_data}()},
+\code{\link{mc_get_wallet_transaction}()},
+\code{\link{mc_list_wallet_transactions}()}
+}
+\concept{MultiChain Transactions}

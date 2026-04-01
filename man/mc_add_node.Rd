@@ -7,15 +7,47 @@
 mc_add_node(conn, node, command = c("add", "remove", "onetry"))
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{node}{IP address and port (e.g., "127.0.0.1:8571").}
+\item{node}{Character string. The IP address and port of the peer node,
+e.g., \code{"127.0.0.1:8571"}.}
 
-\item{command}{One of "add" (queue), "remove" (disconnect), or "onetry" (immediate attempt).}
+\item{command}{Character string. The action to perform:
+\itemize{
+\item \code{"add"} – add the node to the connection queue (will attempt to
+connect and stay connected).
+\item \code{"remove"} – disconnect from the node if currently connected.
+\item \code{"onetry"} – attempt a single connection; do not keep retrying.
+}}
 }
 \value{
-NULL on success.
+Invisibly returns \code{NULL} on success; throws an error if the
+command fails.
 }
 \description{
-Add or remove a peer-to-peer connection
+Manages the node's peer connections. Can add a node to the connection queue,
+remove an existing connection, or attempt a one‑time connection.
 }
+\examples{
+\dontrun{
+# Add a peer
+mc_add_node(conn, "192.168.1.10:8571", command = "add")
+
+# Remove a peer
+mc_add_node(conn, "192.168.1.10:8571", command = "remove")
+}
+
+}
+\seealso{
+\code{\link{mc_get_added_node_info}} to list added nodes,
+\code{\link{mc_get_peer_info}} for connected peers.
+
+Other networking: 
+\code{\link{mc_get_added_node_info}()},
+\code{\link{mc_get_network_info}()},
+\code{\link{mc_get_peer_info}()},
+\code{\link{mc_list_stored_nodes}()},
+\code{\link{mc_ping}()},
+\code{\link{mc_store_node}()}
+}
+\concept{networking}

@@ -7,12 +7,41 @@
 mc_get_tx_out(conn, txid, vout, unconfirmed = FALSE)
 }
 \arguments{
-\item{txid}{Transaction ID.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{vout}{Output index.}
+\item{txid}{Character string. Transaction ID.}
 
-\item{unconfirmed}{Include unconfirmed transactions.}
+\item{vout}{Integer. Output index.}
+
+\item{unconfirmed}{Logical. If \code{TRUE}, includes unconfirmed
+transactions (from the mempool). Default is \code{FALSE}.}
+}
+\value{
+A list with output details, including:
+\item{bestblock}{Hash of the best block.}
+\item{confirmations}{Number of confirmations.}
+\item{value}{Amount (in native currency).}
+\item{scriptPubKey}{Output script details.}
+Returns \code{NULL} if the output does not exist or is spent.
 }
 \description{
-Get details about an unspent transaction output
+Returns information about a specific unspent transaction output (UTXO).
+This can be useful for building transactions or checking balances.
 }
+\examples{
+\dontrun{
+# Check an output from a confirmed transaction
+out <- mc_get_tx_out(conn, "abc...", vout = 0)
+if (!is.null(out)) print(out$value)
+}
+
+}
+\seealso{
+\code{\link{mc_get_raw_transaction}} for full transaction details.
+
+Other mempool & transactions: 
+\code{\link{mc_get_mempool_info}()},
+\code{\link{mc_get_raw_mempool}()},
+\code{\link{mc_get_raw_transaction}()}
+}
+\concept{mempool & transactions}

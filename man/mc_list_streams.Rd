@@ -13,16 +13,36 @@ mc_list_streams(
 )
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{streams}{Stream filter (name, ref, txid, vector or "*").}
+\item{streams}{Character vector of stream names/IDs, or \code{"*"} (default)
+for all streams.}
 
-\item{verbose}{If TRUE, returns detailed information.}
+\item{verbose}{Logical. If \code{TRUE}, returns detailed information.}
 
-\item{count}{Number of streams to return.}
+\item{count}{Optional integer. Number of streams to return.}
 
-\item{start}{Offset.}
+\item{start}{Optional integer. Offset for pagination.}
+}
+\value{
+A data frame (via \code{rpc_res_to_df}) with stream information.
 }
 \description{
-List streams on the blockchain
+Returns a list of streams (or filtered subset) with optional details.
 }
+\examples{
+\dontrun{
+all_streams <- mc_list_streams(conn)
+first_10 <- mc_list_streams(conn, count = 10)
+}
+
+}
+\seealso{
+\code{\link{mc_get_stream_info}}
+
+Other streams: 
+\code{\link{mc_create_stream}()},
+\code{\link{mc_create_stream_from}()},
+\code{\link{mc_get_stream_info}()}
+}
+\concept{streams}

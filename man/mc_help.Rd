@@ -7,13 +7,30 @@
 mc_help(conn, command = NULL)
 }
 \arguments{
-\item{conn}{A multichain_conn object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{command}{Optional string. The name of the command to get help for.}
+\item{command}{Optional character string. The name of the command to get
+detailed help for. If \code{NULL} (default), returns a list of all commands.}
 }
 \value{
-An object of class \code{mc_help} containing the help text.
+An object of class \code{"mc_help"} (a character string) that prints
+nicely using \code{\link{print.mc_help}}.
 }
 \description{
-Returns a list of all available commands, or detailed help for a specific command.
+Returns a list of all available RPC commands, or detailed help for a
+specific command. The result is printed in a human‑readable format.
 }
+\examples{
+\dontrun{
+# List all available commands
+mc_help(conn)
+
+# Get detailed help for the "getinfo" command
+mc_help(conn, "getinfo")
+}
+
+}
+\seealso{
+\code{\link{mc_rpc}} for direct RPC calls.
+}
+\concept{node utilities}

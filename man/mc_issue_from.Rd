@@ -16,22 +16,49 @@ mc_issue_from(
 )
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{from_address}{Address used to issue the asset.}
+\item{from_address}{Character string. Address that will pay for and issue
+the asset.}
 
-\item{to_address}{Recipient address.}
+\item{to_address}{Character string. Recipient address (can be the same as
+\code{from_address}).}
 
-\item{name}{Asset name or params list.}
+\item{name}{Either a character string (asset name) or a list of asset
+parameters (e.g., \code{list(name = "myasset", open = TRUE)}).}
 
-\item{quantity}{Amount to issue.}
+\item{quantity}{Numeric. Total amount to issue.}
 
-\item{units}{Smallest divisible unit.}
+\item{units}{Numeric. Smallest divisible unit. Default is \code{1}.}
 
-\item{native_amount}{Optional native currency amount.}
+\item{native_amount}{Numeric (optional). Amount of native currency to send
+along with the issuance.}
 
-\item{custom_fields}{Optional list of custom fields.}
+\item{custom_fields}{List (optional). Custom fields.}
+}
+\value{
+A character string containing the transaction ID.
 }
 \description{
-Issue new asset from specific address
+Issues a new asset, but allows specifying the sender address (which must
+have sufficient native currency to pay for the transaction). This is useful
+when the node has multiple addresses.
 }
+\examples{
+\dontrun{
+# Issue from a specific address to the same address
+txid <- mc_issue_from(conn, from_address = "1A...", to_address = "1A...",
+                      name = "myasset", quantity = 100)
+}
+
+}
+\seealso{
+\code{\link{mc_issue}} for simpler issuance,
+\code{\link{mc_issue_more_from}} to increase supply.
+
+Other asset issuance: 
+\code{\link{mc_issue}()},
+\code{\link{mc_issue_more}()},
+\code{\link{mc_issue_more_from}()}
+}
+\concept{asset issuance}

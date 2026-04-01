@@ -13,19 +13,54 @@ mc_list_addresses(
 )
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{addresses}{A specific address or vector of addresses to filter. Default "*" (all).}
+\item{addresses}{A character vector of addresses to filter, or \code{"*"}
+(default) to list all addresses.}
 
-\item{verbose}{If TRUE, provides detailed information.}
+\item{verbose}{Logical. If \code{TRUE}, returns detailed information for each
+address.}
 
-\item{count}{Optional. Number of addresses to list.}
+\item{count}{Integer (optional). Maximum number of addresses to return.}
 
-\item{start}{Optional. Offset for the list.}
+\item{start}{Integer (optional). Offset for pagination.}
 }
 \value{
-A data frame containing address information.
+A data frame (created by \code{rpc_res_to_df}) containing address
+information. The exact columns depend on the \code{verbose} setting, but
+typically include \code{address}, \code{label}, \code{balance}, etc.
 }
 \description{
 Returns information about the addresses in the current node's wallet.
+This is a more flexible version of \code{\link{mc_get_addresses}}, allowing
+filtering, pagination, and optional verbosity.
 }
+\examples{
+\dontrun{
+# List all addresses (simple)
+all_addr <- mc_list_addresses(conn)
+
+# List detailed information for specific addresses
+details <- mc_list_addresses(conn,
+                             addresses = c("1A...", "1B..."),
+                             verbose = TRUE)
+
+# Paginate results
+first_10 <- mc_list_addresses(conn, count = 10)
+next_10  <- mc_list_addresses(conn, count = 10, start = 10)
+}
+
+}
+\seealso{
+\code{\link{mc_get_addresses}} for a simpler version.
+
+Other address operations: 
+\code{\link{mc_add_multisig_address}()},
+\code{\link{mc_create_keypairs}()},
+\code{\link{mc_create_multisig}()},
+\code{\link{mc_get_addresses}()},
+\code{\link{mc_get_new_address}()},
+\code{\link{mc_import_address}()},
+\code{\link{mc_validate_address}()}
+}
+\concept{address operations}

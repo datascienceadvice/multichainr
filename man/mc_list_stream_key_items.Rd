@@ -14,6 +14,43 @@ mc_list_stream_key_items(
   local_ordering = FALSE
 )
 }
-\description{
-List items with a specific key
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{stream}{Character string. Stream name, reference, or txid.}
+
+\item{key}{Character string. The key to filter by.}
+
+\item{verbose}{Logical. If \code{TRUE}, returns detailed information.}
+
+\item{count}{Integer. Number of items to return (default 10).}
+
+\item{start}{Optional integer. Offset for pagination.}
+
+\item{local_ordering}{Logical. Use local ordering.}
 }
+\value{
+A data frame (via \code{rpc_res_to_df}) with items.
+}
+\description{
+Returns all items in a stream that have a given key.
+}
+\examples{
+\dontrun{
+items <- mc_list_stream_key_items(conn, "mystream", "mykey")
+}
+
+}
+\seealso{
+Other stream items: 
+\code{\link{mc_get_stream_item}()},
+\code{\link{mc_list_stream_block_items}()},
+\code{\link{mc_list_stream_items}()},
+\code{\link{mc_list_stream_publisher_items}()},
+\code{\link{mc_list_stream_tx_items}()},
+\code{\link{mc_publish}()},
+\code{\link{mc_publish_from}()},
+\code{\link{mc_publish_multi}()},
+\code{\link{mc_publish_multi_from}()}
+}
+\concept{stream items}

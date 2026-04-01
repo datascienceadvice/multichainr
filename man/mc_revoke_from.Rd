@@ -7,16 +7,41 @@
 mc_revoke_from(conn, from_address, to_address, permissions, native_amount = 0)
 }
 \arguments{
-\item{conn}{A multichain_conn object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{from_address}{Address from which the revocation is issued.}
+\item{from_address}{Character string. The address revoking the permissions.}
 
-\item{to_address}{Target wallet address.}
+\item{to_address}{Character string. The address losing the permissions.}
 
-\item{permissions}{Permission string to revoke.}
+\item{permissions}{Character string. Comma‑separated list of permissions to revoke.}
 
-\item{native_amount}{Optional native currency amount.}
+\item{native_amount}{Numeric. Amount of native currency to send along with
+the revocation (default 0).}
+}
+\value{
+A character string containing the transaction ID.
 }
 \description{
-Revoke permissions from a specific address
+Revokes permissions from an address, specifying the address that issues the
+revocation. This allows controlling which address pays for the transaction.
 }
+\examples{
+\dontrun{
+# Revoke from a specific admin address
+txid <- mc_revoke_from(conn, "admin1...", "user1...", "send")
+}
+
+}
+\seealso{
+\code{\link{mc_revoke}}, \code{\link{mc_grant_from}}.
+
+Other permissions: 
+\code{\link{mc_grant}()},
+\code{\link{mc_grant_from}()},
+\code{\link{mc_grant_with_data}()},
+\code{\link{mc_grant_with_data_from}()},
+\code{\link{mc_list_permissions}()},
+\code{\link{mc_revoke}()},
+\code{\link{mc_verify_permission}()}
+}
+\concept{permissions}

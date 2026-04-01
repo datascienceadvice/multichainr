@@ -7,8 +7,44 @@
 mc_test_stream_filter(conn, options, js_code, tx = NULL, vout = NULL)
 }
 \arguments{
-\item{vout}{Optional output index.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{options}{List of filter options (similar to \code{mc_create_stream_filter}).}
+
+\item{js_code}{Character string. JavaScript code to test.}
+
+\item{tx}{Optional character string. Transaction ID or hex representation
+of the stream item's transaction.}
+
+\item{vout}{Optional integer. Output index if the stream item is in a
+transaction output.}
+}
+\value{
+The result of the filter evaluation.
 }
 \description{
-Test a stream filter before creation
+Tests a stream filter's JavaScript code against a specific stream item
+(transaction and optional vout) without permanently creating the filter.
 }
+\examples{
+\dontrun{
+result <- mc_test_stream_filter(conn, list(libraries = list()),
+                                "function filter(stream, item) { return true; }",
+                                tx = "txid...", vout = 0)
+}
+
+}
+\seealso{
+\code{\link{mc_create_stream_filter}}, \code{\link{mc_run_stream_filter}}
+
+Other filters: 
+\code{\link{mc_create_stream_filter}()},
+\code{\link{mc_create_tx_filter}()},
+\code{\link{mc_get_filter_code}()},
+\code{\link{mc_list_stream_filters}()},
+\code{\link{mc_list_tx_filters}()},
+\code{\link{mc_run_stream_filter}()},
+\code{\link{mc_run_tx_filter}()},
+\code{\link{mc_test_tx_filter}()}
+}
+\concept{filters}

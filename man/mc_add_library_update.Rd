@@ -6,6 +6,36 @@
 \usage{
 mc_add_library_update(conn, library, updatename, js_code)
 }
-\description{
-Add an update to an existing library
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{library}{Character string. Library name or transaction ID.}
+
+\item{updatename}{Character string. Name of this update (must be unique).}
+
+\item{js_code}{Character string. The new JavaScript code (or patch).}
 }
+\value{
+A list containing the result of the RPC call (usually transaction ID).
+}
+\description{
+Adds a new version (update) to an existing library. The update mechanism
+depends on the library's \code{updatemode}.
+}
+\examples{
+\dontrun{
+mc_add_library_update(conn, "math", "v2", "function add(a, b) { return a + b + 1; }")
+}
+
+}
+\seealso{
+\code{\link{mc_create_library}}, \code{\link{mc_add_library_update_from}}
+
+Other libraries: 
+\code{\link{mc_add_library_update_from}()},
+\code{\link{mc_create_library}()},
+\code{\link{mc_get_library_code}()},
+\code{\link{mc_list_libraries}()},
+\code{\link{mc_test_library}()}
+}
+\concept{libraries}

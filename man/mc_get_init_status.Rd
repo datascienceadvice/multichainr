@@ -7,12 +7,35 @@
 mc_get_init_status(conn)
 }
 \arguments{
-\item{conn}{A multichain_conn object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 }
 \value{
-A list containing status (string) and progress (numeric, 0 to 1).
+A list with:
+\item{status}{Character string describing the current state (e.g.,
+\code{"Loading blockchain"}, \code{"Synchronizing"}, \code{"Ready"}).}
+\item{progress}{Numeric value between 0 and 1 indicating initialization
+progress (1 = fully initialized).}
 }
 \description{
-Returns information about the node's initialization status,
-which is especially useful during startup.
+Returns information about the node's initialization progress,
+especially useful during startup when the node is still syncing
+or loading the wallet.
 }
+\examples{
+\dontrun{
+init <- mc_get_init_status(conn)
+while (init$progress < 1) {
+  cat("Init progress:", init$progress, "\n")
+  Sys.sleep(5)
+  init <- mc_get_init_status(conn)
+}
+}
+
+}
+\seealso{
+\code{\link{mc_get_info}} for general node status.
+
+Other node information: 
+\code{\link{mc_get_info}()}
+}
+\concept{node information}

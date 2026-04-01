@@ -7,10 +7,36 @@
 mc_node_start(chain_name, datadir = NULL)
 }
 \arguments{
-\item{chain_name}{Name of the blockchain to start.}
+\item{chain_name}{Character string. Name of the blockchain to start.}
 
-\item{datadir}{Optional custom data directory.}
+\item{datadir}{Optional character string. Custom data directory for the
+blockchain. If \code{NULL} (default), the default MultiChain data location is
+used.}
+}
+\value{
+Invisibly returns \code{TRUE} after issuing the start command.
 }
 \description{
-Start a MultiChain node
+Launches a MultiChain node for a given blockchain. The node is started in
+daemon mode (\code{-daemon}). If a custom data directory is provided, it is passed
+via the \code{-datadir} argument.
 }
+\examples{
+\dontrun{
+# Start the node for "my_chain"
+mc_node_start("my_chain")
+
+# Start with a custom data directory
+mc_node_start("my_chain", datadir = "/path/to/data")
+}
+
+}
+\seealso{
+\code{\link{mc_node_init}} to create the blockchain,
+\code{\link{mc_node_stop}} to stop the node.
+
+Other node operations: 
+\code{\link{mc_node_init}()},
+\code{\link{mc_node_stop}()}
+}
+\concept{node operations}

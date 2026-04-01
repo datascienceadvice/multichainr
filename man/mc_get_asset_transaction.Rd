@@ -6,6 +6,33 @@
 \usage{
 mc_get_asset_transaction(conn, asset, txid, verbose = FALSE)
 }
-\description{
-Get a specific transaction involving a subscribed asset
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{asset}{Character string. Subscribed asset name, reference, or issuance ID.}
+
+\item{txid}{Character string. Transaction ID.}
+
+\item{verbose}{Logical. If \code{TRUE}, includes additional details.}
 }
+\value{
+A list (or data frame) with transaction details, including inputs,
+outputs, and asset movements.
+}
+\description{
+Returns details of a single transaction that affects a subscribed asset.
+}
+\examples{
+\dontrun{
+# Get details of a specific transaction
+tx <- mc_get_asset_transaction(conn, "mycoin", "txid...")
+}
+
+}
+\seealso{
+\code{\link{mc_list_asset_transactions}} to list multiple transactions.
+
+Other asset transactions: 
+\code{\link{mc_list_asset_transactions}()}
+}
+\concept{asset transactions}

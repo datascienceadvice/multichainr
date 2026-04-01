@@ -7,17 +7,43 @@
 mc_create_stream(conn, name, open = TRUE, custom_fields = NULL)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{name}{Stream name.}
+\item{name}{Character string. Name of the stream (must be unique).}
 
-\item{open}{Boolean (TRUE for open stream) or a list of restrictions (e.g., list(restrict = "write")).}
+\item{open}{Either a logical (TRUE for open stream, FALSE for restricted) or
+a list of parameters, e.g., \code{list(restrict = "write")}. For open
+streams, any address with \code{send} permission can publish. For restricted,
+only addresses with \code{write} permission on the stream can publish.}
 
-\item{custom_fields}{Optional list of custom fields.}
+\item{custom_fields}{Optional list of custom fields (e.g., \code{list(field1 = "value")}).}
 }
 \value{
-The txid of the stream creation.
+A character string containing the transaction ID (txid) of the stream creation.
 }
 \description{
-Create a new stream
+Creates a new stream on the blockchain. Streams are ordered collections of
+key‑value items that can be used for data storage, messaging, or other
+applications. The stream can be open (anyone can write) or restricted.
 }
+\examples{
+\dontrun{
+# Create an open stream
+txid <- mc_create_stream(conn, "mystream", open = TRUE)
+
+# Create a restricted stream with custom fields
+txid <- mc_create_stream(conn, "private", open = list(restrict = "write"),
+                         custom_fields = list(owner = "admin"))
+}
+
+}
+\seealso{
+\code{\link{mc_create_stream_from}} to specify the creator address,
+\code{\link{mc_get_stream_info}} to query stream details.
+
+Other streams: 
+\code{\link{mc_create_stream_from}()},
+\code{\link{mc_get_stream_info}()},
+\code{\link{mc_list_streams}()}
+}
+\concept{streams}

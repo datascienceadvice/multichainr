@@ -7,15 +7,38 @@
 mc_verify_permission(conn, address, permission)
 }
 \arguments{
-\item{conn}{A multichain_conn object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{address}{The address to check.}
+\item{address}{Character string. The address to check.}
 
-\item{permission}{The permission name (e.g., "send", "admin").}
+\item{permission}{Character string. The permission name (e.g., \code{"send"},
+\code{"admin"}, \code{"connect"}).}
 }
 \value{
-Logical TRUE if the address has the permission, FALSE otherwise.
+A logical value: \code{TRUE} if the address has the permission,
+\code{FALSE} otherwise.
 }
 \description{
-Verify if an address has a specific permission
+Checks whether a given address has a particular permission on the blockchain.
 }
+\examples{
+\dontrun{
+# Check if an address can send
+can_send <- mc_verify_permission(conn, "1A...", "send")
+if (can_send) cat("Address can send assets")
+}
+
+}
+\seealso{
+\code{\link{mc_list_permissions}} to see all permissions.
+
+Other permissions: 
+\code{\link{mc_grant}()},
+\code{\link{mc_grant_from}()},
+\code{\link{mc_grant_with_data}()},
+\code{\link{mc_grant_with_data_from}()},
+\code{\link{mc_list_permissions}()},
+\code{\link{mc_revoke}()},
+\code{\link{mc_revoke_from}()}
+}
+\concept{permissions}

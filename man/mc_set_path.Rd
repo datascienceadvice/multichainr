@@ -7,8 +7,30 @@
 mc_set_path(path)
 }
 \arguments{
-\item{path}{Path to the folder containing multichaind and multichain-util.}
+\item{path}{Character string. Path to the folder containing the MultiChain
+executables. Must be an existing directory.}
+}
+\value{
+Invisibly returns the normalized path (as set in the option) or
+throws an error if the directory does not exist.
 }
 \description{
-Set path to MultiChain binaries
+This function sets the global option \code{multichainr.path} to the directory
+containing the MultiChain executables (\code{multichaind} and \code{multichain-util}).
+All other functions that need to locate the binaries will use this option.
 }
+\examples{
+\dontrun{
+# Set path to MultiChain installation (example on Unix-like systems)
+mc_set_path("/usr/local/bin")
+
+# Check that the option was set correctly
+getOption("multichainr.path")
+}
+
+}
+\seealso{
+\code{\link{mc_get_bin_path}} for the internal path resolution,
+and \code{\link{mc_connect}} for establishing a connection.
+}
+\concept{path management}

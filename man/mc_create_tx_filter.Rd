@@ -7,14 +7,41 @@
 mc_create_tx_filter(conn, name, options, js_code)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{name}{Filter name.}
+\item{name}{Character string. Name of the filter (must be unique).}
 
-\item{options}{List of options, e.g., list(for = "asset1", libraries = list("lib1")).}
+\item{options}{List of filter options. Usually includes \code{for} (target
+asset or stream) and \code{libraries} (list of library names). Example:
+\code{list(for = "asset1", libraries = list("lib1"))}.}
 
-\item{js_code}{JavaScript code for the filter.}
+\item{js_code}{Character string. The JavaScript code for the filter.}
+}
+\value{
+A list containing the result of the RPC call (usually transaction ID).
 }
 \description{
-Create a transaction filter
+Creates a new transaction filter on the blockchain. Transaction filters are
+JavaScript programs that validate or transform transactions.
 }
+\examples{
+\dontrun{
+js_code <- "function filter(tx) { return tx.vin.length > 0; }"
+mc_create_tx_filter(conn, "myfilter", list(for = "asset1"), js_code)
+}
+
+}
+\seealso{
+\code{\link{mc_create_stream_filter}}, \code{\link{mc_list_tx_filters}}
+
+Other filters: 
+\code{\link{mc_create_stream_filter}()},
+\code{\link{mc_get_filter_code}()},
+\code{\link{mc_list_stream_filters}()},
+\code{\link{mc_list_tx_filters}()},
+\code{\link{mc_run_stream_filter}()},
+\code{\link{mc_run_tx_filter}()},
+\code{\link{mc_test_stream_filter}()},
+\code{\link{mc_test_tx_filter}()}
+}
+\concept{filters}

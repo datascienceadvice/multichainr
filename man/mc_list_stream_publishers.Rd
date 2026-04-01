@@ -14,6 +14,31 @@ mc_list_stream_publishers(
   local_ordering = FALSE
 )
 }
-\description{
-List publishers who have written to a stream
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{stream}{Character string. Stream name, reference, or txid.}
+
+\item{addresses}{Character vector of addresses to filter (default \code{"*"}).}
+
+\item{verbose}{Logical. If \code{TRUE}, returns additional metadata.}
+
+\item{count}{Optional integer. Number of publishers to return.}
+
+\item{start}{Optional integer. Offset.}
+
+\item{local_ordering}{Logical. Use local ordering.}
 }
+\value{
+A data frame (via \code{rpc_res_to_df}) with publisher information.
+}
+\description{
+Returns the set of addresses that have published to a stream.
+}
+\examples{
+\dontrun{
+publishers <- mc_list_stream_publishers(conn, "mystream")
+}
+
+}
+\concept{stream publishers}

@@ -15,6 +15,12 @@ or an error occurs during decoding, the original \code{hex_str} is returned.
 }
 \description{
 Converts a hexadecimal encoded string back into its original character
-representation. This is commonly used to read data published to MultiChain streams.
+representation. This is primarily used for reading human-readable data
+published to MultiChain streams.
+}
+\details{
+The function performs a basic validation to ensure the string is a valid
+hexadecimal representation (even length and containing only hex characters)
+before attempting to convert.
 }
 \keyword{internal}

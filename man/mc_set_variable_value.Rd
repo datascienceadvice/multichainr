@@ -7,8 +7,36 @@
 mc_set_variable_value(conn, variable, value = NULL)
 }
 \arguments{
-\item{value}{Any valid JSON structure (list, string, number).}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{variable}{Character string. Variable name or transaction ID.}
+
+\item{value}{Optional. New value (any JSON structure). If \code{NULL}, the
+variable is deleted.}
+}
+\value{
+A list containing the result of the RPC call (usually transaction ID).
 }
 \description{
-Set the value of a variable
+Updates the value of an existing variable. The new value can be any JSON‑compatible
+object (list, number, string, etc.).
 }
+\examples{
+\dontrun{
+mc_set_variable_value(conn, "myvar", value = list(updated = TRUE))
+}
+
+}
+\seealso{
+\code{\link{mc_create_variable}}, \code{\link{mc_get_variable_value}}
+
+Other variables: 
+\code{\link{mc_create_variable}()},
+\code{\link{mc_create_variable_from}()},
+\code{\link{mc_get_variable_history}()},
+\code{\link{mc_get_variable_info}()},
+\code{\link{mc_get_variable_value}()},
+\code{\link{mc_list_variables}()},
+\code{\link{mc_set_variable_value_from}()}
+}
+\concept{variables}

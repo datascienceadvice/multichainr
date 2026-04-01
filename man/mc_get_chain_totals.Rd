@@ -6,6 +6,37 @@
 \usage{
 mc_get_chain_totals(conn)
 }
-\description{
-Get counts of blockchain entities
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 }
+\value{
+A list with counts, typically containing:
+\item{addresses}{Number of addresses.}
+\item{transactions}{Number of transactions.}
+\item{assets}{Number of assets.}
+\item{streams}{Number of streams.}
+\item{permissions}{Number of permission entries.}
+}
+\description{
+Returns the total number of various objects in the blockchain, such as
+addresses, transactions, assets, streams, and permissions.
+}
+\examples{
+\dontrun{
+totals <- mc_get_chain_totals(conn)
+print(totals$transactions)
+}
+
+}
+\seealso{
+\code{\link{mc_get_blockchain_info}} for global blockchain stats.
+
+Other blockchain information: 
+\code{\link{mc_get_block}()},
+\code{\link{mc_get_block_hash}()},
+\code{\link{mc_get_blockchain_info}()},
+\code{\link{mc_get_last_block_info}()},
+\code{\link{mc_list_blocks}()},
+\code{\link{mc_list_miners}()}
+}
+\concept{blockchain information}

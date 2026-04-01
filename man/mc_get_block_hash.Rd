@@ -6,6 +6,32 @@
 \usage{
 mc_get_block_hash(conn, height)
 }
-\description{
-Get block hash by height
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{height}{Integer. The block height (0 for genesis block).}
 }
+\value{
+A character string containing the block hash.
+}
+\description{
+Returns the hash of a block at a given height.
+}
+\examples{
+\dontrun{
+hash <- mc_get_block_hash(conn, 0)  # genesis block hash
+}
+
+}
+\seealso{
+\code{\link{mc_get_block}} to retrieve block details.
+
+Other blockchain information: 
+\code{\link{mc_get_block}()},
+\code{\link{mc_get_blockchain_info}()},
+\code{\link{mc_get_chain_totals}()},
+\code{\link{mc_get_last_block_info}()},
+\code{\link{mc_list_blocks}()},
+\code{\link{mc_list_miners}()}
+}
+\concept{blockchain information}

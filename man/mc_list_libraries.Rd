@@ -6,6 +6,32 @@
 \usage{
 mc_list_libraries(conn, libraries = "*", verbose = FALSE)
 }
-\description{
-List libraries on the blockchain
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{libraries}{Character vector of library names/IDs, or \code{"*"} (default)
+for all libraries.}
+
+\item{verbose}{Logical. If \code{TRUE}, returns detailed information.}
 }
+\value{
+A data frame (via \code{rpc_res_to_df}) with library information.
+}
+\description{
+Returns a list of libraries with optional filtering and verbosity.
+}
+\examples{
+\dontrun{
+libs <- mc_list_libraries(conn)
+}
+
+}
+\seealso{
+Other libraries: 
+\code{\link{mc_add_library_update}()},
+\code{\link{mc_add_library_update_from}()},
+\code{\link{mc_create_library}()},
+\code{\link{mc_get_library_code}()},
+\code{\link{mc_test_library}()}
+}
+\concept{libraries}

@@ -14,18 +14,29 @@ mc_get_token_balances(
 )
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object to the MultiChain node.}
 
-\item{addresses}{Vector of addresses or "\emph{" (default "}").}
+\item{addresses}{A vector of addresses, or \code{"*"} (default \code{"*"}).}
 
-\item{assets}{Vector of parent asset names/refs or "\emph{" (default "}").}
+\item{assets}{A vector of parent asset names/refs, or \code{"*"} (default \code{"*"}).}
 
-\item{minconf}{Minimum confirmations (default 1).}
+\item{minconf}{Integer. Minimum confirmations (default \code{1}).}
 
-\item{include_watch_only}{Include watch-only addresses (default FALSE).}
+\item{include_watch_only}{Logical. Include watch-only addresses (default \code{FALSE}).}
 
-\item{include_locked}{Include locked outputs (default FALSE).}
+\item{include_locked}{Logical. Include locked outputs (default \code{FALSE}).}
+}
+\value{
+A data frame containing token-level balance details.
 }
 \description{
-Get balances for non-fungible tokens (NFTs)
+Specifically retrieves balances for tokens (sub-assets or individual units)
+associated with a parent asset.
 }
+\seealso{
+Other MultiChain Balances: 
+\code{\link{mc_get_address_balances}()},
+\code{\link{mc_get_multi_balances}()},
+\code{\link{mc_get_total_balances}()}
+}
+\concept{MultiChain Balances}

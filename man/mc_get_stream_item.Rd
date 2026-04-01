@@ -6,6 +6,40 @@
 \usage{
 mc_get_stream_item(conn, stream, txid, verbose = FALSE)
 }
-\description{
-Get a specific item from a stream
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{stream}{Character string. Stream name, reference, or txid.}
+
+\item{txid}{Character string. Transaction ID of the item.}
+
+\item{verbose}{Logical. If \code{TRUE}, includes additional details.}
 }
+\value{
+A list with item details (key, data, publisher, etc.).
+}
+\description{
+Retrieves a single stream item by its transaction ID.
+}
+\examples{
+\dontrun{
+item <- mc_get_stream_item(conn, "mystream", "txid...")
+print(item$data)
+}
+
+}
+\seealso{
+\code{\link{mc_list_stream_items}} to list items.
+
+Other stream items: 
+\code{\link{mc_list_stream_block_items}()},
+\code{\link{mc_list_stream_items}()},
+\code{\link{mc_list_stream_key_items}()},
+\code{\link{mc_list_stream_publisher_items}()},
+\code{\link{mc_list_stream_tx_items}()},
+\code{\link{mc_publish}()},
+\code{\link{mc_publish_from}()},
+\code{\link{mc_publish_multi}()},
+\code{\link{mc_publish_multi_from}()}
+}
+\concept{stream items}

@@ -5,4 +5,5 @@ start.R$
 test.R$
 copy.R$
 todo.txt$
+.lintr$
 ^pdf$

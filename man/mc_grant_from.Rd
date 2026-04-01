@@ -15,20 +15,52 @@ mc_grant_from(
 )
 }
 \arguments{
-\item{conn}{A multichain_conn object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{from_address}{Address from which the permissions are granted (must have admin rights).}
+\item{from_address}{Character string. The address granting the permissions.}
 
-\item{to_address}{Target wallet address.}
+\item{to_address}{Character string. The address receiving the permissions.}
 
-\item{permissions}{Permission string (e.g., "connect,send,receive").}
+\item{permissions}{Character string. Comma‑separated list of permissions.}
 
-\item{native_amount}{Optional native currency amount to send with the grant.}
+\item{native_amount}{Numeric. Amount of native currency to send along with
+the grant (default 0).}
 
-\item{start_block}{Optional block from which the permission is valid.}
+\item{start_block}{Optional integer. Block height from which the permission
+becomes valid. If \code{NULL}, the permission starts immediately.}
 
-\item{end_block}{Optional block at which the permission expires.}
+\item{end_block}{Optional integer. Block height at which the permission expires.
+If \code{NULL}, the permission never expires.}
+}
+\value{
+A character string containing the transaction ID.
 }
 \description{
-Grant permissions from a specific address
+Grants permissions from a specified address (which must have admin or
+grant rights). This allows controlling which address pays for the
+transaction and acts as the grantor.
 }
+\examples{
+\dontrun{
+# Grant permissions from a specific admin address
+txid <- mc_grant_from(conn, "admin1...", "user1...", "send,receive")
+
+# Grant with a validity window
+txid <- mc_grant_from(conn, "admin1...", "user1...", "mine",
+                      start_block = 1000, end_block = 2000)
+}
+
+}
+\seealso{
+\code{\link{mc_grant}}, \code{\link{mc_revoke_from}}.
+
+Other permissions: 
+\code{\link{mc_grant}()},
+\code{\link{mc_grant_with_data}()},
+\code{\link{mc_grant_with_data_from}()},
+\code{\link{mc_list_permissions}()},
+\code{\link{mc_revoke}()},
+\code{\link{mc_revoke_from}()},
+\code{\link{mc_verify_permission}()}
+}
+\concept{permissions}

@@ -7,10 +7,14 @@
 \method{print}{mc_help}(x, ...)
 }
 \arguments{
-\item{x}{An mc_help object.}
+\item{x}{An object of class \code{"mc_help"}.}
 
-\item{...}{Additional arguments.}
+\item{...}{Additional arguments (ignored).}
+}
+\value{
+Invisibly returns \code{x}.
 }
 \description{
-Print MultiChain help
+S3 method for printing objects returned by \code{\link{mc_help}}.
+Displays the help text in a clean format.
 }

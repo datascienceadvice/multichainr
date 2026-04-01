@@ -6,6 +6,36 @@
 \usage{
 mc_set_variable_value_from(conn, from_address, variable, value = NULL)
 }
-\description{
-Set variable value from specific address
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{from_address}{Character string. Address that pays for the update.}
+
+\item{variable}{Character string. Variable name or transaction ID.}
+
+\item{value}{Optional. New value (any JSON structure). If \code{NULL}, the
+variable is deleted.}
 }
+\value{
+A list containing the result of the RPC call (usually transaction ID).
+}
+\description{
+Updates a variable's value, specifying the address that pays for the transaction.
+}
+\examples{
+\dontrun{
+mc_set_variable_value_from(conn, "1A...", "myvar", value = 100)
+}
+
+}
+\seealso{
+Other variables: 
+\code{\link{mc_create_variable}()},
+\code{\link{mc_create_variable_from}()},
+\code{\link{mc_get_variable_history}()},
+\code{\link{mc_get_variable_info}()},
+\code{\link{mc_get_variable_value}()},
+\code{\link{mc_list_variables}()},
+\code{\link{mc_set_variable_value}()}
+}
+\concept{variables}

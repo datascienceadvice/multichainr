@@ -7,8 +7,35 @@
 mc_node_stop(x)
 }
 \arguments{
-\item{x}{Either a connection object or a chain name.}
+\item{x}{Either a character string (the chain name) or an object of class
+\code{"multichain_conn"} (a connection created by \code{mc_connect()}).}
+}
+\value{
+Invisibly returns the result of the RPC \code{stop} command.
 }
 \description{
-Stop a MultiChain node
+Stops a running MultiChain node. The function accepts either a connection
+object (created by \code{mc_connect()}) or a chain name. When a chain name is
+provided, it first retrieves the configuration and establishes a connection
+automatically.
 }
+\examples{
+\dontrun{
+# Stop by chain name
+mc_node_stop("my_chain")
+
+# Stop using a connection object
+conn <- mc_connect(mc_get_config("my_chain"))
+mc_node_stop(conn)
+}
+
+}
+\seealso{
+\code{\link{mc_connect}}, \code{\link{mc_rpc}},
+\code{\link{mc_node_start}} to start a node.
+
+Other node operations: 
+\code{\link{mc_node_init}()},
+\code{\link{mc_node_start}()}
+}
+\concept{node operations}

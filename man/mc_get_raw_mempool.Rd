@@ -6,6 +6,28 @@
 \usage{
 mc_get_raw_mempool(conn)
 }
-\description{
-Get list of transaction IDs in mempool
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 }
+\value{
+A character vector of transaction IDs (txids).
+}
+\description{
+Returns a character vector of transaction IDs currently in the node's memory pool.
+}
+\examples{
+\dontrun{
+pending <- mc_get_raw_mempool(conn)
+length(pending)  # number of pending transactions
+}
+
+}
+\seealso{
+\code{\link{mc_get_mempool_info}} for mempool statistics.
+
+Other mempool & transactions: 
+\code{\link{mc_get_mempool_info}()},
+\code{\link{mc_get_raw_transaction}()},
+\code{\link{mc_get_tx_out}()}
+}
+\concept{mempool & transactions}

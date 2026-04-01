@@ -13,6 +13,49 @@ mc_list_stream_items(
   local_ordering = FALSE
 )
 }
-\description{
-List items in a stream (Enhanced version)
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{stream}{Character string. Stream name, reference, or txid.}
+
+\item{verbose}{Logical. If \code{TRUE}, returns detailed item information.}
+
+\item{count}{Integer. Number of items to return (default 10).}
+
+\item{start}{Optional integer. Offset (positive for forward, negative for backward).
+If omitted, the most recent items are returned.}
+
+\item{local_ordering}{Logical. If \code{TRUE}, uses local node's transaction
+ordering (default \code{FALSE}).}
 }
+\value{
+A data frame (via \code{rpc_res_to_df}) with item details.
+}
+\description{
+Returns a list of items published in a stream, with pagination and ordering.
+}
+\examples{
+\dontrun{
+# Get the 10 most recent items
+items <- mc_list_stream_items(conn, "mystream")
+
+# Get next 5 items after the 10th
+items <- mc_list_stream_items(conn, "mystream", count = 5, start = 10)
+}
+
+}
+\seealso{
+\code{\link{mc_list_stream_key_items}}, \code{\link{mc_list_stream_publisher_items}}
+
+Other stream items: 
+\code{\link{mc_get_stream_item}()},
+\code{\link{mc_list_stream_block_items}()},
+\code{\link{mc_list_stream_key_items}()},
+\code{\link{mc_list_stream_publisher_items}()},
+\code{\link{mc_list_stream_tx_items}()},
+\code{\link{mc_publish}()},
+\code{\link{mc_publish_from}()},
+\code{\link{mc_publish_multi}()},
+\code{\link{mc_publish_multi_from}()}
+}
+\concept{stream items}

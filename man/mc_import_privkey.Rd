@@ -7,14 +7,31 @@
 mc_import_privkey(conn, privkeys, label = "", rescan = TRUE)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object to the MultiChain node.}
 
-\item{privkeys}{A single private key string or a vector of strings.}
+\item{privkeys}{A character string or vector of private keys (WIF format).}
 
-\item{label}{Optional label for the addresses.}
+\item{label}{Optional character string. A label to assign to the addresses.}
 
-\item{rescan}{If TRUE (default), rescans the whole chain. Can be an integer block height.}
+\item{rescan}{Logical or Integer. If \code{TRUE}, rescans the entire blockchain.
+Can also be an integer representing the block height to start scanning from.}
+}
+\value{
+Returns \code{NULL} on success.
 }
 \description{
-Import one or more private keys
+Adds private keys to the node's wallet.
 }
+\seealso{
+Other MultiChain Wallet Management: 
+\code{\link{mc_backup_wallet}()},
+\code{\link{mc_change_wallet_passphrase}()},
+\code{\link{mc_dump_privkey}()},
+\code{\link{mc_dump_wallet}()},
+\code{\link{mc_encrypt_wallet}()},
+\code{\link{mc_get_wallet_info}()},
+\code{\link{mc_import_wallet}()},
+\code{\link{mc_lock_wallet}()},
+\code{\link{mc_unlock_wallet}()}
+}
+\concept{MultiChain Wallet Management}

@@ -7,10 +7,41 @@
 mc_list_permissions(conn, permissions = "*")
 }
 \arguments{
-\item{conn}{A multichain_conn object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{permissions}{Permission type to filter (default "*").}
+\item{permissions}{Character string. Permission type to filter.
+Can be a single permission name (e.g., \code{"send"}) or \code{"*"} (default)
+to list all permissions.}
+}
+\value{
+A data frame (via \code{rpc_res_to_df}) with permission entries,
+typically containing columns like \code{address}, \code{type}, \code{start},
+\code{end}, and \code{txid}.
 }
 \description{
-List network permissions
+Returns a list of all permissions (or filtered by type) currently active
+on the blockchain.
 }
+\examples{
+\dontrun{
+# List all permissions
+all_perms <- mc_list_permissions(conn)
+
+# List only "admin" permissions
+admins <- mc_list_permissions(conn, "admin")
+}
+
+}
+\seealso{
+\code{\link{mc_grant}}, \code{\link{mc_revoke}}.
+
+Other permissions: 
+\code{\link{mc_grant}()},
+\code{\link{mc_grant_from}()},
+\code{\link{mc_grant_with_data}()},
+\code{\link{mc_grant_with_data_from}()},
+\code{\link{mc_revoke}()},
+\code{\link{mc_revoke_from}()},
+\code{\link{mc_verify_permission}()}
+}
+\concept{permissions}

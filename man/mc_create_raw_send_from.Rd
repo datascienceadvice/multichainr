@@ -13,16 +13,48 @@ mc_create_raw_send_from(
 )
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{from_address}{Sender address.}
+\item{from_address}{Character string. The address that will fund the transaction.}
 
-\item{to_amounts}{List mapping recipient addresses to amounts.}
+\item{to_amounts}{A named list mapping recipient addresses to amounts
+(e.g., \code{list("1A..." = 0.5, "1B..." = list(asset = 10))}).}
 
-\item{data}{Optional metadata array.}
+\item{data}{Optional array of metadata (strings or lists; will be hex‑encoded).}
 
-\item{action}{Optional action (e.g. "send", "sign").}
+\item{action}{Optional action: \code{"send"}, \code{"sign"}, etc.}
+}
+\value{
+A character string (raw transaction hex) or a list with \code{hex}
+and \code{complete} if signing is requested.
 }
 \description{
-Create and fund a raw transaction from a specific address
+Creates a raw transaction that is automatically funded from a specified
+address. This is a convenience function that selects UTXOs from the given
+address and builds the transaction.
 }
+\examples{
+\dontrun{
+# Send 1.0 native coin to address
+tx_hex <- mc_create_raw_send_from(conn, "1A...", list("1B..." = 1.0))
+
+# Send asset and metadata
+tx_hex <- mc_create_raw_send_from(conn, "1A...",
+                                  list("1B..." = list(myasset = 50)),
+                                  data = list("payment", list(ref = 123)))
+}
+
+}
+\seealso{
+\code{\link{mc_create_raw_transaction}}
+
+Other raw transactions: 
+\code{\link{mc_append_raw_change}()},
+\code{\link{mc_append_raw_data}()},
+\code{\link{mc_append_raw_transaction}()},
+\code{\link{mc_create_raw_transaction}()},
+\code{\link{mc_decode_raw_transaction}()},
+\code{\link{mc_send_raw_transaction}()},
+\code{\link{mc_sign_raw_transaction}()}
+}
+\concept{raw transactions}

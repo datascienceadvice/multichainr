@@ -2,19 +2,30 @@
 % Please edit documentation in R/transactions.R
 \name{mc_get_address_transaction}
 \alias{mc_get_address_transaction}
-\title{Get details of a transaction related to an address}
+\title{Get details of a transaction for a specific address}
 \usage{
 mc_get_address_transaction(conn, address, txid, verbose = FALSE)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object to the MultiChain node.}
 
-\item{address}{Wallet address.}
+\item{address}{Character. The MultiChain address to query.}
 
-\item{txid}{Transaction ID.}
+\item{txid}{Character. The transaction ID.}
 
-\item{verbose}{If TRUE, provides details of inputs and outputs.}
+\item{verbose}{Logical. If \code{TRUE}, provides a detailed breakdown of inputs and outputs (default \code{FALSE}).}
+}
+\value{
+A list containing transaction details.
 }
 \description{
-Get details of a transaction related to an address
+Provides information about a specific transaction, but only if it involves the specified address.
 }
+\seealso{
+Other MultiChain Transactions: 
+\code{\link{mc_get_tx_out_data}()},
+\code{\link{mc_get_wallet_transaction}()},
+\code{\link{mc_list_address_transactions}()},
+\code{\link{mc_list_wallet_transactions}()}
+}
+\concept{MultiChain Transactions}

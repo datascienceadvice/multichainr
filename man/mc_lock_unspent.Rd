@@ -7,15 +7,25 @@
 mc_lock_unspent(conn, unlock, outputs = NULL)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object to the MultiChain node.}
 
-\item{unlock}{Logical. If TRUE, unlocks; if FALSE, locks.}
+\item{unlock}{Logical. If \code{TRUE}, unlocks the outputs; if \code{FALSE}, locks them.}
 
-\item{outputs}{Optional list of outputs to (un)lock: list(list(txid="id", vout=0), ...).}
+\item{outputs}{Optional list of outputs to (un)lock. Expected format:
+\code{list(list(txid="id", vout=0), ...)}. If empty and \code{unlock=TRUE},
+all outputs are unlocked.}
 }
 \value{
-Logical TRUE on success.
+Logical \code{TRUE} on success.
 }
 \description{
-Lock or unlock unspent outputs
+Prevents specific UTXOs from being spent in automated transactions, or
+releases them if they were previously locked.
 }
+\seealso{
+Other MultiChain UTXO Management: 
+\code{\link{mc_combine_unspent}()},
+\code{\link{mc_list_lock_unspent}()},
+\code{\link{mc_list_unspent}()}
+}
+\concept{MultiChain UTXO Management}

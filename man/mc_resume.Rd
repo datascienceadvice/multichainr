@@ -7,13 +7,32 @@
 mc_resume(conn, tasks)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{tasks}{A character vector or comma-separated string of tasks.}
+\item{tasks}{A character vector or a comma‑separated string of tasks to resume.
+Valid task names: \code{"mining"}, \code{"incoming"}, \code{"offchain"}.}
 }
 \value{
-NULL on success.
+Invisibly returns \code{NULL} on success.
 }
 \description{
-Resume specified node tasks
+Restarts node tasks that were previously paused with \code{\link{mc_pause}}.
 }
+\examples{
+\dontrun{
+# Resume mining after a pause
+mc_resume(conn, "mining")
+
+# Resume all paused tasks
+mc_resume(conn, c("mining", "incoming", "offchain"))
+}
+
+}
+\seealso{
+\code{\link{mc_pause}} to pause tasks.
+
+Other node control: 
+\code{\link{mc_pause}()},
+\code{\link{mc_set_last_block}()}
+}
+\concept{node control}

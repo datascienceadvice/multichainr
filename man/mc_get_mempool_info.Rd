@@ -6,6 +6,32 @@
 \usage{
 mc_get_mempool_info(conn)
 }
-\description{
-Get memory pool information
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 }
+\value{
+A list with mempool statistics:
+\item{size}{Number of transactions in the mempool.}
+\item{bytes}{Total size in bytes.}
+\item{usage}{Memory usage.}
+}
+\description{
+Returns information about the node's memory pool (mempool), which holds
+unconfirmed transactions awaiting inclusion in a block.
+}
+\examples{
+\dontrun{
+mempool <- mc_get_mempool_info(conn)
+print(paste("Pending transactions:", mempool$size))
+}
+
+}
+\seealso{
+\code{\link{mc_get_raw_mempool}} for the list of transaction IDs.
+
+Other mempool & transactions: 
+\code{\link{mc_get_raw_mempool}()},
+\code{\link{mc_get_raw_transaction}()},
+\code{\link{mc_get_tx_out}()}
+}
+\concept{mempool & transactions}

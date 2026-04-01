@@ -11,6 +11,29 @@ mc_get_stream_publisher_summary(
   mode = "jsonobjectmerge"
 )
 }
-\description{
-Get summary of JSON objects published by a specific address
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{stream}{Character string. Stream name, reference, or txid.}
+
+\item{address}{Character string. Publisher address.}
+
+\item{mode}{Character string. Merge mode (default \code{"jsonobjectmerge"}).}
 }
+\value{
+A JSON object (list) representing the merged summary.
+}
+\description{
+Aggregates JSON objects published by a given address in a stream.
+}
+\examples{
+\dontrun{
+summary <- mc_get_stream_publisher_summary(conn, "mystream", "1A...")
+}
+
+}
+\seealso{
+Other stream summaries: 
+\code{\link{mc_get_stream_key_summary}()}
+}
+\concept{stream summaries}

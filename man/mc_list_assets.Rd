@@ -7,16 +7,46 @@
 mc_list_assets(conn, assets = "*", verbose = FALSE, count = NULL, start = NULL)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{assets}{Asset filter (name, ref, txid, vector of names, or "*").}
+\item{assets}{Asset filter. Can be a single asset name/ref/txid, a vector
+of such identifiers, or \code{"*"} (default) to list all assets.}
 
-\item{verbose}{If TRUE, returns detailed information.}
+\item{verbose}{Logical. If \code{TRUE}, returns detailed information
+(e.g., issuances, open status). Default is \code{FALSE}.}
 
-\item{count}{Number of assets to return.}
+\item{count}{Integer (optional). Maximum number of assets to return.}
 
-\item{start}{Offset.}
+\item{start}{Integer (optional). Offset for pagination.}
+}
+\value{
+A data frame (via \code{rpc_res_to_df}) with asset information.
+If \code{verbose = FALSE}, columns include \code{name}, \code{ref},
+\code{issuetxid}, etc. If \code{verbose = TRUE}, additional details
+like issuances and open status are included.
 }
 \description{
-List blockchain assets
+Returns a list of assets on the blockchain, with optional filtering
+and pagination.
 }
+\examples{
+\dontrun{
+# List all assets
+all_assets <- mc_list_assets(conn)
+
+# Get details for a specific asset
+asset_detail <- mc_list_assets(conn, assets = "mycoin", verbose = TRUE)
+
+# List first 10 assets
+first_10 <- mc_list_assets(conn, count = 10)
+}
+
+}
+\seealso{
+\code{\link{mc_get_asset_info}} for single asset details.
+
+Other asset information: 
+\code{\link{mc_get_asset_info}()},
+\code{\link{mc_list_asset_issues}()}
+}
+\concept{asset information}

@@ -7,10 +7,38 @@
 mc_create_variable(conn, name, open = TRUE, value = NULL)
 }
 \arguments{
-\item{open}{If TRUE, anyone with create permissions can edit.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{value}{Initial JSON value.}
+\item{name}{Character string. Variable name (must be unique).}
+
+\item{open}{Logical. If \code{TRUE}, anyone with \code{create} permissions
+can edit the variable. If \code{FALSE}, only admins can edit.}
+
+\item{value}{Optional. Initial JSON value (list, number, string, etc.).}
+}
+\value{
+A list containing the result of the RPC call (usually transaction ID).
 }
 \description{
-Create a new variable
+Creates a global variable on the blockchain. Variables are key‑value stores
+that can be read by filters and transactions.
 }
+\examples{
+\dontrun{
+mc_create_variable(conn, "myvar", open = TRUE, value = list(key = "value"))
+}
+
+}
+\seealso{
+\code{\link{mc_set_variable_value}}, \code{\link{mc_get_variable_value}}
+
+Other variables: 
+\code{\link{mc_create_variable_from}()},
+\code{\link{mc_get_variable_history}()},
+\code{\link{mc_get_variable_info}()},
+\code{\link{mc_get_variable_value}()},
+\code{\link{mc_list_variables}()},
+\code{\link{mc_set_variable_value}()},
+\code{\link{mc_set_variable_value_from}()}
+}
+\concept{variables}

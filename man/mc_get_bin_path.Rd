@@ -7,9 +7,16 @@
 mc_get_bin_path(bin_name)
 }
 \arguments{
-\item{bin_name}{Name of the binary (multichaind or multichain-util).}
+\item{bin_name}{Character string. Name of the binary (e.g., \code{"multichaind"},
+\code{"multichain-util"}). The function automatically appends \code{.exe} on Windows.}
+}
+\value{
+Character string with the full path to the binary, or stops with an
+error if the binary is not found.
 }
 \description{
-Internal function to locate executable files
+Searches for a MultiChain binary (e.g., \code{multichaind} or \code{multichain-util})
+first in the path set by \code{mc_set_path()}, then in the system \code{PATH}.
+This function is not intended to be called directly by users.
 }
 \keyword{internal}

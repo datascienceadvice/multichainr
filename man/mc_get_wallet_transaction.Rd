@@ -12,14 +12,25 @@ mc_get_wallet_transaction(
 )
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object to the MultiChain node.}
 
-\item{txid}{Transaction ID.}
+\item{txid}{Character. The transaction ID.}
 
-\item{include_watch_only}{Include watch-only addresses (default FALSE).}
+\item{include_watch_only}{Logical. Include watch-only addresses (default \code{FALSE}).}
 
-\item{verbose}{If TRUE, provides details of inputs and outputs.}
+\item{verbose}{Logical. If \code{TRUE}, provides details of inputs and outputs (default \code{FALSE}).}
+}
+\value{
+A list containing detailed transaction data.
 }
 \description{
-Get details of a wallet transaction
+Retrieves detailed information about a transaction in the node's wallet.
 }
+\seealso{
+Other MultiChain Transactions: 
+\code{\link{mc_get_address_transaction}()},
+\code{\link{mc_get_tx_out_data}()},
+\code{\link{mc_list_address_transactions}()},
+\code{\link{mc_list_wallet_transactions}()}
+}
+\concept{MultiChain Transactions}

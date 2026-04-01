@@ -6,6 +6,39 @@
 \usage{
 mc_get_blockchain_info(conn)
 }
-\description{
-Get general blockchain information
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 }
+\value{
+A list with blockchain metadata. Typical fields:
+\item{chain}{Name of the chain.}
+\item{blocks}{Current block height.}
+\item{headers}{Number of block headers.}
+\item{bestblockhash}{Hash of the most recent block.}
+\item{difficulty}{Current mining difficulty.}
+\item{chainwork}{Total work in the chain.}
+}
+\description{
+Returns global information about the blockchain, such as the current block
+height, chain name, protocol version, difficulty, and consensus status.
+}
+\examples{
+\dontrun{
+info <- mc_get_blockchain_info(conn)
+print(info$blocks)
+}
+
+}
+\seealso{
+\code{\link{mc_get_chain_totals}} for counts of entities,
+\code{\link{mc_get_last_block_info}} for the most recent block.
+
+Other blockchain information: 
+\code{\link{mc_get_block}()},
+\code{\link{mc_get_block_hash}()},
+\code{\link{mc_get_chain_totals}()},
+\code{\link{mc_get_last_block_info}()},
+\code{\link{mc_list_blocks}()},
+\code{\link{mc_list_miners}()}
+}
+\concept{blockchain information}

@@ -7,17 +7,25 @@
 mc_list_unspent(conn, minconf = 1, maxconf = 999999, addresses = NULL)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object to the MultiChain node.}
 
-\item{minconf}{Minimum confirmations (default 1).}
+\item{minconf}{Integer. Minimum confirmations (default \code{1}).}
 
-\item{maxconf}{Maximum confirmations (default 999999).}
+\item{maxconf}{Integer. Maximum confirmations (default \code{999999}).}
 
-\item{addresses}{Optional vector of addresses to filter.}
+\item{addresses}{Optional character vector of addresses to filter the results.}
 }
 \value{
-A data frame containing UTXO details, including assets and permissions.
+A data frame containing UTXO details, including \code{txid}, \code{vout},
+\code{address}, \code{amount}, and associated asset/permission data.
 }
 \description{
-List unspent transaction outputs
+Returns a list of all unspent outputs (UTXOs) available in the wallet.
 }
+\seealso{
+Other MultiChain UTXO Management: 
+\code{\link{mc_combine_unspent}()},
+\code{\link{mc_list_lock_unspent}()},
+\code{\link{mc_lock_unspent}()}
+}
+\concept{MultiChain UTXO Management}

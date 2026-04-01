@@ -73,5 +73,15 @@ devtools::check(args = "--as-cran")
 # R CMD Rd2pdf .
 # R CMD Rd2pdf . --output=multichainr.pdf
 
+# fs::dir_ls(recurse = TRUE) |> fs::file_touch()
 
+files <- list.files(recursive = TRUE, full.names = TRUE)
+Sys.setFileTime(files, Sys.time())
 
+covr::report()
+
+lintr::lint_package() # проверить warnings()
+
+# проверить @seealso, @family!
+
+# сделать в виньетке тестовую ноду и в примерах повторять так же создание?

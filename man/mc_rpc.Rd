@@ -7,16 +7,23 @@
 mc_rpc(conn, method, params = list())
 }
 \arguments{
-\item{conn}{A multichain_conn object.}
+\item{conn}{A \code{multichain_conn} object containing the node URL and credentials.}
 
-\item{method}{Character string of the RPC method.}
+\item{method}{Character string. The specific MultiChain RPC method to call.}
 
-\item{params}{List of parameters.}
+\item{params}{List. A collection of parameters expected by the RPC method.}
 }
 \value{
-The result field from the JSON-RPC response.
+The \code{result} field from the JSON-RPC response.
 }
 \description{
-Internal function for JSON-RPC requests
+Handles the low-level HTTP POST requests to the MultiChain node. It manages
+authentication, scientific notation suppression for transaction IDs,
+retry logic, and error handling for common RPC failure states.
+}
+\details{
+The function temporarily sets \code{options(scipen = 99)} to ensure that
+large numbers or long hex strings (like txids) are not converted to
+scientific notation when serialized to JSON.
 }
 \keyword{internal}

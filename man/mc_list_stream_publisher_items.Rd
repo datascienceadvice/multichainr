@@ -14,6 +14,43 @@ mc_list_stream_publisher_items(
   local_ordering = FALSE
 )
 }
-\description{
-List items published by a specific address
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{stream}{Character string. Stream name, reference, or txid.}
+
+\item{address}{Character string. Publisher address.}
+
+\item{verbose}{Logical. If \code{TRUE}, returns detailed information.}
+
+\item{count}{Integer. Number of items to return (default 10).}
+
+\item{start}{Optional integer. Offset.}
+
+\item{local_ordering}{Logical. Use local ordering.}
 }
+\value{
+A data frame (via \code{rpc_res_to_df}) with items.
+}
+\description{
+Returns all items in a stream that were published by a given address.
+}
+\examples{
+\dontrun{
+items <- mc_list_stream_publisher_items(conn, "mystream", "1A...")
+}
+
+}
+\seealso{
+Other stream items: 
+\code{\link{mc_get_stream_item}()},
+\code{\link{mc_list_stream_block_items}()},
+\code{\link{mc_list_stream_items}()},
+\code{\link{mc_list_stream_key_items}()},
+\code{\link{mc_list_stream_tx_items}()},
+\code{\link{mc_publish}()},
+\code{\link{mc_publish_from}()},
+\code{\link{mc_publish_multi}()},
+\code{\link{mc_publish_multi_from}()}
+}
+\concept{stream items}

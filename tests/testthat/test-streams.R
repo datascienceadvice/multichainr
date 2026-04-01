@@ -70,7 +70,7 @@ test_that("mc_publish and mc_publish_from return txid", {
       expect_equal(tx2, fake_txid)
       
       # Тест публикации From
-      tx3 <- mc_publish_from(conn_mock, "1ADDR", "stream1", "key1", list(json = list(a=1)))
+      tx3 <- mc_publish_from(conn_mock, "1ADDR", "stream1", "key1", list(json = list(a = 1)))
       expect_equal(tx3, fake_txid)
     }
   )

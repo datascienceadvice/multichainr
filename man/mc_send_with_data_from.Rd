@@ -7,16 +7,40 @@
 mc_send_with_data_from(conn, from_address, to_address, amounts, data)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{from_address}{Sender address.}
+\item{from_address}{Character string. Sender address.}
 
-\item{to_address}{Recipient address.}
+\item{to_address}{Character string. Recipient address.}
 
-\item{amounts}{Numeric (native) or list of assets.}
+\item{amounts}{Either a numeric value (native) or a named list of assets.}
 
-\item{data}{Data string or list (will be converted to hex).}
+\item{data}{Data to embed. Can be a string, list (converted to JSON), etc.}
+}
+\value{
+A character string containing the transaction ID.
 }
 \description{
-Send payment from specific address with metadata
+Sends a transaction with inline metadata from a specified sender address.
+Combines the capabilities of \code{\link{mc_send_from}} and
+\code{\link{mc_send_with_data}}.
 }
+\examples{
+\dontrun{
+# Send from a specific address with metadata
+txid <- mc_send_with_data_from(conn, "1A...", "1B...", 0.5,
+                               list(reference = "invoice123"))
+}
+
+}
+\seealso{
+\code{\link{mc_send_with_data}}, \code{\link{mc_send_from}}.
+
+Other transactions: 
+\code{\link{mc_send}()},
+\code{\link{mc_send_asset}()},
+\code{\link{mc_send_asset_from}()},
+\code{\link{mc_send_from}()},
+\code{\link{mc_send_with_data}()}
+}
+\concept{transactions}

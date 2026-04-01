@@ -7,14 +7,36 @@
 mc_approve_from(conn, from_address, entity, approve)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{from_address}{Admin address.}
+\item{from_address}{Character string. Admin address that issues the approval.}
 
-\item{entity}{Name or txid of the upgrade/filter.}
+\item{entity}{Character string. Name or transaction ID of the upgrade/filter.}
 
-\item{approve}{Boolean (for global) or list(for = "stream", approve = TRUE) for stream filters.}
+\item{approve}{Either a logical (for global upgrades/filters) or a list
+of the form \code{list(for = "stream", approve = TRUE)} for stream‑specific
+filter approval.}
+}
+\value{
+A list containing the result of the RPC call (usually transaction ID).
 }
 \description{
-Approve or disapprove an upgrade or filter
+Sends an approval or disapproval transaction from a specific address
+(must have admin permissions). This is used to vote on upgrades or
+to approve/disapprove filters.
 }
+\examples{
+\dontrun{
+# Approve a global upgrade
+mc_approve_from(conn, "admin_address", "speedup", approve = TRUE)
+
+# Approve a stream filter for a specific stream
+mc_approve_from(conn, "admin_address", "myfilter",
+                approve = list(for = "mystream", approve = TRUE))
+}
+
+}
+\seealso{
+\code{\link{mc_create_upgrade}}, \code{\link{mc_create_stream_filter}}
+}
+\concept{approvals}

@@ -7,12 +7,39 @@
 mc_decode_raw_exchange(conn, tx_hex, verbose = FALSE)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{tx_hex}{Hex string of the exchange transaction.}
+\item{tx_hex}{Character string. Hexadecimal representation of the exchange
+transaction.}
 
-\item{verbose}{If TRUE, lists all individual stages in the exchange.}
+\item{verbose}{Logical. If \code{TRUE}, lists all individual stages
+(contributions) of the exchange. Default is \code{FALSE}.}
+}
+\value{
+A list (or a data frame if \code{verbose}) containing the decoded
+exchange details.
 }
 \description{
-Decode a raw exchange transaction
+Parses a raw atomic exchange transaction (partial or complete) and returns
+a human‑readable representation of its structure, including the involved
+inputs, outputs, and the assets being exchanged.
 }
+\examples{
+\dontrun{
+decoded <- mc_decode_raw_exchange(conn, my_tx_hex)
+print(decoded)
+}
+
+}
+\seealso{
+\code{\link{mc_create_raw_exchange}}
+
+Other atomic exchange: 
+\code{\link{mc_append_raw_exchange}()},
+\code{\link{mc_complete_raw_exchange}()},
+\code{\link{mc_create_raw_exchange}()},
+\code{\link{mc_disable_raw_transaction}()},
+\code{\link{mc_prepare_lock_unspent}()},
+\code{\link{mc_prepare_lock_unspent_from}()}
+}
+\concept{atomic exchange}

@@ -7,15 +7,50 @@
 mc_append_binary_cache(conn, identifier, data = "")
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{identifier}{The cache item identifier (from mc_create_binary_cache).}
+\item{identifier}{Character string. The cache item identifier returned by
+\code{\link{mc_create_binary_cache}}.}
 
-\item{data}{Data to append. Can be a hex string, or a list like list(text="...") or list(json=...).}
+\item{data}{Data to append. Can be:
+\itemize{
+\item a character string of hex data,
+\item a list with element \code{text} (will be converted to hex),
+\item a list with element \code{json} (will be converted to JSON and then to hex),
+\item \code{""} (default) returns the current size without appending.
+}}
 }
 \value{
-The resulting size of the cache item in bytes.
+Integer. The resulting size of the cache item in bytes after appending
+(or the current size if \code{data = ""}).
 }
 \description{
-Append data to a binary cache item
+Appends data to an existing binary cache item. If \code{data = ""}
+(the default), the RPC call returns the current size without adding new data.
+The \code{data} argument can be provided as a hex string, or as a list
+with a \code{text} or \code{json} component that will be automatically converted.
 }
+\examples{
+\dontrun{
+id <- mc_create_binary_cache(conn)
+
+# Append text data
+mc_append_binary_cache(conn, id, list(text = "Hello, world!"))
+
+# Append JSON data
+mc_append_binary_cache(conn, id, list(json = list(key = "value")))
+
+# Get current size without appending
+size <- mc_append_binary_cache(conn, id)
+}
+
+}
+\seealso{
+\code{\link{mc_create_binary_cache}}, \code{\link{mc_delete_binary_cache}}
+
+Other binary cache: 
+\code{\link{mc_create_binary_cache}()},
+\code{\link{mc_delete_binary_cache}()},
+\code{\link{mc_txout_to_binary_cache}()}
+}
+\concept{binary cache}

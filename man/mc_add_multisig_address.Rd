@@ -7,15 +7,41 @@
 mc_add_multisig_address(conn, n_required, keys)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{n_required}{Number of required signatures (integer).}
+\item{n_required}{Integer. Number of signatures required to spend funds.}
 
-\item{keys}{A character vector of public keys or addresses.}
+\item{keys}{Character vector. Public keys or addresses that will be part of
+the multi-signature set.}
 }
 \value{
-A string containing the multisig address.
+A character string containing the multi-signature address.
 }
 \description{
-Creates a multi-signature address from a list of keys and required signatures.
+Creates a multi-signature address and adds it to the node's wallet.
+The address is a Pay‑to‑Script‑Hash (P2SH) address that requires a specified
+number of signatures from the provided keys.
 }
+\examples{
+\dontrun{
+# Assume connection 'conn' is already established
+addr <- mc_add_multisig_address(conn, n_required = 2,
+                                keys = c("1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+                                         "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2"))
+}
+
+}
+\seealso{
+\code{\link{mc_create_multisig}} to create a multisig address
+without adding it to the wallet.
+
+Other address operations: 
+\code{\link{mc_create_keypairs}()},
+\code{\link{mc_create_multisig}()},
+\code{\link{mc_get_addresses}()},
+\code{\link{mc_get_new_address}()},
+\code{\link{mc_import_address}()},
+\code{\link{mc_list_addresses}()},
+\code{\link{mc_validate_address}()}
+}
+\concept{address operations}

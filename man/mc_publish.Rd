@@ -7,16 +7,51 @@
 mc_publish(conn, stream, keys, data, options = NULL)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{stream}{Stream name, ref or txid.}
+\item{stream}{Character string. Stream name, reference, or creation txid.}
 
-\item{keys}{A single key (string) or a vector of keys.}
+\item{keys}{A single key (string) or a vector of keys (for multi‑key items).}
 
-\item{data}{Data to publish. Can be a hex string, or a list like list(text = "...") or list(json = ...).}
+\item{data}{Data to publish. Can be a hex string, or a list with \code{text}
+(will be hex‑encoded) or \code{json} (will be converted to JSON then hex).}
 
-\item{options}{Optional. Use "offchain" to publish as an off-chain item.}
+\item{options}{Optional character string. Use \code{"offchain"} to publish as
+an off‑chain item (requires off‑chain capability on the blockchain).}
+}
+\value{
+A character string containing the transaction ID of the published item.
 }
 \description{
-Publish an item to a stream
+Writes a key‑value item to a stream. The item is stored on the blockchain
+(or optionally off‑chain) and can be retrieved by its key.
 }
+\examples{
+\dontrun{
+# Publish with a text key and simple text data
+mc_publish(conn, "mystream", "greeting", list(text = "Hello world!"))
+
+# Publish with JSON data
+mc_publish(conn, "mystream", "data", list(json = list(a = 1, b = 2)))
+
+# Publish off‑chain
+mc_publish(conn, "mystream", "large", list(text = "big data"), options = "offchain")
+}
+
+}
+\seealso{
+\code{\link{mc_publish_from}} to specify publisher address,
+\code{\link{mc_publish_multi}} for multiple items.
+
+Other stream items: 
+\code{\link{mc_get_stream_item}()},
+\code{\link{mc_list_stream_block_items}()},
+\code{\link{mc_list_stream_items}()},
+\code{\link{mc_list_stream_key_items}()},
+\code{\link{mc_list_stream_publisher_items}()},
+\code{\link{mc_list_stream_tx_items}()},
+\code{\link{mc_publish_from}()},
+\code{\link{mc_publish_multi}()},
+\code{\link{mc_publish_multi_from}()}
+}
+\concept{stream items}

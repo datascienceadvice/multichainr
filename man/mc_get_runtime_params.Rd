@@ -7,11 +7,31 @@
 mc_get_runtime_params(conn)
 }
 \arguments{
-\item{conn}{A multichain_conn object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 }
 \value{
-A list of runtime parameters (e.g., mining status, connection limits, etc.).
+A list of runtime parameters, e.g.:
+\item{mining}{Logical; whether mining is enabled.}
+\item{maxconnections}{Maximum number of inbound connections.}
+\item{...}{Other runtime settings.}
 }
 \description{
-Returns an object containing the current runtime parameters of the node.
+Returns the current runtime parameters of the node. These can be changed
+while the node is running (see \code{\link{mc_set_runtime_param}}).
 }
+\examples{
+\dontrun{
+runtime <- mc_get_runtime_params(conn)
+print(runtime$mining)
+}
+
+}
+\seealso{
+\code{\link{mc_set_runtime_param}} to modify parameters,
+\code{\link{mc_get_blockchain_params}} for fixed chain parameters.
+
+Other node configuration: 
+\code{\link{mc_get_blockchain_params}()},
+\code{\link{mc_set_runtime_param}()}
+}
+\concept{node configuration}

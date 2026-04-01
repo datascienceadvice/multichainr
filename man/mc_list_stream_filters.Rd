@@ -7,10 +7,37 @@
 mc_list_stream_filters(conn, filters = "*", verbose = FALSE)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{filters}{Filters.}
+\item{filters}{Character vector of filter names/IDs, or \code{"*"} (default)
+for all filters.}
+
+\item{verbose}{Logical. If \code{TRUE}, returns detailed information.}
+}
+\value{
+A data frame (via \code{rpc_res_to_df}) with filter information.
 }
 \description{
-List stream filters
+Returns a list of stream filters on the blockchain, with optional filtering
+and verbosity.
 }
+\examples{
+\dontrun{
+all_filters <- mc_list_stream_filters(conn)
+}
+
+}
+\seealso{
+\code{\link{mc_create_stream_filter}}, \code{\link{mc_list_tx_filters}}
+
+Other filters: 
+\code{\link{mc_create_stream_filter}()},
+\code{\link{mc_create_tx_filter}()},
+\code{\link{mc_get_filter_code}()},
+\code{\link{mc_list_tx_filters}()},
+\code{\link{mc_run_stream_filter}()},
+\code{\link{mc_run_tx_filter}()},
+\code{\link{mc_test_stream_filter}()},
+\code{\link{mc_test_tx_filter}()}
+}
+\concept{filters}

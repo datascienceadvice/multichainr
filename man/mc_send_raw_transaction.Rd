@@ -6,9 +6,39 @@
 \usage{
 mc_send_raw_transaction(conn, tx_hex)
 }
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{tx_hex}{Character string. The signed raw transaction hex to send.}
+}
 \value{
-Transaction ID.
+A character string containing the transaction ID (txid).
 }
 \description{
-Send a signed raw transaction to the network
+Broadcasts a signed raw transaction to the blockchain network. The
+transaction must be complete (all inputs signed) before sending.
 }
+\examples{
+\dontrun{
+# Create, sign, and send a transaction
+tx_hex <- mc_create_raw_transaction(conn, inputs, outputs)
+signed <- mc_sign_raw_transaction(conn, tx_hex)
+if (signed$complete) {
+  txid <- mc_send_raw_transaction(conn, signed$hex)
+}
+}
+
+}
+\seealso{
+\code{\link{mc_sign_raw_transaction}}, \code{\link{mc_create_raw_transaction}}
+
+Other raw transactions: 
+\code{\link{mc_append_raw_change}()},
+\code{\link{mc_append_raw_data}()},
+\code{\link{mc_append_raw_transaction}()},
+\code{\link{mc_create_raw_send_from}()},
+\code{\link{mc_create_raw_transaction}()},
+\code{\link{mc_decode_raw_transaction}()},
+\code{\link{mc_sign_raw_transaction}()}
+}
+\concept{raw transactions}

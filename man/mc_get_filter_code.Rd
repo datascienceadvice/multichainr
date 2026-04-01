@@ -7,10 +7,35 @@
 mc_get_filter_code(conn, filter)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{filter}{Filter.}
+\item{filter}{Character string. Filter name or transaction ID.}
+}
+\value{
+A list containing the filter's code and details.
 }
 \description{
-Get JavaScript code of a filter
+Retrieves the JavaScript code (and associated metadata) of an existing
+stream or transaction filter.
 }
+\examples{
+\dontrun{
+code_info <- mc_get_filter_code(conn, "myfilter")
+print(code_info$code)
+}
+
+}
+\seealso{
+\code{\link{mc_get_library_code}} for libraries.
+
+Other filters: 
+\code{\link{mc_create_stream_filter}()},
+\code{\link{mc_create_tx_filter}()},
+\code{\link{mc_list_stream_filters}()},
+\code{\link{mc_list_tx_filters}()},
+\code{\link{mc_run_stream_filter}()},
+\code{\link{mc_run_tx_filter}()},
+\code{\link{mc_test_stream_filter}()},
+\code{\link{mc_test_tx_filter}()}
+}
+\concept{filters}

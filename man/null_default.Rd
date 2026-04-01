@@ -8,14 +8,15 @@
 a \%||\% b
 }
 \arguments{
-\item{a}{An object}
+\item{a}{An object to check for \code{NULL}.}
 
-\item{b}{An object}
+\item{b}{The default value to return if \code{a} is \code{NULL}.}
 }
 \value{
-a if not null, else b
+\code{a} if it is not \code{NULL}, otherwise \code{b}.
 }
 \description{
-Null-default operator
+This infix operator provides a convenient way to handle \code{NULL} values
+by providing a default value.
 }
 \keyword{internal}

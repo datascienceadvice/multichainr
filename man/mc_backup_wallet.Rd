@@ -7,10 +7,27 @@
 mc_backup_wallet(conn, filename)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object to the MultiChain node.}
 
-\item{filename}{Full path and name for the backup file on the node's machine.}
+\item{filename}{Character. The full path and filename for the backup.
+\strong{Note:} This path is relative to the machine where the MultiChain node is running.}
+}
+\value{
+Returns \code{NULL} on success.
 }
 \description{
-Backup the wallet file
+Safely copies the \code{wallet.dat} file to a specified destination.
 }
+\seealso{
+Other MultiChain Wallet Management: 
+\code{\link{mc_change_wallet_passphrase}()},
+\code{\link{mc_dump_privkey}()},
+\code{\link{mc_dump_wallet}()},
+\code{\link{mc_encrypt_wallet}()},
+\code{\link{mc_get_wallet_info}()},
+\code{\link{mc_import_privkey}()},
+\code{\link{mc_import_wallet}()},
+\code{\link{mc_lock_wallet}()},
+\code{\link{mc_unlock_wallet}()}
+}
+\concept{MultiChain Wallet Management}

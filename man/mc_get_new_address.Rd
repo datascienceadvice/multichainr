@@ -7,8 +7,32 @@
 mc_get_new_address(conn)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+}
+\value{
+A character string with the newly created address.
 }
 \description{
-Create new wallet address
+Generates a new address (with a private key) and adds it to the node's wallet.
 }
+\examples{
+\dontrun{
+new_addr <- mc_get_new_address(conn)
+print(new_addr)
+}
+
+}
+\seealso{
+\code{\link{mc_create_keypairs}} to generate key pairs not stored
+in the wallet.
+
+Other address operations: 
+\code{\link{mc_add_multisig_address}()},
+\code{\link{mc_create_keypairs}()},
+\code{\link{mc_create_multisig}()},
+\code{\link{mc_get_addresses}()},
+\code{\link{mc_import_address}()},
+\code{\link{mc_list_addresses}()},
+\code{\link{mc_validate_address}()}
+}
+\concept{address operations}

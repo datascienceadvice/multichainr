@@ -7,18 +7,42 @@
 mc_publish_from(conn, from_address, stream, keys, data, options = NULL)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{from_address}{Address used to publish the item.}
+\item{from_address}{Character string. Address that will publish the item.}
 
-\item{stream}{Stream name, ref or txid.}
+\item{stream}{Character string. Stream name, reference, or txid.}
 
 \item{keys}{A single key or vector of keys.}
 
-\item{data}{Data string or list.}
+\item{data}{Data to publish (string or list).}
 
-\item{options}{Optional "offchain" string.}
+\item{options}{Optional \code{"offchain"} string.}
+}
+\value{
+A character string containing the transaction ID.
 }
 \description{
-Publish an item to a stream from a specific address
+Similar to \code{\link{mc_publish}}, but specifies the publishing address.
 }
+\examples{
+\dontrun{
+mc_publish_from(conn, "1A...", "mystream", "key", list(text = "data"))
+}
+
+}
+\seealso{
+\code{\link{mc_publish}}
+
+Other stream items: 
+\code{\link{mc_get_stream_item}()},
+\code{\link{mc_list_stream_block_items}()},
+\code{\link{mc_list_stream_items}()},
+\code{\link{mc_list_stream_key_items}()},
+\code{\link{mc_list_stream_publisher_items}()},
+\code{\link{mc_list_stream_tx_items}()},
+\code{\link{mc_publish}()},
+\code{\link{mc_publish_multi}()},
+\code{\link{mc_publish_multi_from}()}
+}
+\concept{stream items}

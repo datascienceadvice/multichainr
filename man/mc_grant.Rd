@@ -7,12 +7,40 @@
 mc_grant(conn, address, permissions)
 }
 \arguments{
-\item{conn}{A multichain_conn object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{address}{Target wallet address.}
+\item{address}{Character string. The address that will receive the permissions.}
 
-\item{permissions}{Permission string (e.g., "connect,send,receive").}
+\item{permissions}{Character string. A comma‑separated list of permissions
+to grant, e.g., \code{"connect,send,receive"}.}
+}
+\value{
+A character string containing the transaction ID (txid) of the grant.
 }
 \description{
-Grant permissions to an address
+Grants one or more permissions to a wallet address. Permissions control what
+actions an address can perform on the blockchain (e.g., connect, send, receive,
+mine, admin, etc.).
 }
+\examples{
+\dontrun{
+# Grant connect and send permissions to an address
+txid <- mc_grant(conn, "1A...", "connect,send")
+}
+
+}
+\seealso{
+\code{\link{mc_grant_from}} to specify the grantor,
+\code{\link{mc_revoke}} to revoke permissions,
+\code{\link{mc_list_permissions}} to view permissions.
+
+Other permissions: 
+\code{\link{mc_grant_from}()},
+\code{\link{mc_grant_with_data}()},
+\code{\link{mc_grant_with_data_from}()},
+\code{\link{mc_list_permissions}()},
+\code{\link{mc_revoke}()},
+\code{\link{mc_revoke_from}()},
+\code{\link{mc_verify_permission}()}
+}
+\concept{permissions}

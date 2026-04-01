@@ -7,14 +7,41 @@
 mc_pause(conn, tasks)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{tasks}{A character vector or comma-separated string of tasks
-(mining, incoming, offchain).}
+\item{tasks}{A character vector or a comma‑separated string of tasks to pause.
+Valid task names are:
+\itemize{
+\item \code{"mining"} – stop mining new blocks.
+\item \code{"incoming"} – stop accepting incoming connections.
+\item \code{"offchain"} – stop processing off‑chain data.
+}
+Multiple tasks can be specified, e.g., \code{c("mining", "incoming")}.}
 }
 \value{
-NULL on success.
+Invisibly returns \code{NULL} on success.
 }
 \description{
-Pause specified node tasks
+Temporarily suspends certain node operations without shutting down the node.
+Tasks that can be paused include mining, incoming connections, and off‑chain
+data handling.
 }
+\examples{
+\dontrun{
+# Pause mining only
+mc_pause(conn, "mining")
+
+# Pause both incoming connections and mining
+mc_pause(conn, c("incoming", "mining"))
+}
+
+}
+\seealso{
+\code{\link{mc_resume}} to restart paused tasks,
+\code{\link{mc_clear_mempool}} for use after pausing.
+
+Other node control: 
+\code{\link{mc_resume}()},
+\code{\link{mc_set_last_block}()}
+}
+\concept{node control}

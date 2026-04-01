@@ -6,6 +6,34 @@
 \usage{
 mc_list_miners(conn, verbose = FALSE)
 }
-\description{
-List miners and their status
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{verbose}{Logical. If \code{TRUE}, returns additional details about
+each miner (e.g., mining status, last block mined). Default is \code{FALSE}.}
 }
+\value{
+A data frame (via \code{rpc_res_to_df}) with miner information.
+Typical columns: \code{address}, \code{status}, \code{lastblocktime}, etc.
+}
+\description{
+Returns information about nodes that are mining (or have mining permission)
+on the blockchain.
+}
+\examples{
+\dontrun{
+miners <- mc_list_miners(conn)
+print(miners)
+}
+
+}
+\seealso{
+Other blockchain information: 
+\code{\link{mc_get_block}()},
+\code{\link{mc_get_block_hash}()},
+\code{\link{mc_get_blockchain_info}()},
+\code{\link{mc_get_chain_totals}()},
+\code{\link{mc_get_last_block_info}()},
+\code{\link{mc_list_blocks}()}
+}
+\concept{blockchain information}

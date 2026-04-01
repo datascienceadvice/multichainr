@@ -6,6 +6,26 @@
 \usage{
 mc_list_upgrades(conn, upgrades = "*")
 }
-\description{
-List upgrades
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{upgrades}{Character vector of upgrade names/IDs, or \code{"*"} (default)
+for all upgrades.}
 }
+\value{
+A data frame (via \code{rpc_res_to_df}) with upgrade information.
+}
+\description{
+Returns a list of upgrade proposals on the blockchain.
+}
+\examples{
+\dontrun{
+upgrades <- mc_list_upgrades(conn)
+}
+
+}
+\seealso{
+Other upgrades: 
+\code{\link{mc_create_upgrade}()}
+}
+\concept{upgrades}

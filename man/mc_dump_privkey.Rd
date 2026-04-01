@@ -7,13 +7,26 @@
 mc_dump_privkey(conn, address)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object to the MultiChain node.}
 
-\item{address}{The wallet address.}
+\item{address}{Character. The wallet address for which to retrieve the private key.}
 }
 \value{
-The private key in WIF format.
+Character. The private key in Wallet Import Format (WIF).
 }
 \description{
 Dump a private key for an address
 }
+\seealso{
+Other MultiChain Wallet Management: 
+\code{\link{mc_backup_wallet}()},
+\code{\link{mc_change_wallet_passphrase}()},
+\code{\link{mc_dump_wallet}()},
+\code{\link{mc_encrypt_wallet}()},
+\code{\link{mc_get_wallet_info}()},
+\code{\link{mc_import_privkey}()},
+\code{\link{mc_import_wallet}()},
+\code{\link{mc_lock_wallet}()},
+\code{\link{mc_unlock_wallet}()}
+}
+\concept{MultiChain Wallet Management}

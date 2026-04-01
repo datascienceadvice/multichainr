@@ -6,6 +6,38 @@
 \usage{
 mc_create_variable_from(conn, from_address, name, open = TRUE, value = NULL)
 }
-\description{
-Create a variable from a specific address
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{from_address}{Character string. Address that pays for and creates the variable.}
+
+\item{name}{Character string. Variable name.}
+
+\item{open}{Logical. If \code{TRUE}, anyone with \code{create} permissions
+can edit the variable.}
+
+\item{value}{Optional. Initial JSON value.}
 }
+\value{
+A list containing the result of the RPC call (usually transaction ID).
+}
+\description{
+Creates a global variable, specifying the address that issues the transaction.
+}
+\examples{
+\dontrun{
+mc_create_variable_from(conn, "1A...", "myvar", open = TRUE, value = 42)
+}
+
+}
+\seealso{
+Other variables: 
+\code{\link{mc_create_variable}()},
+\code{\link{mc_get_variable_history}()},
+\code{\link{mc_get_variable_info}()},
+\code{\link{mc_get_variable_value}()},
+\code{\link{mc_list_variables}()},
+\code{\link{mc_set_variable_value}()},
+\code{\link{mc_set_variable_value_from}()}
+}
+\concept{variables}

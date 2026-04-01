@@ -7,14 +7,44 @@
 mc_send_with_data(conn, address, amounts, data)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{address}{Recipient address.}
+\item{address}{Character string. Recipient address.}
 
-\item{amounts}{Numeric (native) or list of assets.}
+\item{amounts}{Either a numeric value (native) or a named list of assets.}
 
-\item{data}{Data string or list (will be converted to hex).}
+\item{data}{Data to embed. Can be a character string (will be hex‑encoded),
+a list (will be converted to JSON then hex), or raw binary (not directly).
+The function automatically converts lists to JSON and then to hex.}
+}
+\value{
+A character string containing the transaction ID.
 }
 \description{
-Send payment with inline metadata
+Sends a transaction that includes arbitrary data (metadata) attached to the
+output. The data can be text, JSON, or any binary data (hex‑encoded).
+This is useful for storing small amounts of information on the blockchain.
 }
+\examples{
+\dontrun{
+# Send with a text note
+txid <- mc_send_with_data(conn, "1A...", 0.1, "Hello, blockchain!")
+
+# Send with structured JSON metadata
+metadata <- list(id = 123, action = "transfer", tag = "payment")
+txid <- mc_send_with_data(conn, "1A...", list(myasset = 10), metadata)
+}
+
+}
+\seealso{
+\code{\link{mc_send_with_data_from}} to specify sender,
+\code{\link{mc_send}} for simple payments.
+
+Other transactions: 
+\code{\link{mc_send}()},
+\code{\link{mc_send_asset}()},
+\code{\link{mc_send_asset_from}()},
+\code{\link{mc_send_from}()},
+\code{\link{mc_send_with_data_from}()}
+}
+\concept{transactions}

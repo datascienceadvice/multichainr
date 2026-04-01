@@ -2,19 +2,29 @@
 % Please edit documentation in R/transactions.R
 \name{mc_get_address_balances}
 \alias{mc_get_address_balances}
-\title{Get asset balances for an address}
+\title{Get asset balances for a specific address}
 \usage{
 mc_get_address_balances(conn, address, minconf = 1, include_locked = FALSE)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object to the MultiChain node.}
 
-\item{address}{Wallet address.}
+\item{address}{Character. The MultiChain address to query.}
 
-\item{minconf}{Minimum number of confirmations (default 1).}
+\item{minconf}{Integer. The minimum number of confirmations (default \code{1}).}
 
-\item{include_locked}{Include unspent outputs which have been locked (default FALSE).}
+\item{include_locked}{Logical. If \code{TRUE}, includes unspent outputs that have been locked (default \code{FALSE}).}
+}
+\value{
+A data frame containing asset names, amounts, and other balance details.
 }
 \description{
-Get asset balances for an address
+Returns a list of all asset balances for a given address in the node's wallet.
 }
+\seealso{
+Other MultiChain Balances: 
+\code{\link{mc_get_multi_balances}()},
+\code{\link{mc_get_token_balances}()},
+\code{\link{mc_get_total_balances}()}
+}
+\concept{MultiChain Balances}

@@ -4,9 +4,10 @@ test_that("mc_rpc handles successful response correctly", {
   fake_result <- list(
     result = list(chain_name = "testchain", version = "2.0"),
     error = NULL,
-    id = 1)
+    id = 1
+  )
   fake_body_raw <- charToRaw(as.character(jsonlite::toJSON(fake_result, null = "null", auto_unbox = TRUE)))
-
+  
   httr2::with_mocked_responses(
     function(req) {
       httr2::response(

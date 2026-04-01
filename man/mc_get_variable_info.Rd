@@ -6,6 +6,34 @@
 \usage{
 mc_get_variable_info(conn, variable, verbose = FALSE)
 }
-\description{
-Get information about a variable
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{variable}{Character string. Variable name or transaction ID.}
+
+\item{verbose}{Logical. If \code{TRUE}, includes additional details.}
 }
+\value{
+A list with variable information.
+}
+\description{
+Returns metadata about a variable, such as creator, open status, creation time.
+}
+\examples{
+\dontrun{
+info <- mc_get_variable_info(conn, "myvar")
+print(info$open)
+}
+
+}
+\seealso{
+Other variables: 
+\code{\link{mc_create_variable}()},
+\code{\link{mc_create_variable_from}()},
+\code{\link{mc_get_variable_history}()},
+\code{\link{mc_get_variable_value}()},
+\code{\link{mc_list_variables}()},
+\code{\link{mc_set_variable_value}()},
+\code{\link{mc_set_variable_value_from}()}
+}
+\concept{variables}

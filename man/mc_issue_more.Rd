@@ -14,18 +14,42 @@ mc_issue_more(
 )
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{address}{Recipient address.}
+\item{address}{Character string. Address that will receive the newly issued
+units.}
 
-\item{asset}{Asset name, ref or txid.}
+\item{asset}{Character string. Asset name, reference, or issuance transaction ID.}
 
-\item{quantity}{Amount to issue.}
+\item{quantity}{Numeric. Additional quantity to issue.}
 
-\item{native_amount}{Optional native currency amount.}
+\item{native_amount}{Numeric (optional). Amount of native currency to send.}
 
-\item{custom_fields}{Optional list of custom fields.}
+\item{custom_fields}{List (optional). Custom fields (overwrites existing ones
+if present).}
+}
+\value{
+A character string containing the transaction ID.
 }
 \description{
-Issue more of an existing fungible asset
+Increases the supply of a previously issued fungible asset. The asset must
+be open for further issuances (i.e., its \code{open} property must be
+\code{TRUE}).
 }
+\examples{
+\dontrun{
+# Increase supply of "mycoin" by 500 units
+txid <- mc_issue_more(conn, "1A...", "mycoin", quantity = 500)
+}
+
+}
+\seealso{
+\code{\link{mc_issue}} for initial issuance,
+\code{\link{mc_issue_more_from}} to issue from a specific address.
+
+Other asset issuance: 
+\code{\link{mc_issue}()},
+\code{\link{mc_issue_from}()},
+\code{\link{mc_issue_more_from}()}
+}
+\concept{asset issuance}

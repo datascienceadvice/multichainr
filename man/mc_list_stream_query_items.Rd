@@ -7,8 +7,29 @@
 mc_list_stream_query_items(conn, stream, query, verbose = FALSE)
 }
 \arguments{
-\item{query}{List like list(keys = c("k1"), publishers = c("addr1"))}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{stream}{Character string. Stream name, reference, or txid.}
+
+\item{query}{A list with optional fields:
+\itemize{
+\item \code{keys} – vector of keys.
+\item \code{publishers} – vector of publisher addresses.
+}}
+
+\item{verbose}{Logical. If \code{TRUE}, returns detailed information.}
+}
+\value{
+A data frame (via \code{rpc_res_to_df}) with matching items.
 }
 \description{
-Query items by matching keys and publishers
+Returns items that match a combination of key and publisher filters.
 }
+\examples{
+\dontrun{
+query <- list(keys = c("key1", "key2"), publishers = c("1A..."))
+items <- mc_list_stream_query_items(conn, "mystream", query)
+}
+
+}
+\concept{stream queries}

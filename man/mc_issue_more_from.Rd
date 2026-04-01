@@ -14,6 +14,44 @@ mc_issue_more_from(
   custom_fields = NULL
 )
 }
-\description{
-Issue more of an asset from specific address
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{from_address}{Character string. Address that will pay for and issue
+the additional units.}
+
+\item{to_address}{Character string. Recipient address.}
+
+\item{asset}{Character string. Asset name, reference, or issuance transaction ID.}
+
+\item{quantity}{Numeric. Additional quantity to issue.}
+
+\item{native_amount}{Numeric (optional). Amount of native currency to send.}
+
+\item{custom_fields}{List (optional). Custom fields (overwrites existing ones
+if present).}
 }
+\value{
+A character string containing the transaction ID.
+}
+\description{
+Increases the supply of a fungible asset, specifying the address that pays
+for and initiates the transaction.
+}
+\examples{
+\dontrun{
+# Issue more from a specific address to another address
+txid <- mc_issue_more_from(conn, "1A...", "1B...", "mycoin", quantity = 100)
+}
+
+}
+\seealso{
+\code{\link{mc_issue_more}} for simpler usage,
+\code{\link{mc_issue_from}} for initial issuance.
+
+Other asset issuance: 
+\code{\link{mc_issue}()},
+\code{\link{mc_issue_from}()},
+\code{\link{mc_issue_more}()}
+}
+\concept{asset issuance}

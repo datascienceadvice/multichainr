@@ -7,12 +7,37 @@
 mc_revoke(conn, address, permissions)
 }
 \arguments{
-\item{conn}{A multichain_conn object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{address}{Target wallet address.}
+\item{address}{Character string. The address from which permissions are revoked.}
 
-\item{permissions}{Permission string to revoke.}
+\item{permissions}{Character string. Comma‑separated list of permissions to revoke.}
+}
+\value{
+A character string containing the transaction ID.
 }
 \description{
-Revoke permissions from an address
+Removes one or more permissions from a wallet address. The revoking address
+must have admin rights.
 }
+\examples{
+\dontrun{
+# Revoke send and receive permissions
+txid <- mc_revoke(conn, "1A...", "send,receive")
+}
+
+}
+\seealso{
+\code{\link{mc_revoke_from}} to specify the revoker,
+\code{\link{mc_grant}} for granting.
+
+Other permissions: 
+\code{\link{mc_grant}()},
+\code{\link{mc_grant_from}()},
+\code{\link{mc_grant_with_data}()},
+\code{\link{mc_grant_with_data_from}()},
+\code{\link{mc_list_permissions}()},
+\code{\link{mc_revoke_from}()},
+\code{\link{mc_verify_permission}()}
+}
+\concept{permissions}

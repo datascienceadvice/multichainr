@@ -7,12 +7,32 @@
 mc_get_stream_info(conn, stream, verbose = FALSE)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{stream}{Stream name, ref or creation txid.}
+\item{stream}{Character string. Stream name, reference, or creation transaction ID.}
 
-\item{verbose}{If TRUE, includes creator information.}
+\item{verbose}{Logical. If \code{TRUE}, includes the creator address.}
+}
+\value{
+A list with stream details (name, ref, open, txid, etc.).
 }
 \description{
-Get information about a specific stream
+Returns metadata about a stream, including its creation transaction,
+open/restricted status, and optionally the creator address.
 }
+\examples{
+\dontrun{
+info <- mc_get_stream_info(conn, "mystream")
+print(info$open)
+}
+
+}
+\seealso{
+\code{\link{mc_list_streams}} to list all streams.
+
+Other streams: 
+\code{\link{mc_create_stream}()},
+\code{\link{mc_create_stream_from}()},
+\code{\link{mc_list_streams}()}
+}
+\concept{streams}

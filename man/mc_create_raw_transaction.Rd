@@ -7,16 +7,57 @@
 mc_create_raw_transaction(conn, inputs, outputs, data = list(), action = "")
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{inputs}{List of lists, each containing "txid" and "vout".}
+\item{inputs}{A list of input objects, each containing:
+\itemize{
+\item \code{txid} – Transaction ID of the UTXO.
+\item \code{vout} – Output index (vout) of the UTXO.
+}}
 
-\item{outputs}{List/object mapping addresses to amounts.}
+\item{outputs}{A named list (or list of named lists) mapping addresses to
+amounts. Example: \code{list("address1" = 0.5, "address2" = list(asset = 10))}.}
 
-\item{data}{Optional array of metadata (strings or lists).}
+\item{data}{Optional array of metadata. Each element can be a string or a list
+(which will be converted to JSON then hex). The data is embedded in the
+transaction outputs.}
 
-\item{action}{Optional action: "lock", "sign", "lock,sign", or "send".}
+\item{action}{Optional action string: \code{"lock"} (lock inputs),
+\code{"sign"} (sign the transaction), \code{"lock,sign"} (both), or
+\code{"send"} (sign and send). Default is \code{""} (just create).}
+}
+\value{
+A character string containing the raw transaction hex (if no action)
+or a list with \code{hex} and \code{complete} if action includes signing.
 }
 \description{
-Create a raw transaction
+Creates a raw (unsigned) transaction from a list of inputs and outputs.
+This is the first step in building a custom transaction before signing and
+broadcasting.
 }
+\examples{
+\dontrun{
+# Build a simple transaction
+inputs <- list(list(txid = "abc...", vout = 0))
+outputs <- list("1A..." = 1.0)
+tx_hex <- mc_create_raw_transaction(conn, inputs, outputs)
+
+# With metadata
+tx_hex <- mc_create_raw_transaction(conn, inputs, outputs,
+                                    data = list("Hello", list(key = "value")))
+}
+
+}
+\seealso{
+\code{\link{mc_sign_raw_transaction}}, \code{\link{mc_send_raw_transaction}}
+
+Other raw transactions: 
+\code{\link{mc_append_raw_change}()},
+\code{\link{mc_append_raw_data}()},
+\code{\link{mc_append_raw_transaction}()},
+\code{\link{mc_create_raw_send_from}()},
+\code{\link{mc_decode_raw_transaction}()},
+\code{\link{mc_send_raw_transaction}()},
+\code{\link{mc_sign_raw_transaction}()}
+}
+\concept{raw transactions}

@@ -13,16 +13,36 @@ mc_create_stream_from(
 )
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{from_address}{Address used to create the stream.}
+\item{from_address}{Character string. The address that will create the stream.}
 
-\item{name}{Stream name.}
+\item{name}{Character string. Stream name.}
 
-\item{open}{Boolean or list of parameters.}
+\item{open}{Either logical or a list of parameters (see \code{\link{mc_create_stream}}).}
 
 \item{custom_fields}{Optional list of custom fields.}
 }
-\description{
-Create a new stream from a specific address
+\value{
+A character string containing the transaction ID.
 }
+\description{
+Creates a stream from a specified address (the address pays for the transaction).
+This is useful when the node has multiple addresses and you want to control
+which address appears as the creator.
+}
+\examples{
+\dontrun{
+txid <- mc_create_stream_from(conn, "1A...", "mystream", open = TRUE)
+}
+
+}
+\seealso{
+\code{\link{mc_create_stream}}
+
+Other streams: 
+\code{\link{mc_create_stream}()},
+\code{\link{mc_get_stream_info}()},
+\code{\link{mc_list_streams}()}
+}
+\concept{streams}

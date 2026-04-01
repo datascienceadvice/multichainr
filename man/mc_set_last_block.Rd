@@ -7,13 +7,37 @@
 mc_set_last_block(conn, hash_or_height)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{hash_or_height}{Block hash or height to rewind to.}
+\item{hash_or_height}{Either a block hash (character string) or a
+block height (integer) to rewind to.}
 }
 \value{
-The hash of the last block after the change.
+Character string. The hash of the last block after the rewind.
 }
 \description{
-Note: Must be called after mc_pause(conn, "incoming,mining").
+Moves the node's active chain to a previous block, effectively
+rolling back the blockchain state. This is a powerful operation
+typically used for testing or recovery. The node must be paused
+with \code{mc_pause(conn, "incoming,mining")} before calling.
 }
+\examples{
+\dontrun{
+# Pause the node first
+mc_pause(conn, "incoming,mining")
+# Rewind to block height 100
+last_hash <- mc_set_last_block(conn, 100)
+# Resume after rewind
+mc_resume(conn, "incoming,mining")
+}
+
+}
+\seealso{
+\code{\link{mc_pause}}, \code{\link{mc_resume}},
+\code{\link{mc_get_block}} to inspect blocks.
+
+Other node control: 
+\code{\link{mc_pause}()},
+\code{\link{mc_resume}()}
+}
+\concept{node control}

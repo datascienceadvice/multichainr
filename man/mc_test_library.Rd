@@ -6,6 +6,45 @@
 \usage{
 mc_test_library(conn, library = NULL, updatename = NULL, js_code = NULL)
 }
-\description{
-Manage testing of libraries and updates locally
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{library}{Optional character string. Library name or transaction ID.}
+
+\item{updatename}{Optional character string. Update name (if testing an update).}
+
+\item{js_code}{Optional character string. JavaScript code (if testing a new library).}
 }
+\value{
+The result of the test (e.g., compiled code, validation output).
+}
+\description{
+Tests a library's code or a specific update without permanently creating it.
+The behaviour depends on the arguments:
+\itemize{
+\item If only \code{js_code} is provided, tests that code as a new library.
+\item If \code{library} and optionally \code{updatename} are given, tests
+the existing library's code (or a specific update).
+}
+}
+\examples{
+\dontrun{
+# Test a new library
+mc_test_library(conn, js_code = "function add(a, b) { return a + b; }")
+
+# Test an existing library's active code
+mc_test_library(conn, library = "math")
+}
+
+}
+\seealso{
+\code{\link{mc_create_library}}, \code{\link{mc_add_library_update}}
+
+Other libraries: 
+\code{\link{mc_add_library_update}()},
+\code{\link{mc_add_library_update_from}()},
+\code{\link{mc_create_library}()},
+\code{\link{mc_get_library_code}()},
+\code{\link{mc_list_libraries}()}
+}
+\concept{libraries}

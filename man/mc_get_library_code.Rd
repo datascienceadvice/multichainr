@@ -7,8 +7,36 @@
 mc_get_library_code(conn, library, updatename = NULL)
 }
 \arguments{
-\item{updatename}{Optional. If omitted, returns active code. Use "" for initial code.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{library}{Character string. Library name or transaction ID.}
+
+\item{updatename}{Optional character string. Update name. If omitted,
+returns the active code. Use \code{""} to retrieve the initial code.}
+}
+\value{
+A list containing the library code and metadata.
 }
 \description{
-Get JavaScript code for a library
+Retrieves the JavaScript code of a library. By default, returns the active
+code. If \code{updatename} is provided, returns the code of that specific
+update (or the initial code if \code{updatename = ""}).
 }
+\examples{
+\dontrun{
+active_code <- mc_get_library_code(conn, "math")
+initial_code <- mc_get_library_code(conn, "math", updatename = "")
+}
+
+}
+\seealso{
+\code{\link{mc_get_filter_code}} for filters.
+
+Other libraries: 
+\code{\link{mc_add_library_update}()},
+\code{\link{mc_add_library_update_from}()},
+\code{\link{mc_create_library}()},
+\code{\link{mc_list_libraries}()},
+\code{\link{mc_test_library}()}
+}
+\concept{libraries}

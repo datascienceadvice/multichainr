@@ -6,6 +6,38 @@
 \usage{
 mc_list_stream_tx_items(conn, stream, txid, verbose = FALSE)
 }
-\description{
-List items in stream within a given transaction ID
+\arguments{
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
+
+\item{stream}{Character string. Stream name, reference, or txid.}
+
+\item{txid}{Character string. Transaction ID.}
+
+\item{verbose}{Logical. If \code{TRUE}, returns detailed information.}
 }
+\value{
+A data frame (via \code{rpc_res_to_df}) with items.
+}
+\description{
+Returns all stream items that are part of a specific transaction (e.g., when
+multiple items were published in a single transaction).
+}
+\examples{
+\dontrun{
+items <- mc_list_stream_tx_items(conn, "mystream", "txid...")
+}
+
+}
+\seealso{
+Other stream items: 
+\code{\link{mc_get_stream_item}()},
+\code{\link{mc_list_stream_block_items}()},
+\code{\link{mc_list_stream_items}()},
+\code{\link{mc_list_stream_key_items}()},
+\code{\link{mc_list_stream_publisher_items}()},
+\code{\link{mc_publish}()},
+\code{\link{mc_publish_from}()},
+\code{\link{mc_publish_multi}()},
+\code{\link{mc_publish_multi_from}()}
+}
+\concept{stream items}

@@ -7,17 +7,44 @@
 mc_create_raw_exchange(conn, txid, vout, amounts)
 }
 \arguments{
-\item{conn}{Connection object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{txid}{Transaction ID from preparelockunspent.}
+\item{txid}{Character string. Transaction ID of the locked output (obtained
+via \code{\link{mc_prepare_lock_unspent}}).}
 
-\item{vout}{Vout from preparelockunspent.}
+\item{vout}{Integer. Output index (vout) of the locked output.}
 
-\item{amounts}{Assets/currency asked for in exchange.}
+\item{amounts}{A list specifying the assets or native currency asked for
+in exchange. Format: \code{list(asset_name = quantity, ...)} or a numeric
+value for native currency.}
 }
 \value{
-A raw partial transaction in hexadecimal.
+Character string. Raw partial transaction in hexadecimal.
 }
 \description{
-Create a new atomic exchange transaction
+Initialises a partial atomic exchange transaction by specifying the first
+locked output and the desired assets/currency in return. This is the first
+step in constructing a multi‑party atomic exchange.
 }
+\examples{
+\dontrun{
+# First, lock some output
+locked <- mc_prepare_lock_unspent(conn, amounts = list(myasset = 10))
+# Create the exchange offer
+offer <- mc_create_raw_exchange(conn, locked$txid, locked$vout,
+                                amounts = list(otherasset = 5))
+}
+
+}
+\seealso{
+\code{\link{mc_prepare_lock_unspent}}, \code{\link{mc_append_raw_exchange}}
+
+Other atomic exchange: 
+\code{\link{mc_append_raw_exchange}()},
+\code{\link{mc_complete_raw_exchange}()},
+\code{\link{mc_decode_raw_exchange}()},
+\code{\link{mc_disable_raw_transaction}()},
+\code{\link{mc_prepare_lock_unspent}()},
+\code{\link{mc_prepare_lock_unspent_from}()}
+}
+\concept{atomic exchange}

@@ -2,15 +2,45 @@
 % Please edit documentation in R/node_local.R
 \name{mc_get_config}
 \alias{mc_get_config}
-\title{Get MultiChain config}
+\title{Get MultiChain configuration}
 \usage{
 mc_get_config(chain_name, base_dir = NULL)
 }
 \arguments{
-\item{chain_name}{Name of the chain.}
+\item{chain_name}{Character string. Name of the MultiChain blockchain.}
 
-\item{base_dir}{Optional base directory path (for testing).}
+\item{base_dir}{Optional character string. Base directory where MultiChain
+stores blockchain data. If \code{NULL} (default), the platform‑specific default
+is used:
+\itemize{
+\item Windows: \verb{\%APPDATA\%/MultiChain}
+\item macOS: \verb{~/Library/Application Support/MultiChain}
+\item Linux/other: \verb{~/.multichain}
+}}
+}
+\value{
+A list with four components:
+\item{user}{RPC username (from \code{multichain.conf}).}
+\item{password}{RPC password (from \code{multichain.conf}).}
+\item{port}{RPC port number (integer).}
+\item{host}{Always \code{"127.0.0.1"} (hard‑coded).}
 }
 \description{
-Get MultiChain config
+Reads the configuration parameters (RPC user, password, port) for a given
+blockchain from the MultiChain data directory. The function automatically
+determines the platform‑specific base directory, but a custom base can be
+supplied for testing.
 }
+\examples{
+\dontrun{
+# Get configuration for a chain called "my_chain"
+config <- mc_get_config("my_chain")
+print(config)
+}
+
+}
+\seealso{
+\code{\link{mc_connect}} to create a connection object using the
+returned configuration.
+}
+\concept{configuration}

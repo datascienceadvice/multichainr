@@ -7,18 +7,53 @@
 mc_set_runtime_param(conn, name, value)
 }
 \arguments{
-\item{conn}{A multichain_conn object.}
+\item{conn}{A connection object created by \code{\link{mc_connect}}.}
 
-\item{name}{The name of the parameter to change. Supported: acceptfiltertimeout,
-autosubscribe, bantx, handshakelocal, hideknownopdrops, lockadminminerounds,
-lockblock, lockinlinemetadata, maxshowndata, maxqueryscanitems,
-mineemptyrounds, miningrequirespeers, miningturnover, sendfiltertimeout.}
+\item{name}{Character string. The name of the parameter to change.
+Must be one of:
+\describe{
+\item{acceptfiltertimeout}{Timeout for filter acceptance.}
+\item{autosubscribe}{Automatically subscribe to streams.}
+\item{bantx}{Ban transactions from the mempool.}
+\item{handshakelocal}{Local handshake behaviour.}
+\item{hideknownopdrops}{Hide known opdrops.}
+\item{lockadminminerounds}{Lock admin mining rounds.}
+\item{lockblock}{Lock block creation.}
+\item{lockinlinemetadata}{Lock inline metadata.}
+\item{maxshowndata}{Maximum shown data size.}
+\item{maxqueryscanitems}{Maximum items to scan in queries.}
+\item{mineemptyrounds}{Number of empty mining rounds.}
+\item{miningrequirespeers}{Require peers for mining.}
+\item{miningturnover}{Mining turnover.}
+\item{sendfiltertimeout}{Timeout for sending filters.}
+}}
 
-\item{value}{The new value for the parameter. Can be boolean, numeric, or string.}
+\item{value}{The new value for the parameter. Type depends on the parameter:
+logical, numeric, or character.}
 }
 \value{
-NULL on success.
+Invisibly returns \code{NULL} on success; throws an error if the
+parameter name is invalid or the value is inappropriate.
 }
 \description{
 Changes a runtime parameter of the node without requiring a restart.
+Only a predefined set of parameters can be modified.
 }
+\examples{
+\dontrun{
+# Enable mining
+mc_set_runtime_param(conn, "mining", TRUE)
+
+# Set maximum connections to 50
+mc_set_runtime_param(conn, "maxconnections", 50)
+}
+
+}
+\seealso{
+\code{\link{mc_get_runtime_params}} to inspect current settings.
+
+Other node configuration: 
+\code{\link{mc_get_blockchain_params}()},
+\code{\link{mc_get_runtime_params}()}
+}
+\concept{node configuration}

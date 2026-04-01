@@ -2,19 +2,21 @@
 % Please edit documentation in R/streams.R
 \name{mc_publish}
 \alias{mc_publish}
-\title{Publish data to a stream}
+\title{Publish an item to a stream}
 \usage{
-mc_publish(conn, stream, key, data)
+mc_publish(conn, stream, keys, data, options = NULL)
 }
 \arguments{
 \item{conn}{Connection object.}
 
-\item{stream}{Stream name.}
+\item{stream}{Stream name, ref or txid.}
 
-\item{key}{Item key.}
+\item{keys}{A single key (string) or a vector of keys.}
 
-\item{data}{Data string or list (will be converted to JSON).}
+\item{data}{Data to publish. Can be a hex string, or a list like list(text = "...") or list(json = ...).}
+
+\item{options}{Optional. Use "offchain" to publish as an off-chain item.}
 }
 \description{
-Publish data to a stream
+Publish an item to a stream
 }

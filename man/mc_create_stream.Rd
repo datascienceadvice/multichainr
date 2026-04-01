@@ -2,17 +2,22 @@
 % Please edit documentation in R/streams.R
 \name{mc_create_stream}
 \alias{mc_create_stream}
-\title{Create new stream}
+\title{Create a new stream}
 \usage{
-mc_create_stream(conn, name, open = TRUE)
+mc_create_stream(conn, name, open = TRUE, custom_fields = NULL)
 }
 \arguments{
 \item{conn}{Connection object.}
 
 \item{name}{Stream name.}
 
-\item{open}{Boolean. If TRUE, anyone with "send" metadata permissions can publish.}
+\item{open}{Boolean (TRUE for open stream) or a list of restrictions (e.g., list(restrict = "write")).}
+
+\item{custom_fields}{Optional list of custom fields.}
+}
+\value{
+The txid of the stream creation.
 }
 \description{
-Create new stream
+Create a new stream
 }

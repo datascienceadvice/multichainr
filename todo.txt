@@ -1,0 +1,25 @@
+https://www.multichain.com/developers/json-rpc-api/
+
+General utilities +
+Managing wallet addresses +
+Working with non-wallet addresses +
+Permissions management +
+Asset management +
+Querying wallet balances and transactions -
+Sending one-way payments -
+Atomic exchange transactions -
+Stream management -
+Publishing stream items -
+Managing stream and asset subscriptions -
+Querying subscribed assets -
+Querying subscribed streams -
+Managing wallet unspent outputs -
+Working with raw transactions -
+Peer-to-peer connections -
+Messaging signing and verification -
+Querying the blockchain -
+Binary cache -
+Advanced wallet control -
+Smart filters and upgrades -
+Libraries and variables -
+Advanced node control -

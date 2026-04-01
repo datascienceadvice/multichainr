@@ -2,17 +2,17 @@
 % Please edit documentation in R/streams.R
 \name{mc_list_stream_items}
 \alias{mc_list_stream_items}
-\title{List items in a stream}
+\title{List items in a stream (Enhanced version)}
 \usage{
-mc_list_stream_items(conn, stream, count = 10)
-}
-\arguments{
-\item{conn}{Connection object.}
-
-\item{stream}{Stream name.}
-
-\item{count}{Number of items to retrieve.}
+mc_list_stream_items(
+  conn,
+  stream,
+  verbose = FALSE,
+  count = 10,
+  start = NULL,
+  local_ordering = FALSE
+)
 }
 \description{
-List items in a stream
+List items in a stream (Enhanced version)
 }

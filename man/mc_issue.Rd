@@ -4,18 +4,30 @@
 \alias{mc_issue}
 \title{Issue new asset}
 \usage{
-mc_issue(conn, address, name, quantity, units = 1)
+mc_issue(
+  conn,
+  address,
+  name,
+  quantity,
+  units = 1,
+  native_amount = NULL,
+  custom_fields = NULL
+)
 }
 \arguments{
 \item{conn}{Connection object.}
 
 \item{address}{Wallet address to receive the issued assets.}
 
-\item{name}{Asset name string or list of parameters.}
+\item{name}{Asset name string or list of parameters (open, restrict, fungible, etc.).}
 
 \item{quantity}{Total amount to issue.}
 
 \item{units}{Smallest divisible unit (e.g., 0.01).}
+
+\item{native_amount}{Optional native currency amount to send.}
+
+\item{custom_fields}{Optional list of custom fields.}
 }
 \description{
 Issue new asset

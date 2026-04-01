@@ -108,7 +108,7 @@ my_address <- mc_get_addresses(conn_a)[1]
 message("Exporting key for: ", my_address)
 
 # 3. Экспортируем приватный ключ
-priv_key <- mc_export_private_key(conn_a, my_address)
+priv_key <- mc_dump_privkey(conn_a, my_address)
 message("Private key (WIF) obtained.")
 
 # --- Переходим к другому узлу ---

@@ -1,3 +1,5 @@
+conn_mock <- mc_connect(port = 8570, user = "u", password = "p")
+
 test_that("mc_list_permissions correctly parses response into data.frame", {
   conn <- mc_connect(port = 8570, user = "u", password = "p")
   
@@ -113,6 +115,61 @@ test_that("mc_revoke returns transaction ID on success", {
     {
       txid <- mc_revoke(conn, "1ABC...", "mine")
       expect_equal(txid, "1234567890abcdef...")
+    }
+  )
+})
+
+test_that("mc_verify_permission returns boolean", {
+  fake_body <- '{"result":true,"error":null,"id":1}'
+  
+  httr2::with_mocked_responses(
+    function(req) {
+      httr2::response(
+        status_code = 200,
+        headers = list("Content-Type" = "application/json"),
+        body = charToRaw(fake_body)
+      )
+    },
+    {
+      res <- mc_verify_permission(conn_mock, "1ABC", "send")
+      expect_true(res)
+    }
+  )
+})
+
+test_that("mc_grant_with_data returns txid", {
+  fake_txid <- "txid_123456"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) {
+      httr2::response(
+        status_code = 200,
+        headers = list("Content-Type" = "application/json"),
+        body = charToRaw(fake_body)
+      )
+    },
+    {
+      txid <- mc_grant_with_data(conn_mock, "1ABC", "issue", "some_metadata")
+      expect_equal(txid, fake_txid)
+    }
+  )
+})
+
+test_that("mc_grant_from handles optional block params", {
+  fake_body <- '{"result":"txid_grant_from","error":null,"id":1}'
+  
+  httr2::with_mocked_responses(
+    function(req) {
+      httr2::response(
+        status_code = 200,
+        headers = list("Content-Type" = "application/json"),
+        body = charToRaw(fake_body)
+      )
+    },
+    {
+      txid <- mc_grant_from(conn_mock, "1ADMIN", "1USER", "send", start_block = 100)
+      expect_equal(txid, "txid_grant_from")
     }
   )
 })

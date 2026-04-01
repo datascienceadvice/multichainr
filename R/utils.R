@@ -12,8 +12,9 @@ mc_rpc <- function(conn, method, params = list()) {
     stop("Argument 'conn' must be a 'multichain_conn' object.", call. = FALSE)
   }
   
-  old_scipen <- options(scipen = 99)
-  on.exit(options(old_scipen), add = TRUE)
+  old_scipen <- getOption("scipen")
+  options(scipen = 99)
+  on.exit(options(scipen = old_scipen), add = TRUE)
   
   body <- list(method = method, params = params, id = 1)
   
@@ -41,8 +42,11 @@ mc_rpc <- function(conn, method, params = list()) {
   })
   
   if (!is.null(content$error)) {
+    err_msg <- if (!is.null(content$error$message)) content$error$message else "Unknown RPC error"
+    err_code <- if (!is.null(content$error$code)) content$error$code else "unknown"
+    
     stop(sprintf("MultiChain RPC Error [%s]: %s (Code: %s)", 
-                 method, content$error$message, content$error$code %||% "unknown"), call. = FALSE)
+                 method, err_msg, err_code), call. = FALSE)
   }
   
   return(content$result)
@@ -50,28 +54,39 @@ mc_rpc <- function(conn, method, params = list()) {
 
 #' Convert RPC result list to data frame
 #' 
-#' A helper function that takes a list of lists (typically returned by MultiChain RPC 
-#' calls like `listassets` or `listpermissions`) and converts it into a flat 
-#' data frame.
-#'
-#' @param res A list of objects returned by [mc_rpc()].
-#' @return A data frame where each element of the list is a row. 
-#' Returns an empty data frame if the input is empty.
+#' @param res A list of objects or primitives returned by [mc_rpc()].
+#' @return A data frame. Returns an empty data frame if the input is empty.
 #' @keywords internal
 rpc_res_to_df <- function(res) {
   if (is.null(res) || length(res) == 0) return(data.frame())
   
   all_names <- unique(unlist(lapply(res, names)))
   
+  # case 1: list of vectors
+  if (is.null(all_names)) {
+    df <- data.frame(value = unname(unlist(res)), stringsAsFactors = FALSE)
+    return(df)
+  }
+  
+  # case 2: list of objects
   df_list <- lapply(res, function(x) {
-    missing <- setdiff(all_names, names(x))
-    x[missing] <- NA
-    x <- x[all_names]
-    x[sapply(x, is.null)] <- NA
-    as.data.frame(x, stringsAsFactors = FALSE)
+    row_list <- lapply(all_names, function(name) {
+      val <- x[[name]]
+      
+      if (is.null(val)) return(NA)
+      
+      if (is.list(val)) return(I(list(val)))
+      
+      return(val)
+    })
+    
+    names(row_list) <- all_names
+    as.data.frame(row_list, stringsAsFactors = FALSE)
   })
   
-  do.call(rbind, df_list)
+  df <- do.call(rbind, df_list)
+  rownames(df) <- NULL
+  return(df)
 }
 
 #' Decode hex string to character

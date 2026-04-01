@@ -4,10 +4,18 @@
 \alias{mc_list_assets}
 \title{List blockchain assets}
 \usage{
-mc_list_assets(conn)
+mc_list_assets(conn, assets = "*", verbose = FALSE, count = NULL, start = NULL)
 }
 \arguments{
 \item{conn}{Connection object.}
+
+\item{assets}{Asset filter (name, ref, txid, vector of names, or "*").}
+
+\item{verbose}{If TRUE, returns detailed information.}
+
+\item{count}{Number of assets to return.}
+
+\item{start}{Offset.}
 }
 \description{
 List blockchain assets

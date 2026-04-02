@@ -56,3 +56,25 @@ test_that("mc_delete_binary_cache returns NULL", {
     }
   )
 })
+
+test_that("mc_txout_to_binary_cache calls RPC with count_bytes and start_byte", {
+  fake_size <- 123
+  fake_body <- sprintf('{"result":%d,"error":null,"id":1}', fake_size)
+  
+  httr2::with_mocked_responses(
+    function(req) {
+      httr2::response(status_code = 200, body = charToRaw(fake_body))
+    },
+    {
+      res <- mc_txout_to_binary_cache(
+        conn = conn_mock,
+        identifier = "cache_id",
+        txid = "txid123",
+        vout = 0,
+        count_bytes = 100,
+        start_byte = 5
+      )
+      expect_equal(res, fake_size)
+    }
+  )
+})

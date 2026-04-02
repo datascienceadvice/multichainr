@@ -2,6 +2,7 @@ devtools::load_all()
 library(multichainr)
 
 mc_set_path("E:/multichain")
+multichainr:::mc_get_bin_path()
 
 # 1. Создаем новый чейн (только один раз)
 mc_node_init("testchain")

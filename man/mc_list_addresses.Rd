@@ -54,7 +54,7 @@ next_10  <- mc_list_addresses(conn, count = 10, start = 10)
 \seealso{
 \code{\link{mc_get_addresses}} for a simpler version.
 
-Other address operations: 
+Other addresses: 
 \code{\link{mc_add_multisig_address}()},
 \code{\link{mc_create_keypairs}()},
 \code{\link{mc_create_multisig}()},
@@ -63,4 +63,4 @@ Other address operations:
 \code{\link{mc_import_address}()},
 \code{\link{mc_validate_address}()}
 }
-\concept{address operations}
+\concept{addresses}

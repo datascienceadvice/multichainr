@@ -36,7 +36,7 @@ keys5 <- mc_create_keypairs(conn, count = 5)
 \code{\link{mc_get_new_address}} to create an address stored in the
 wallet.
 
-Other address operations: 
+Other addresses: 
 \code{\link{mc_add_multisig_address}()},
 \code{\link{mc_create_multisig}()},
 \code{\link{mc_get_addresses}()},
@@ -45,4 +45,4 @@ Other address operations:
 \code{\link{mc_list_addresses}()},
 \code{\link{mc_validate_address}()}
 }
-\concept{address operations}
+\concept{addresses}

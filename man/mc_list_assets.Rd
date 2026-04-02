@@ -45,7 +45,7 @@ first_10 <- mc_list_assets(conn, count = 10)
 \seealso{
 \code{\link{mc_get_asset_info}} for single asset details.
 
-Other asset information: 
+Other assets: 
 \code{\link{mc_get_asset_info}()},
 \code{\link{mc_list_asset_issues}()}
 }

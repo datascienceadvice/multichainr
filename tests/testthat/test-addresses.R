@@ -111,6 +111,42 @@ test_that("mc_list_addresses returns data.frame", {
   )
 })
 
+test_that("mc_list_addresses works with count = NULL", {
+  fake_body <- jsonlite::toJSON(list(result = list()), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      result <- mc_list_addresses(conn_mock)
+      expect_true(is.data.frame(result))
+    }
+  )
+})
+
+test_that("mc_list_addresses works with count only", {
+  fake_body <- jsonlite::toJSON(list(result = list()), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      result <- mc_list_addresses(conn_mock, count = 5)
+      expect_true(is.data.frame(result))
+    }
+  )
+})
+
+test_that("mc_list_addresses works with count and start", {
+  fake_body <- jsonlite::toJSON(list(result = list()), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      result <- mc_list_addresses(conn_mock, count = 5, start = 10)
+      expect_true(is.data.frame(result))
+    }
+  )
+})
+
 test_that("mc_create_keypairs returns a data.frame", {
   fake_body <- '{"result":[{"address":"A","pubkey":"B","privkey":"C"}],"error":null,"id":1}'
   

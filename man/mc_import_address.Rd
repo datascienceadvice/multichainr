@@ -36,7 +36,7 @@ mc_import_address(conn, "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
 \seealso{
 \code{\link{mc_validate_address}} to check address validity.
 
-Other address operations: 
+Other addresses: 
 \code{\link{mc_add_multisig_address}()},
 \code{\link{mc_create_keypairs}()},
 \code{\link{mc_create_multisig}()},
@@ -45,4 +45,4 @@ Other address operations:
 \code{\link{mc_list_addresses}()},
 \code{\link{mc_validate_address}()}
 }
-\concept{address operations}
+\concept{addresses}

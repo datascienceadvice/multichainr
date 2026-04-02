@@ -58,3 +58,32 @@ test_that("mc_send_with_data returns txid and handles metadata", {
     }
   )
 })
+
+test_that("mc_send_with_data_from handles string data", {
+  fake_txid <- "1234abcd"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_send_with_data_from(conn_mock, "from_addr", "to_addr",
+                                    list(asset = 10), "simple string")
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_send_with_data_from handles list data", {
+  fake_txid <- "5678efgh"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      data_list <- list(key = "value", number = 123)
+      res <- mc_send_with_data_from(conn_mock, "from_addr", "to_addr",
+                                    list(asset = 10), data_list)
+      expect_equal(res, fake_txid)
+    }
+  )
+})

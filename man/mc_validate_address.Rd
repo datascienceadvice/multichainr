@@ -37,7 +37,7 @@ key_info <- mc_validate_address(conn, "L5...")
 \seealso{
 \code{\link{mc_import_address}} to add an address to the wallet.
 
-Other address operations: 
+Other addresses: 
 \code{\link{mc_add_multisig_address}()},
 \code{\link{mc_create_keypairs}()},
 \code{\link{mc_create_multisig}()},
@@ -46,4 +46,4 @@ Other address operations:
 \code{\link{mc_import_address}()},
 \code{\link{mc_list_addresses}()}
 }
-\concept{address operations}
+\concept{addresses}

@@ -317,3 +317,11 @@ test_that("mc_help returns detailed help for a specific command", {
     }
   )
 })
+
+test_that("print.mc_help prints help text and returns invisibly", {
+  help_obj <- structure("Test help content", class = "mc_help")
+  
+  expect_invisible(print(help_obj))
+  
+  expect_output(print(help_obj), "Test help content")
+})

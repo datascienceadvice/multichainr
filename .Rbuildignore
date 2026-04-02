@@ -4,6 +4,7 @@
 start.R$
 test.R$
 copy.R$
+extract_strings.R$
 todo.txt$
 .lintr$
 ^pdf$

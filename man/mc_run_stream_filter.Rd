@@ -33,11 +33,14 @@ result <- mc_run_stream_filter(conn, "myfilter", "txid...", vout = 0)
 \code{\link{mc_test_stream_filter}}, \code{\link{mc_create_stream_filter}}
 
 Other filters: 
+\code{\link{mc_approve_from}()},
 \code{\link{mc_create_stream_filter}()},
 \code{\link{mc_create_tx_filter}()},
+\code{\link{mc_create_upgrade}()},
 \code{\link{mc_get_filter_code}()},
 \code{\link{mc_list_stream_filters}()},
 \code{\link{mc_list_tx_filters}()},
+\code{\link{mc_list_upgrades}()},
 \code{\link{mc_run_tx_filter}()},
 \code{\link{mc_test_stream_filter}()},
 \code{\link{mc_test_tx_filter}()}

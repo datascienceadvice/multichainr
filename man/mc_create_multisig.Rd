@@ -36,7 +36,7 @@ cat("Multisig address:", multisig$address)
 \code{\link{mc_add_multisig_address}} to create and add the address
 to the wallet.
 
-Other address operations: 
+Other addresses: 
 \code{\link{mc_add_multisig_address}()},
 \code{\link{mc_create_keypairs}()},
 \code{\link{mc_get_addresses}()},
@@ -45,4 +45,4 @@ Other address operations:
 \code{\link{mc_list_addresses}()},
 \code{\link{mc_validate_address}()}
 }
-\concept{address operations}
+\concept{addresses}

@@ -37,7 +37,7 @@ info_verbose <- mc_get_asset_info(conn, "mycoin", verbose = TRUE)
 \code{\link{mc_list_assets}} to list all assets,
 \code{\link{mc_list_asset_issues}} to list issuances.
 
-Other asset information: 
+Other assets: 
 \code{\link{mc_list_asset_issues}()},
 \code{\link{mc_list_assets}()}
 }

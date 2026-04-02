@@ -173,3 +173,19 @@ test_that("mc_get_tx_out_data returns hex string", {
     }
   )
 })
+
+test_that("mc_get_tx_out_data handles count_bytes and start_byte", {
+  fake_hex <- "48656c6c6f20576f726c64"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_hex)
+  
+  httr2::with_mocked_responses(
+    function(req) {
+      httr2::response(status_code = 200, body = charToRaw(fake_body))
+    },
+    {
+      res <- mc_get_tx_out_data(conn_mock, "txid123", 0, count_bytes = 100, start_byte = 5)
+      expect_type(res, "character")
+      expect_equal(res, fake_hex)
+    }
+  )
+})

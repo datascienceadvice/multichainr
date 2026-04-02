@@ -56,6 +56,7 @@ devtools::install()
 
 
 
+
 # check ------------------------------------------------------------------------
 devtools::load_all()
 devtools::document()
@@ -64,6 +65,9 @@ devtools::check()
 
 devtools::check(args = c("--as-cran"), manual = TRUE, remote = TRUE)
 devtools::check(args = "--as-cran")
+
+devtools::check_win_devel()
+devtools::check_win_release()
 
 # devtools::build_manual(path = ".")
 # tinytex::reinstall_tinytex(repository = "illinois")

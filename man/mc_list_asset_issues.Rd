@@ -44,7 +44,7 @@ recent <- mc_list_asset_issues(conn, "mycoin", verbose = TRUE,
 \code{\link{mc_list_assets}} to list assets,
 \code{\link{mc_get_asset_info}} for asset summary.
 
-Other asset information: 
+Other assets: 
 \code{\link{mc_get_asset_info}()},
 \code{\link{mc_list_assets}()}
 }

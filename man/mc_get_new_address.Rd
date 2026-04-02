@@ -26,7 +26,7 @@ print(new_addr)
 \code{\link{mc_create_keypairs}} to generate key pairs not stored
 in the wallet.
 
-Other address operations: 
+Other addresses: 
 \code{\link{mc_add_multisig_address}()},
 \code{\link{mc_create_keypairs}()},
 \code{\link{mc_create_multisig}()},
@@ -35,4 +35,4 @@ Other address operations:
 \code{\link{mc_list_addresses}()},
 \code{\link{mc_validate_address}()}
 }
-\concept{address operations}
+\concept{addresses}

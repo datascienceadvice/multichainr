@@ -95,6 +95,98 @@ test_that("mc_grant returns transaction ID on success", {
   )
 })
 
+test_that("mc_grant_from works with start_block only", {
+  fake_txid <- "grant_txid_001"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_grant_from(conn_mock, "from_addr", "to_addr", "connect", start_block = 100)
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_grant_from works with end_block only", {
+  fake_txid <- "grant_txid_002"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_grant_from(conn_mock, "from_addr", "to_addr", "connect", end_block = 500)
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_grant_from works with both start_block and end_block", {
+  fake_txid <- "grant_txid_003"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_grant_from(conn_mock, "from_addr", "to_addr", "connect",
+                           start_block = 100, end_block = 500)
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_grant_with_data works with string data", {
+  fake_txid <- "grant_data_txid_001"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_grant_with_data(conn_mock, "to_addr", "connect", "simple text")
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_grant_with_data works with list data", {
+  fake_txid <- "grant_data_txid_002"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_grant_with_data(conn_mock, "to_addr", "connect", list(key = "value"))
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_grant_with_data_from works with string data", {
+  fake_txid <- "grant_data_from_txid_001"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_grant_with_data_from(conn_mock, "from_addr", "to_addr", "connect", "simple text")
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_grant_with_data_from works with list data", {
+  fake_txid <- "grant_data_from_txid_002"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_grant_with_data_from(conn_mock, "from_addr", "to_addr", "connect", list(key = "value"))
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
 test_that("mc_revoke returns transaction ID on success", {
   conn <- mc_connect(port = 8570, user = "u", password = "p")
   
@@ -114,6 +206,19 @@ test_that("mc_revoke returns transaction ID on success", {
     {
       txid <- mc_revoke(conn, "1ABC...", "mine")
       expect_equal(txid, "1234567890abcdef...")
+    }
+  )
+})
+
+test_that("mc_revoke_from works", {
+  fake_txid <- "revoke_txid_001"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_revoke_from(conn_mock, "from_addr", "to_addr", "connect")
+      expect_equal(res, fake_txid)
     }
   )
 })

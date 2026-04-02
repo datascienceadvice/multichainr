@@ -34,7 +34,7 @@ details <- mc_get_addresses(conn, verbose = TRUE)
 \seealso{
 \code{\link{mc_list_addresses}} for more flexible listing options.
 
-Other address operations: 
+Other addresses: 
 \code{\link{mc_add_multisig_address}()},
 \code{\link{mc_create_keypairs}()},
 \code{\link{mc_create_multisig}()},
@@ -43,4 +43,4 @@ Other address operations:
 \code{\link{mc_list_addresses}()},
 \code{\link{mc_validate_address}()}
 }
-\concept{address operations}
+\concept{addresses}

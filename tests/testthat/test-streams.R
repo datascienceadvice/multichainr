@@ -18,6 +18,102 @@ test_that("mc_create_stream returns txid", {
   )
 })
 
+test_that("mc_create_stream works with open = TRUE (logical) and no custom_fields", {
+  fake_txid <- "stream_txid_001"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_create_stream(conn_mock, "mystream", open = TRUE)
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_create_stream works with open = FALSE (logical) and no custom_fields", {
+  fake_txid <- "stream_txid_002"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_create_stream(conn_mock, "mystream", open = FALSE)
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_create_stream works with open as list (restricted) and no custom_fields", {
+  fake_txid <- "stream_txid_003"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      open_list <- list(restrict = "write")
+      res <- mc_create_stream(conn_mock, "mystream", open = open_list)
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_create_stream works with custom_fields", {
+  fake_txid <- "stream_txid_004"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      custom <- list(owner = "admin", version = 1)
+      res <- mc_create_stream(conn_mock, "mystream", open = TRUE, custom_fields = custom)
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_create_stream works with open as list and custom_fields", {
+  fake_txid <- "stream_txid_005"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      open_list <- list(restrict = "write", details = "something")
+      custom <- list(field = "value")
+      res <- mc_create_stream(conn_mock, "mystream", open = open_list, custom_fields = custom)
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_create_stream_from works without custom_fields", {
+  fake_txid <- "create_stream_txid_001"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_create_stream_from(conn_mock, "from_addr", "mystream", open = TRUE)
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_create_stream_from works with custom_fields", {
+  fake_txid <- "create_stream_txid_002"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_create_stream_from(conn_mock, "from_addr", "mystream",
+                                   open = FALSE, custom_fields = list(owner = "admin"))
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
 test_that("mc_get_stream_info returns list", {
   fake_body <- '{"result":{"name":"mystream","streamref":"1-2-3","items":10},"error":null,"id":1}'
   
@@ -50,6 +146,58 @@ test_that("mc_list_streams returns data.frame", {
   )
 })
 
+test_that("mc_list_streams works with default parameters", {
+  fake_streams <- list(list(name = "stream1", ref = "ref1"))
+  fake_body <- jsonlite::toJSON(list(result = fake_streams), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_streams(conn_mock)
+      expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
+test_that("mc_list_streams works with count parameter", {
+  fake_streams <- list(list(name = "stream1", ref = "ref1"))
+  fake_body <- jsonlite::toJSON(list(result = fake_streams), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_streams(conn_mock, count = 5)
+      expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
+test_that("mc_list_streams works with start parameter (and no count)", {
+  fake_streams <- list(list(name = "stream1", ref = "ref1"))
+  fake_body <- jsonlite::toJSON(list(result = fake_streams), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_streams(conn_mock, start = 10)
+      expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
+test_that("mc_list_streams works with both count and start", {
+  fake_streams <- list(list(name = "stream1", ref = "ref1"))
+  fake_body <- jsonlite::toJSON(list(result = fake_streams), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_streams(conn_mock, count = 5, start = 10)
+      expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
 test_that("mc_publish and mc_publish_from return txid", {
   fake_txid <- "pub_txid_123"
   fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
@@ -71,6 +219,72 @@ test_that("mc_publish and mc_publish_from return txid", {
   )
 })
 
+test_that("mc_publish works with single key and no options", {
+  fake_txid <- "publish_txid_001"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish(conn_mock, "mystream", "key1", list(text = "data"))
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_publish works with multiple keys", {
+  fake_txid <- "publish_txid_002"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish(conn_mock, "mystream", c("key1", "key2"), list(text = "data"))
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_publish works with options", {
+  fake_txid <- "publish_txid_003"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish(conn_mock, "mystream", "key1", list(text = "data"), options = "offchain")
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_publish_from works without options", {
+  fake_txid <- "publish_from_txid_001"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish_from(conn_mock, "from_addr", "mystream", "key1", list(text = "data"))
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_publish_from works with options", {
+  fake_txid <- "publish_from_txid_002"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish_from(conn_mock, "from_addr", "mystream", "key1",
+                             list(text = "data"), options = "offchain")
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
 test_that("mc_publish_multi returns txid", {
   fake_txid <- "multi_txid_456"
   fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
@@ -87,6 +301,62 @@ test_that("mc_publish_multi returns txid", {
     {
       tx <- mc_publish_multi(conn_mock, "stream1", items)
       expect_equal(tx, fake_txid)
+    }
+  )
+})
+
+test_that("mc_publish_multi works without options", {
+  fake_txid <- "publish_multi_txid_001"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  items <- list(list(key = "k1", data = list(text = "d1")))
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish_multi(conn_mock, "mystream", items)
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_publish_multi works with options", {
+  fake_txid <- "publish_multi_txid_002"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  items <- list(list(key = "k1", data = list(text = "d1")))
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish_multi(conn_mock, "mystream", items, options = "offchain")
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_publish_multi_from works without options", {
+  fake_txid <- "publish_multi_from_txid_001"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  items <- list(list(key = "k1", data = list(text = "d1")))
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish_multi_from(conn_mock, "from_addr", "mystream", items)
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_publish_multi_from works with options", {
+  fake_txid <- "publish_multi_from_txid_002"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  items <- list(list(key = "k1", data = list(text = "d1")))
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish_multi_from(conn_mock, "from_addr", "mystream", items, options = "offchain")
+      expect_equal(res, fake_txid)
     }
   )
 })
@@ -122,6 +392,45 @@ test_that("mc_get_stream_key_summary returns merged JSON list", {
   )
 })
 
+test_that("mc_get_stream_publisher_summary works", {
+  fake_summary <- list(address = "1A...", items = 5)
+  fake_body <- jsonlite::toJSON(list(result = fake_summary), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_get_stream_publisher_summary(conn_mock, "mystream", "1A...")
+      expect_equal(res$address, "1A...")
+    }
+  )
+})
+
+test_that("mc_list_stream_items works with default start = NULL", {
+  fake_items <- list(list(txid = "tx1", key = "k1"))
+  fake_body <- jsonlite::toJSON(list(result = fake_items), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_stream_items(conn_mock, "mystream")
+      expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
+test_that("mc_list_stream_items works with start parameter", {
+  fake_items <- list(list(txid = "tx1", key = "k1"))
+  fake_body <- jsonlite::toJSON(list(result = fake_items), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_stream_items(conn_mock, "mystream", start = 10)
+      expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
 test_that("mc_list_stream_keys returns data.frame of keys", {
   fake_body <- '{"result":[{"key":"k1","items":5},{"key":"k2","items":12}],"error":null,"id":1}'
   
@@ -134,6 +443,175 @@ test_that("mc_list_stream_keys returns data.frame of keys", {
       expect_s3_class(df, "data.frame")
       expect_equal(nrow(df), 2)
       expect_equal(df$items[2], 12)
+    }
+  )
+})
+
+test_that("mc_list_stream_key_items works with default start = NULL", {
+  fake_items <- list(list(txid = "tx1", key = "k1"))
+  fake_body <- jsonlite::toJSON(list(result = fake_items), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_stream_key_items(conn_mock, "mystream", "k1")
+      expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
+test_that("mc_list_stream_key_items works with start parameter", {
+  fake_items <- list(list(txid = "tx1", key = "k1"))
+  fake_body <- jsonlite::toJSON(list(result = fake_items), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_stream_key_items(conn_mock, "mystream", "k1", start = 10)
+      expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
+test_that("mc_list_stream_keys works with default parameters", {
+  fake_keys <- list(list(key = "k1", count = 5))
+  fake_body <- jsonlite::toJSON(list(result = fake_keys), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_stream_keys(conn_mock, "mystream")
+      expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
+test_that("mc_list_stream_keys works with count parameter", {
+  fake_keys <- list(list(key = "k1", count = 5))
+  fake_body <- jsonlite::toJSON(list(result = fake_keys), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_stream_keys(conn_mock, "mystream", count = 5)
+      expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
+test_that("mc_list_stream_keys works with start parameter (and no count)", {
+  fake_keys <- list(list(key = "k1", count = 5))
+  fake_body <- jsonlite::toJSON(list(result = fake_keys), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_stream_keys(conn_mock, "mystream", start = 10)
+      expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
+test_that("mc_list_stream_keys works with both count and start", {
+  fake_keys <- list(list(key = "k1", count = 5))
+  fake_body <- jsonlite::toJSON(list(result = fake_keys), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_stream_keys(conn_mock, "mystream", count = 5, start = 10)
+      expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
+test_that("mc_list_stream_keys works with local_ordering = TRUE", {
+  fake_keys <- list(list(key = "k1", count = 5))
+  fake_body <- jsonlite::toJSON(list(result = fake_keys), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_stream_keys(conn_mock, "mystream", local_ordering = TRUE)
+      expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
+test_that("mc_list_stream_publisher_items works with default start = NULL", {
+  fake_items <- list(list(txid = "tx1", key = "k1"))
+  fake_body <- jsonlite::toJSON(list(result = fake_items), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_stream_publisher_items(conn_mock, "mystream", "1A...")
+      expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
+test_that("mc_list_stream_publisher_items works with start parameter", {
+  fake_items <- list(list(txid = "tx1", key = "k1"))
+  fake_body <- jsonlite::toJSON(list(result = fake_items), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_stream_publisher_items(conn_mock, "mystream", "1A...", start = 10)
+      expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
+test_that("mc_list_stream_publishers works with default parameters", {
+  fake_publishers <- list(list(address = "1A...", items = 5))
+  fake_body <- jsonlite::toJSON(list(result = fake_publishers), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_stream_publishers(conn_mock, "mystream")
+      expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
+test_that("mc_list_stream_publishers works with count parameter", {
+  fake_publishers <- list(list(address = "1A...", items = 5))
+  fake_body <- jsonlite::toJSON(list(result = fake_publishers), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_stream_publishers(conn_mock, "mystream", count = 5)
+      expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
+test_that("mc_list_stream_publishers works with start parameter (and no count)", {
+  fake_publishers <- list(list(address = "1A...", items = 5))
+  fake_body <- jsonlite::toJSON(list(result = fake_publishers), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_stream_publishers(conn_mock, "mystream", start = 10)
+      expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
+test_that("mc_list_stream_publishers works with both count and start", {
+  fake_publishers <- list(list(address = "1A...", items = 5))
+  fake_body <- jsonlite::toJSON(list(result = fake_publishers), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_stream_publishers(conn_mock, "mystream", count = 5, start = 10)
+      expect_s3_class(res, "data.frame")
     }
   )
 })
@@ -175,6 +653,45 @@ test_that("mc_list_stream_tx_items returns data.frame", {
       df <- mc_list_stream_tx_items(conn_mock, "s1", "tx123")
       expect_s3_class(df, "data.frame")
       expect_equal(nrow(df), 1)
+    }
+  )
+})
+
+test_that("mc_list_stream_block_items works without count and start", {
+  fake_items <- list(list(txid = "tx1", key = "k1"))
+  fake_body <- jsonlite::toJSON(list(result = fake_items), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_stream_block_items(conn_mock, "mystream", blocks = 100)
+      expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
+test_that("mc_list_stream_block_items works with count parameter", {
+  fake_items <- list(list(txid = "tx1", key = "k1"))
+  fake_body <- jsonlite::toJSON(list(result = fake_items), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_stream_block_items(conn_mock, "mystream", blocks = 100, count = 5)
+      expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
+test_that("mc_list_stream_block_items works with start parameter", {
+  fake_items <- list(list(txid = "tx1", key = "k1"))
+  fake_body <- jsonlite::toJSON(list(result = fake_items), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_stream_block_items(conn_mock, "mystream", blocks = 100, start = 10)
+      expect_s3_class(res, "data.frame")
     }
   )
 })

@@ -24,6 +24,57 @@ test_that("mc_list_unspent returns data.frame with assets", {
   )
 })
 
+test_that("mc_list_unspent works without addresses", {
+  fake_utxos <- list(
+    list(txid = "abc", vout = 0, address = "1A...", amount = 1.0, confirmations = 5)
+  )
+  fake_body <- jsonlite::toJSON(list(result = fake_utxos), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      result <- mc_list_unspent(conn_mock)
+      expect_s3_class(result, "data.frame")
+      expect_equal(nrow(result), 1)
+      expect_equal(result$txid, "abc")
+    }
+  )
+})
+
+test_that("mc_list_unspent works with single address", {
+  fake_utxos <- list(
+    list(txid = "def", vout = 1, address = "1B...", amount = 0.5, confirmations = 10)
+  )
+  fake_body <- jsonlite::toJSON(list(result = fake_utxos), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      result <- mc_list_unspent(conn_mock, addresses = "1B...")
+      expect_s3_class(result, "data.frame")
+      expect_equal(nrow(result), 1)
+      expect_equal(result$address, "1B...")
+    }
+  )
+})
+
+test_that("mc_list_unspent works with multiple addresses", {
+  fake_utxos <- list(
+    list(txid = "ghi", vout = 2, address = "1C...", amount = 2.0, confirmations = 3),
+    list(txid = "jkl", vout = 0, address = "1D...", amount = 0.2, confirmations = 1)
+  )
+  fake_body <- jsonlite::toJSON(list(result = fake_utxos), auto_unbox = TRUE)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      result <- mc_list_unspent(conn_mock, addresses = c("1C...", "1D..."))
+      expect_s3_class(result, "data.frame")
+      expect_equal(nrow(result), 2)
+    }
+  )
+})
+
 test_that("mc_combine_unspent returns txid vector", {
   fake_body <- '{"result":["tx_comb_1","tx_comb_2"],"error":null,"id":1}'
   
@@ -124,6 +175,84 @@ test_that("mc_get_wallet_transaction returns list", {
       res <- mc_get_wallet_transaction(conn_mock, "tx123")
       expect_type(res, "list")
       expect_equal(res$confirmations, 10)
+    }
+  )
+})
+
+test_that("mc_import_wallet calls importwallet RPC and returns result", {
+  fake_result <- "Wallet imported successfully"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_result)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_import_wallet(conn_mock, "wallet_backup.dat", rescan = 1)
+      expect_equal(res, fake_result)
+    }
+  )
+})
+
+test_that("mc_backup_wallet calls backupwallet RPC and returns result", {
+  fake_result <- "Backup completed"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_result)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_backup_wallet(conn_mock, "wallet_backup.dat")
+      expect_equal(res, fake_result)
+    }
+  )
+})
+
+test_that("mc_dump_wallet calls dumpwallet RPC and returns result", {
+  fake_result <- "Wallet dumped to file"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_result)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_dump_wallet(conn_mock, "wallet_dump.txt")
+      expect_equal(res, fake_result)
+    }
+  )
+})
+
+test_that("mc_encrypt_wallet calls encryptwallet RPC and returns result", {
+  fake_result <- "Wallet encrypted successfully"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_result)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_encrypt_wallet(conn_mock, "mysecretpassphrase")
+      expect_equal(res, fake_result)
+    }
+  )
+})
+
+test_that("mc_lock_wallet calls walletlock RPC and returns result", {
+  fake_result <- "Wallet locked"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_result)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_lock_wallet(conn_mock)
+      expect_equal(res, fake_result)
+    }
+  )
+})
+
+test_that("mc_change_wallet_passphrase calls walletpassphrasechange RPC and returns result", {
+  fake_result <- "Wallet passphrase changed"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_result)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_change_wallet_passphrase(conn_mock, "oldpass", "newpass")
+      expect_equal(res, fake_result)
     }
   )
 })

@@ -35,7 +35,7 @@ addr <- mc_add_multisig_address(conn, n_required = 2,
 \code{\link{mc_create_multisig}} to create a multisig address
 without adding it to the wallet.
 
-Other address operations: 
+Other addresses: 
 \code{\link{mc_create_keypairs}()},
 \code{\link{mc_create_multisig}()},
 \code{\link{mc_get_addresses}()},
@@ -44,4 +44,4 @@ Other address operations:
 \code{\link{mc_list_addresses}()},
 \code{\link{mc_validate_address}()}
 }
-\concept{address operations}
+\concept{addresses}

@@ -73,7 +73,7 @@ mc_create_tx_filter <- function(conn, name, options, js_code) {
 #'
 #' @seealso \code{\link{mc_approve_from}} to approve an upgrade.
 #'
-#' @family upgrades
+#' @family filters
 #' @export
 mc_create_upgrade <- function(conn, name, params) {
   mc_rpc(conn, "create", list("upgrade", name, FALSE, params))
@@ -106,7 +106,7 @@ mc_create_upgrade <- function(conn, name, params) {
 #'
 #' @seealso \code{\link{mc_create_upgrade}}, \code{\link{mc_create_stream_filter}}
 #'
-#' @family approvals
+#' @family filters
 #' @export
 mc_approve_from <- function(conn, from_address, entity, approve) {
   mc_rpc(conn, "approvefrom", list(from_address, entity, approve))
@@ -197,7 +197,7 @@ mc_list_tx_filters <- function(conn, filters = "*", verbose = FALSE) {
 #' upgrades <- mc_list_upgrades(conn)
 #' }
 #'
-#' @family upgrades
+#' @family filters
 #' @export
 mc_list_upgrades <- function(conn, upgrades = "*") {
   res <- mc_rpc(conn, "listupgrades", list(upgrades))

@@ -54,7 +54,7 @@ mc_get_asset_info <- function(conn, asset, verbose = FALSE) {
 #' @seealso \code{\link{mc_issue_token}} to issue tokens,
 #'   \code{\link{mc_list_assets}} to list parent assets.
 #'
-#' @family token operations
+#' @family assets
 #' @export
 mc_get_token_info <- function(conn, asset, token, verbose = FALSE) {
   mc_rpc(conn, "gettokeninfo", list(asset, token, verbose))
@@ -97,7 +97,7 @@ mc_get_token_info <- function(conn, asset, token, verbose = FALSE) {
 #' @seealso \code{\link{mc_issue_from}} to issue from a specific address,
 #'   \code{\link{mc_issue_more}} to increase supply of a fungible asset.
 #'
-#' @family asset issuance
+#' @family assets
 #' @export
 mc_issue <- function(conn, address, name, quantity, units = 1, native_amount = NULL, custom_fields = NULL) {
   asset_params <- if (is.list(name)) name else list(name = name)
@@ -144,7 +144,7 @@ mc_issue <- function(conn, address, name, quantity, units = 1, native_amount = N
 #' @seealso \code{\link{mc_issue}} for simpler issuance,
 #'   \code{\link{mc_issue_more_from}} to increase supply.
 #'
-#' @family asset issuance
+#' @family assets
 #' @export
 mc_issue_from <- function(conn, from_address, to_address, name, quantity, units = 1, native_amount = NULL, custom_fields = NULL) {
   asset_params <- if (is.list(name)) name else list(name = name)
@@ -188,7 +188,7 @@ mc_issue_from <- function(conn, from_address, to_address, name, quantity, units 
 #' @seealso \code{\link{mc_issue}} for initial issuance,
 #'   \code{\link{mc_issue_more_from}} to issue from a specific address.
 #'
-#' @family asset issuance
+#' @family assets
 #' @export
 mc_issue_more <- function(conn, address, asset, quantity, native_amount = NULL, custom_fields = NULL) {
   params <- list(address, asset, as.numeric(quantity))
@@ -221,7 +221,7 @@ mc_issue_more <- function(conn, address, asset, quantity, native_amount = NULL, 
 #' @seealso \code{\link{mc_issue_more}} for simpler usage,
 #'   \code{\link{mc_issue_from}} for initial issuance.
 #'
-#' @family asset issuance
+#' @family assets
 #' @export
 mc_issue_more_from <- function(conn, from_address, to_address, asset, quantity, native_amount = NULL, custom_fields = NULL) {
   params <- list(from_address, to_address, asset, as.numeric(quantity))
@@ -259,7 +259,7 @@ mc_issue_more_from <- function(conn, from_address, to_address, asset, quantity, 
 #' @seealso \code{\link{mc_get_token_info}} to query token details,
 #'   \code{\link{mc_issue_token_from}} for using a specific sender address.
 #'
-#' @family token operations
+#' @family assets
 #' @export
 mc_issue_token <- function(conn, address, asset, token, quantity, native_amount = NULL, token_details = NULL) {
   params <- list(address, asset, token, as.numeric(quantity))
@@ -290,7 +290,7 @@ mc_issue_token <- function(conn, address, asset, token, quantity, native_amount 
 #'
 #' @seealso \code{\link{mc_issue_token}} for simpler usage.
 #'
-#' @family token operations
+#' @family assets
 #' @export
 mc_issue_token_from <- function(conn, from_address, to_address, asset, token, quantity, native_amount = NULL, token_details = NULL) {
   params <- list(from_address, to_address, asset, token, as.numeric(quantity))
@@ -411,7 +411,7 @@ mc_list_assets <- function(conn, assets = "*", verbose = FALSE, count = NULL, st
 #'
 #' @seealso \code{\link{mc_update_from}} to update from a specific address.
 #'
-#' @family asset management
+#' @family assets
 #' @export
 mc_update <- function(conn, asset, params) {
   mc_rpc(conn, "update", list(asset, params))
@@ -437,7 +437,7 @@ mc_update <- function(conn, asset, params) {
 #'
 #' @seealso \code{\link{mc_update}} for simpler usage.
 #'
-#' @family asset management
+#' @family assets
 #' @export
 mc_update_from <- function(conn, from_address, asset, params) {
   mc_rpc(conn, "updatefrom", list(from_address, asset, params))

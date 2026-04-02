@@ -49,8 +49,17 @@ txid <- mc_issue_token(conn, "1A...", "art", "painting1", quantity = 1,
 \code{\link{mc_get_token_info}} to query token details,
 \code{\link{mc_issue_token_from}} for using a specific sender address.
 
-Other token operations: 
+Other assets: 
+\code{\link{mc_get_asset_info}()},
 \code{\link{mc_get_token_info}()},
-\code{\link{mc_issue_token_from}()}
+\code{\link{mc_issue}()},
+\code{\link{mc_issue_from}()},
+\code{\link{mc_issue_more}()},
+\code{\link{mc_issue_more_from}()},
+\code{\link{mc_issue_token_from}()},
+\code{\link{mc_list_asset_issues}()},
+\code{\link{mc_list_assets}()},
+\code{\link{mc_update}()},
+\code{\link{mc_update_from}()}
 }
-\concept{token operations}
+\concept{assets}

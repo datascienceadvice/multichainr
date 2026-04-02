@@ -27,27 +27,8 @@ Integer. The resulting size of the cache item in bytes after appending
 \description{
 Appends data to an existing binary cache item. If \code{data = ""}
 (the default), the RPC call returns the current size without adding new data.
-The \code{data} argument can be provided as a hex string, or as a list
-with a \code{text} or \code{json} component that will be automatically converted.
-}
-\examples{
-\dontrun{
-id <- mc_create_binary_cache(conn)
-
-# Append text data
-mc_append_binary_cache(conn, id, list(text = "Hello, world!"))
-
-# Append JSON data
-mc_append_binary_cache(conn, id, list(json = list(key = "value")))
-
-# Get current size without appending
-size <- mc_append_binary_cache(conn, id)
-}
-
 }
 \seealso{
-\code{\link{mc_create_binary_cache}}, \code{\link{mc_delete_binary_cache}}
-
 Other binary cache: 
 \code{\link{mc_create_binary_cache}()},
 \code{\link{mc_delete_binary_cache}()},

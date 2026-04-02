@@ -29,6 +29,18 @@ test_that("mc_append_binary_cache returns numeric size", {
   )
 })
 
+test_that("mc_append_binary_cache handles text lists", {
+  fake_body <- '{"result":10,"error":null,"id":1}'
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      size <- mc_append_binary_cache(conn_mock, "id1", list(text = "Hello"))
+      expect_equal(size, 10)
+    }
+  )
+})
+
 test_that("mc_txout_to_binary_cache returns size", {
   fake_body <- '{"result":5000,"error":null,"id":1}'
   

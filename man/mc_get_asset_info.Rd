@@ -38,7 +38,16 @@ info_verbose <- mc_get_asset_info(conn, "mycoin", verbose = TRUE)
 \code{\link{mc_list_asset_issues}} to list issuances.
 
 Other assets: 
+\code{\link{mc_get_token_info}()},
+\code{\link{mc_issue}()},
+\code{\link{mc_issue_from}()},
+\code{\link{mc_issue_more}()},
+\code{\link{mc_issue_more_from}()},
+\code{\link{mc_issue_token}()},
+\code{\link{mc_issue_token_from}()},
 \code{\link{mc_list_asset_issues}()},
-\code{\link{mc_list_assets}()}
+\code{\link{mc_list_assets}()},
+\code{\link{mc_update}()},
+\code{\link{mc_update_from}()}
 }
 \concept{assets}

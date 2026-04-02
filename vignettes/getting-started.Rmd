@@ -1,0 +1,128 @@
+---
+title: "Getting Started with multichainr"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with multichainr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE 
+)
+```
+
+The `multichainr` package provides a high-level R interface to the MultiChain API. This guide walks you through setting up binary paths, creating a temporary test blockchain, connecting to a node, and performing basic cleanup.
+
+## 1. Setting Up MultiChain Paths
+
+To interact with the blockchain, the package needs to locate the MultiChain executable files (`multichaind` and `multichain-util`). 
+
+### Persistent Configuration (Recommended)
+The most convenient way is to set the path in your environment variables. Open your `.Renviron` file (you can use `usethis::edit_r_environ()`) and add the following line:
+
+```text
+MULTICHAIN_PATH="C:/path/to/multichain"
+```
+*(Replace the path with the actual directory containing your MultiChain binaries.)*
+
+### Manual Session Configuration
+If you prefer not to use environment variables, you can set the path manually at the beginning of your R script using `mc_set_path()`:
+
+```{r setup}
+library(multichainr)
+
+# Provide the path to the folder containing MultiChain executables
+mc_set_path("E:/multichain") 
+```
+
+## 2. Initializing a Temporary Blockchain
+
+Let's create a "sandbox" — a temporary blockchain named `vignette_chain` for testing purposes.
+
+```{r init}
+chain_name <- "vignette_chain"
+
+# Initialize a new blockchain (creates the configuration files)
+mc_node_init(chain_name)
+```
+
+## 3. Starting the Node
+
+Once initialized, we can launch the MultiChain node. By default, it starts in daemon mode (background process).
+
+```{r start}
+# Start the node
+mc_node_start(chain_name)
+
+# Wait a few seconds for the node to initialize and open the RPC port
+Sys.sleep(3)
+```
+
+## 4. Connecting and Running Commands
+
+To communicate with the node, we need to retrieve its configuration (RPC port, username, and password) and create a connection object. `multichainr` handles this by reading the node's configuration files automatically.
+
+```{r connect}
+# Get the configuration for the specific chain
+config <- mc_get_config(chain_name)
+
+# Create a connection object
+conn <- mc_connect(config)
+
+# Verify the node status
+info <- mc_get_info(conn)
+cat("Connected to chain:", info$chainname, "\n")
+cat("Protocol Version:", info$protocolversion, "\n")
+cat("Current Block Height:", info$blocks, "\n")
+```
+
+## 5. Node Shutdown and Cleanup
+
+After finishing your work, it is important to stop the node and, if the blockchain was temporary, delete its data directory to free up disk space.
+
+```{r cleanup}
+# Send the stop signal to the node
+mc_node_stop(conn)
+
+# Brief pause to allow the process to finalize file writing
+Sys.sleep(2)
+
+# Deleting the blockchain files (WARNING: This is irreversible!)
+# Determine the default MultiChain data directory based on the OS
+if (.Platform$OS.type == "windows") {
+  base_dir <- file.path(Sys.getenv("APPDATA"), "MultiChain")
+} else if (Sys.info()["sysname"] == "Darwin") {
+  base_dir <- file.path(Sys.getenv("HOME"), "Library/Application Support/MultiChain")
+} else {
+  base_dir <- file.path(Sys.getenv("HOME"), ".multichain")
+}
+
+chain_dir <- file.path(base_dir, chain_name)
+
+if (dir.exists(chain_dir)) {
+  unlink(chain_dir, recursive = TRUE)
+  message("Temporary blockchain files deleted successfully.")
+}
+```
+
+## Summary
+
+In this guide, we covered:
+
+1. Configuring the path to MultiChain binaries via `MULTICHAIN_PATH` or `mc_set_path()`.
+2. Initializing and starting a local blockchain node.
+3. Establishing an RPC connection.
+4. Shutting down the node and cleaning up temporary files.
+
+In the next vignettes, we will explore how to manage assets, issue tokens, and store data in streams.
+
+### Key Highlights of this Vignette:
+
+- **Environment Variables**: It emphasizes the use of `MULTICHAIN_PATH`, making the user's workflow much smoother.
+- **Temporary Sandbox**: It teaches best practices by showing how to create and destroy test environments without leaving "ghost" folders in the user's system.
+- **Safe Evaluation**: The `eval = FALSE` setting in the first chunk ensures that the vignette can be built into a package website (like `pkgdown`) even if the server building it doesn't have MultiChain installed.
+- **Cross-Platform**: The cleanup logic is robust for Windows, macOS, and Linux.

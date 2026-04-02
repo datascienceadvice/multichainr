@@ -1,0 +1,142 @@
+---
+title: "Network Permissions and Governance"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Network Permissions and Governance}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+## Introduction
+
+In a MultiChain network, the security model is based on a set of expandable permissions. Governance is handled by "Admin" addresses that can grant or revoke rights for other participants. This vignette covers how to manage these permissions and audit the current state of the network.
+
+```{r setup}
+library(multichainr)
+
+# Ensure the path to MultiChain binaries is set
+mc_set_path(Sys.getenv("MULTICHAIN_PATH"))
+```
+
+## 1. Node Initialization
+
+First, we set up a local environment. When a chain is first created, the address that initializes the chain is automatically granted all permissions, including "Admin" rights.
+
+```{r init}
+chain_name <- "governance_demo_chain"
+
+# Create and start the node
+mc_node_init(chain_name)
+mc_node_start(chain_name)
+
+# Wait for the node to initialize
+Sys.sleep(3) 
+
+# Connect to the local node
+config <- mc_get_config(chain_name)
+conn <- mc_connect(config)
+```
+
+## 2. Managing Basic Permissions
+
+There are several types of permissions in MultiChain, such as `connect`, `send`, `receive`, `issue`, `mine`, and `admin`.
+
+```{r basic_perms}
+# Create a new address for a participant
+participant_addr <- mc_get_new_address(conn)
+
+# Grant 'connect' and 'receive' permissions
+# This allows the address to sync with the network and hold assets
+mc_grant(conn, participant_addr, "connect,receive")
+
+# Check if the participant can currently send assets
+can_send <- mc_verify_permission(conn, participant_addr, "send")
+print(paste("Can participant send?", can_send))
+```
+
+## 3. Permissions with Metadata and Expiry
+
+For enterprise use cases, you may want to attach metadata (like a KYC reference) to a permission grant or make a permission temporary.
+
+```{r advanced_perms}
+# Grant 'send' permission with a metadata note and a validity period
+# start_block = 0 (now), end_block = 5000 (expires at block 5000)
+metadata <- list(kyc_id = "USR-9982", officer = "Admin_01")
+
+mc_grant_with_data(conn, 
+                   to_address = participant_addr, 
+                   permissions = "send", 
+                   data = metadata)
+
+# Note: Timed permissions can also be set via mc_grant_from
+# mc_grant_from(conn, from_admin, participant_addr, "mine", start_block = 100, end_block = 1000)
+```
+
+## 4. Auditing Network Permissions
+
+As an administrator or auditor, you can list all active permissions on the chain to ensure compliance.
+
+```{r list_perms}
+# List all addresses with 'admin' rights
+admins <- mc_list_permissions(conn, "admin")
+print(admins)
+
+# List all permissions currently held by our participant
+all_perms <- mc_list_permissions(conn, "*")
+# Filter locally for our address
+participant_perms <- all_perms[all_perms$address == participant_addr, ]
+print(participant_perms)
+```
+
+## 5. Revoking Permissions
+
+Governance also involves removing rights when a participant leaves the network or violates its rules.
+
+```{r revoke}
+# Revoke 'send' permission from the participant
+mc_revoke(conn, participant_addr, "send")
+
+# Verify the change
+still_can_send <- mc_verify_permission(conn, participant_addr, "send")
+print(paste("Can participant still send?", still_can_send))
+```
+
+## 6. Cleanup
+
+Always ensure that the node is stopped and temporary files are cleaned up in your testing environment.
+
+
+```{r cleanup}
+mc_node_stop(conn)
+Sys.sleep(2)
+
+# Determine data directory for cleanup
+if (.Platform$OS.type == "windows") {
+  base_dir <- file.path(Sys.getenv("APPDATA"), "MultiChain")
+} else if (Sys.info()["sysname"] == "Darwin") {
+  base_dir <- file.path(Sys.getenv("HOME"), "Library/Application Support/MultiChain")
+} else {
+  base_dir <- file.path(Sys.getenv("HOME"), ".multichain")
+}
+
+chain_dir <- file.path(base_dir, chain_name)
+if (dir.exists(chain_dir)) unlink(chain_dir, recursive = TRUE)
+```
+
+## Summary
+
+In this vignette, we demonstrated the governance workflow in `multichainr`:
+  
+1. **Granting Rights**: Using `mc_grant` to authorize network actions.
+2. **Audit Trail**: Attaching metadata to permissions using `mc_grant_with_data` to create a verifiable history of authorization.
+3. **Network Auditing**: Using `mc_list_permissions` to monitor all participants.
+4. **Verification**: Using `mc_verify_permission` for real-time logic checks.
+5. **Revocation**: Using `mc_revoke` to manage the lifecycle of network participants.

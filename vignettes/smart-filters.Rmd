@@ -1,0 +1,197 @@
+---
+title: "Smart Filters and On-Chain Logic"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Smart Filters and On-Chain Logic}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+## Introduction
+
+In MultiChain, Smart Filters provide a way to enforce business rules directly on the ledger. For example, you can ensure that a sensor only records values within a specific range or that a transaction is only valid if it contains certain metadata. To keep code clean, common logic can be stored in Libraries.
+
+```{r setup}
+library(multichainr)
+
+# Set the path to your MultiChain binaries
+mc_set_path(Sys.getenv("MULTICHAIN_PATH"))
+```
+
+## 1. Node Initialization
+
+We start by setting up a local node. Governance permissions (Admin) are required to create filters and libraries.
+
+```{r init}
+chain_name <- "logic_demo_chain"
+
+# Create and start the node
+mc_node_init(chain_name)
+mc_node_start(chain_name)
+
+# Wait for the node to initialize
+Sys.sleep(3) 
+
+# Connect to the local node
+config <- mc_get_config(chain_name)
+conn <- mc_connect(config)
+```
+
+## 2. Creating a JavaScript Library
+
+A library contains helper functions. Here, we create a library called `validator` that checks if a temperature reading is within a safe physical range.
+
+```{r create_library}
+# Define the JavaScript code for the library
+lib_js <- "
+function isSafeTemp(temp) {
+    return temp >= -50 && temp <= 100;
+}
+"
+
+# Create the library on the blockchain
+# updatemode = 'instant' means updates take effect immediately without voting
+mc_create_library(conn, "validator", updatemode = "instant", js_code = lib_js)
+
+cat("Library 'validator' created on-chain.\n")
+```
+
+## 3. Writing and Testing a Stream Filter
+
+Now we want to create a filter for a stream called `telemetry`. This filter will use our library to reject any data that has an "impossible" temperature.
+
+### Defining the Filter
+The filter logic must be contained in a function named `filterstreamitem()`.
+
+```{r define_filter}
+# The filter code imports the 'validator' library
+filter_js <- "
+function filterstreamitem() {
+    var item = getfilterstreamitem();
+    
+    if (item.data.json && typeof item.data.json.temp !== 'undefined') {
+        if (!isSafeTemp(item.data.json.temp)) {
+            return 'Invalid temperature detected by on-chain logic';
+        }
+    }
+    return true;
+}
+"
+```
+
+### Local Testing (Dry Run)
+Before deploying a filter to the whole network, it is best practice to test it locally using `mc_test_stream_filter`. To do this, we first publish a sample item to get a valid transaction ID.
+
+```{r test_filter}
+# 0. Setup a temporary stream for testing
+mc_create_stream(conn, "test_stream", open = TRUE)
+mc_subscribe(conn, "test_stream")
+
+# 1. Publish valid data and get its TXID
+txid_valid <- mc_publish(conn, "test_stream", "key1", list(json = list(temp = 25.5)))
+
+# Test the filter against the valid transaction
+test_valid <- mc_test_stream_filter(conn, 
+                                    options = list(libraries = list("validator")), 
+                                    js_code = filter_js, 
+                                    tx = txid_valid)
+print(test_valid) # Should be TRUE (logical) or 'true' (string)
+
+# 2. Publish invalid data and get its TXID
+txid_invalid <- mc_publish(conn, "test_stream", "key1", list(json = list(temp = 500)))
+
+# Test the filter against the invalid transaction
+test_invalid <- mc_test_stream_filter(conn, 
+                                      options = list(libraries = list("validator")), 
+                                      js_code = filter_js, 
+                                      tx = txid_invalid)
+print(test_invalid) # Should return our error message string
+```
+
+## 4. Deploying and Using the Filter
+
+Once tested, we create the filter on the blockchain and attach it to our stream.
+
+```{r deploy_filter}
+# 1. Create the telemetry stream
+mc_create_stream(conn, "telemetry", open = TRUE)
+
+# 2. Create the stream filter globally
+# Here 'options' only specifies the libraries used.
+mc_create_stream_filter(conn, "temp_range_check", 
+                        options = list(libraries = list("validator")), 
+                        js_code = filter_js)
+
+# 3. Activate the filter for the 'telemetry' stream
+# In MultiChain, filters must be approved for specific entities.
+admin_addr <- mc_get_addresses(conn)[1]
+
+mc_approve_from(conn, 
+                from_address = admin_addr, 
+                entity = "temp_range_check", 
+                approve = list("for" = "telemetry", approve = TRUE))
+```
+
+## 5. Verifying the Logic
+
+After the filter is active, any attempt to publish invalid data to the `telemetry` stream will be rejected by every node in the network.
+
+```{r verify}
+# This will SUCCEED (20 is within range)
+txid_ok <- mc_publish(conn, "telemetry", "sensor_01", list(json = list(temp = 20)))
+print(paste("Successful publish TXID:", txid_ok))
+
+# This will FAIL at the protocol level. 
+# We use try() to catch the RPC error so the vignette can continue.
+publish_error <- try(mc_publish(conn, "telemetry", "sensor_01", list(json = list(temp = 999))), 
+                     silent = TRUE)
+
+if (inherits(publish_error, "try-error")) {
+    cat("Rejected! As expected, the filter blocked the invalid data.\n")
+}
+
+# Retrieve the filter code from the blockchain to verify
+code_info <- mc_get_filter_code(conn, "temp_range_check")
+cat("Stored filter code length:", nchar(code_info), "characters.\n")
+```
+
+## 6. Cleanup
+
+Always shut down the node and clean up the temporary directory.
+
+```{r cleanup}
+# Stop the node
+mc_node_stop(conn)
+Sys.sleep(2)
+
+# Determine data directory
+if (.Platform$OS.type == "windows") {
+  base_dir <- file.path(Sys.getenv("APPDATA"), "MultiChain")
+} else if (Sys.info()["sysname"] == "Darwin") {
+  base_dir <- file.path(Sys.getenv("HOME"), "Library/Application Support/MultiChain")
+} else {
+  base_dir <- file.path(Sys.getenv("HOME"), ".multichain")
+}
+
+chain_dir <- file.path(base_dir, chain_name)
+if (dir.exists(chain_dir)) {
+  unlink(chain_dir, recursive = TRUE)
+}
+```
+
+## Summary
+
+In this vignette, we demonstrated the advanced logic capabilities of `multichainr`:
+
+1. **Code Reuse**: Using `mc_create_library` to store JavaScript functions.
+2. **Logic Definition**: Writing a stream filter that intercepts and validates incoming data.
+3. **Prototyping**: Using `mc_test_stream_filter` to debug JavaScript logic without making on-chain transactions.
+4. **Deployment**: Attaching validation rules to specific streams using `mc_create_stream_filter`.

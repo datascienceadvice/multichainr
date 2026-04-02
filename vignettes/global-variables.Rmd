@@ -1,0 +1,144 @@
+---
+title: "Global Variables and State History"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Global Variables and State History}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+## Introduction
+
+Global Variables in MultiChain allow users to store and update a single "state" value. While you can always retrieve the most recent value, the blockchain also maintains a complete historical record of every previous value the variable has held, along with the timestamp and the address that performed the update.
+
+```{r setup}
+library(multichainr)
+
+# Set the path to your MultiChain binaries
+mc_set_path(Sys.getenv("MULTICHAIN_PATH"))
+```
+
+## 1. Node Initialization
+
+We start by setting up a local testing environment.
+
+```{r init}
+chain_name <- "vars_demo_chain"
+
+# Create and start the node
+mc_node_init(chain_name)
+mc_node_start(chain_name)
+
+# Wait for the node to initialize
+Sys.sleep(3) 
+
+# Connect to the local node
+config <- mc_get_config(chain_name)
+conn <- mc_connect(config)
+```
+
+## 2. Creating a Global Variable
+
+When creating a variable, you can decide if it is **open** (can be updated by anyone with `create` permissions) or restricted to admins.
+
+```{r create_var}
+var_name <- "system_config"
+
+# Create a variable that is open for updates
+# We can also provide an optional initial value
+initial_val <- list(version = "1.0.0", status = "initializing")
+
+mc_create_variable(conn, var_name, open = TRUE, value = initial_val)
+
+# Retrieve basic info about the variable
+info <- mc_get_variable_info(conn, var_name)
+print(info)
+```
+
+## 3. Updating State
+
+Updating a variable is as simple as providing a new value. This value can be a string, a number, or a complex nested list (which is automatically converted to JSON).
+
+```{r updates}
+# Update 1: Change status to 'active'
+mc_set_variable_value(conn, var_name, list(version = "1.0.0", status = "active"))
+
+Sys.sleep(1) # Brief pause to simulate time passing
+
+# Update 2: Upgrade version and add new fields
+new_config <- list(
+  version = "1.1.0",
+  status = "active",
+  last_maintenance = "2025-04-02",
+  threshold = 85
+)
+
+mc_set_variable_value(conn, var_name, new_config)
+```
+
+## 4. Retrieving the Current Value
+
+The `mc_get_variable_value` function always returns the most recent state of the variable.
+
+```{r current_state}
+current_val <- mc_get_variable_value(conn, var_name)
+
+cat("Current System Version:", current_val$version, "\n")
+cat("Current Status:", current_val$status, "\n")
+```
+
+## 5. Auditing State History
+
+The true power of Global Variables lies in the `mc_get_variable_history` function. This returns a data frame containing every version of the variable ever published.
+
+```{r history}
+# Retrieve the full history of changes
+history_df <- mc_get_variable_history(conn, var_name, verbose = TRUE)
+
+# The data frame includes the value, the blocktime, and the transaction ID
+print(history_df[, c("blocktime", "value")])
+
+# You can see exactly how the 'threshold' or 'status' changed over time
+# for auditing or debugging purposes.
+```
+
+## 6. Cleanup
+
+Always shut down the node and clean up the environment after testing.
+
+```{r cleanup}
+# Stop the node
+mc_node_stop(conn)
+Sys.sleep(2)
+
+# Determine data directory
+if (.Platform$OS.type == "windows") {
+  base_dir <- file.path(Sys.getenv("APPDATA"), "MultiChain")
+} else if (Sys.info()["sysname"] == "Darwin") {
+  base_dir <- file.path(Sys.getenv("HOME"), "Library/Application Support/MultiChain")
+} else {
+  base_dir <- file.path(Sys.getenv("HOME"), ".multichain")
+}
+
+chain_dir <- file.path(base_dir, chain_name)
+if (dir.exists(chain_dir)) {
+  unlink(chain_dir, recursive = TRUE)
+}
+```
+
+## Summary
+
+In this vignette, we demonstrated how to:
+
+1. **Initialize State**: Using `mc_create_variable` to define a new on-chain data point.
+2. **Modify State**: Using `mc_set_variable_value` to push updates (JSON-compatible).
+3. **Access State**: Using `mc_get_variable_value` for high-speed retrieval of the current "truth".
+4. **Audit State**: Using `mc_get_variable_history` to reconstruct the timeline of changes for a specific variable.

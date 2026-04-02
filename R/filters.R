@@ -1,3 +1,14 @@
+prep_filter_options <- function(options) {
+  if (is.list(options) && !is.null(options$libraries)) {
+    # Если передана одна строка, превращаем ее в список, 
+    # чтобы jsonlite сохранил ее как JSON array []
+    if (is.character(options$libraries) && length(options$libraries) == 1) {
+      options$libraries <- as.list(options$libraries)
+    }
+  }
+  return(options)
+}
+
 #' Create a stream filter
 #'
 #' Creates a new stream filter on the blockchain. Stream filters are JavaScript
@@ -23,6 +34,7 @@
 #' @family filters
 #' @export
 mc_create_stream_filter <- function(conn, name, options, js_code) {
+  options <- prep_filter_options(options)
   mc_rpc(conn, "create", list("streamfilter", name, options, js_code))
 }
 
@@ -51,6 +63,7 @@ mc_create_stream_filter <- function(conn, name, options, js_code) {
 #' @family filters
 #' @export
 mc_create_tx_filter <- function(conn, name, options, js_code) {
+  options <- prep_filter_options(options)
   mc_rpc(conn, "create", list("txfilter", name, options, js_code))
 }
 
@@ -230,6 +243,7 @@ mc_list_upgrades <- function(conn, upgrades = "*") {
 #' @family filters
 #' @export
 mc_test_tx_filter <- function(conn, options, js_code, tx = NULL) {
+  options <- prep_filter_options(options)
   params <- list(options, js_code)
   if (!is.null(tx)) params <- c(params, list(tx))
   mc_rpc(conn, "testtxfilter", params)
@@ -286,6 +300,7 @@ mc_run_tx_filter <- function(conn, filter, tx) {
 #' @family filters
 #' @export
 mc_test_stream_filter <- function(conn, options, js_code, tx = NULL, vout = NULL) {
+  options <- prep_filter_options(options)
   params <- list(options, js_code)
   if (!is.null(tx)) {
     params <- c(params, list(tx))

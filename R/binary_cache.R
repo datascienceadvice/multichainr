@@ -26,8 +26,6 @@ mc_create_binary_cache <- function(conn) {
 #'
 #' Appends data to an existing binary cache item. If \code{data = ""}
 #' (the default), the RPC call returns the current size without adding new data.
-#' The \code{data} argument can be provided as a hex string, or as a list
-#' with a \code{text} or \code{json} component that will be automatically converted.
 #'
 #' @param conn A connection object created by \code{\link{mc_connect}}.
 #' @param identifier Character string. The cache item identifier returned by
@@ -41,25 +39,26 @@ mc_create_binary_cache <- function(conn) {
 #' @return Integer. The resulting size of the cache item in bytes after appending
 #'   (or the current size if \code{data = ""}).
 #'
-#' @examples
-#' \dontrun{
-#' id <- mc_create_binary_cache(conn)
-#'
-#' # Append text data
-#' mc_append_binary_cache(conn, id, list(text = "Hello, world!"))
-#'
-#' # Append JSON data
-#' mc_append_binary_cache(conn, id, list(json = list(key = "value")))
-#'
-#' # Get current size without appending
-#' size <- mc_append_binary_cache(conn, id)
-#' }
-#'
-#' @seealso \code{\link{mc_create_binary_cache}}, \code{\link{mc_delete_binary_cache}}
-#'
 #' @family binary cache
 #' @export
 mc_append_binary_cache <- function(conn, identifier, data = "") {
+  if (is.list(data)) {
+    if (!is.null(data$text)) {
+      data <- paste(charToRaw(as.character(data$text)), collapse = "")
+    } else if (!is.null(data$json)) {
+      json_str <- jsonlite::toJSON(data$json, auto_unbox = TRUE)
+      data <- paste(charToRaw(as.character(json_str)), collapse = "")
+    }
+  }
+  
+  if (is.character(data) && nchar(data) > 0) {
+    is_already_hex <- nchar(data) %% 2 == 0 && grepl("^[0-9a-fA-F]+$", data)
+    
+    if (!is_already_hex) {
+      data <- paste(charToRaw(as.character(data)), collapse = "")
+    }
+  }
+  
   mc_rpc(conn, "appendbinarycache", list(identifier, data))
 }
 

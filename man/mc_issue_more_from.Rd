@@ -49,9 +49,17 @@ txid <- mc_issue_more_from(conn, "1A...", "1B...", "mycoin", quantity = 100)
 \code{\link{mc_issue_more}} for simpler usage,
 \code{\link{mc_issue_from}} for initial issuance.
 
-Other asset issuance: 
+Other assets: 
+\code{\link{mc_get_asset_info}()},
+\code{\link{mc_get_token_info}()},
 \code{\link{mc_issue}()},
 \code{\link{mc_issue_from}()},
-\code{\link{mc_issue_more}()}
+\code{\link{mc_issue_more}()},
+\code{\link{mc_issue_token}()},
+\code{\link{mc_issue_token_from}()},
+\code{\link{mc_list_asset_issues}()},
+\code{\link{mc_list_assets}()},
+\code{\link{mc_update}()},
+\code{\link{mc_update_from}()}
 }
-\concept{asset issuance}
+\concept{assets}

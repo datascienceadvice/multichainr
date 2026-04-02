@@ -1,0 +1,150 @@
+---
+title: "Multi-Signature Wallets and Security"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Multi-Signature Wallets and Security}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+## Introduction
+
+In this guide, we will explore how to generate key pairs, create multi-signature addresses, and use digital signatures to verify the authenticity of messages.
+
+```{r setup}
+library(multichainr)
+
+# Set the path to your MultiChain binaries
+mc_set_path(Sys.getenv("MULTICHAIN_PATH"))
+```
+
+## 1. Node Initialization
+
+As with any MultiChain project, we begin by initializing a local node.
+
+```{r init}
+chain_name <- "crypto_demo_chain"
+
+# Create and start the node
+mc_node_init(chain_name)
+mc_node_start(chain_name)
+
+# Wait for the node to initialize
+Sys.sleep(3) 
+
+# Connect to the local node
+config <- mc_get_config(chain_name)
+conn <- mc_connect(config)
+```
+
+## 2. Generating Key Pairs
+
+MultiChain allows you to generate public/private key pairs that are not stored in the node's wallet. These are useful for creating "cold storage" or for participants who manage their own keys externally.
+
+```{r keypairs}
+# Generate three unique key pairs
+key_set <- mc_create_keypairs(conn, count = 3)
+
+# View the generated keys (address, pubkey, and the secret privkey)
+print(key_set)
+
+# For clarity, let's extract the public keys
+public_keys <- key_set$pubkey
+```
+
+## 3. Creating a Multi-Signature Address
+
+We will now create a **2-of-3** multi-signature address. This address will be a Pay-to-Script-Hash (P2SH) address that requires two signatures to authorize spending.
+
+```{r multisig}
+# Create the multisig address and add it to the node's wallet
+multisig_addr <- mc_add_multisig_address(conn, 
+                                         n_required = 2, 
+                                         keys = public_keys)
+
+cat("The new 2-of-3 multisig address is:", multisig_addr, "\n")
+
+# Validate the address to see its properties
+info <- mc_validate_address(conn, multisig_addr)
+print(info)
+```
+
+## 4. Granting Permissions to Multisig
+
+Even though a multisig address requires multiple signatures, the network treats it as a standard entity for permissions. We can grant it the right to receive and send assets.
+
+```{r perms}
+# Grant 'receive' and 'send' permissions to the multisig address
+mc_grant(conn, multisig_addr, "receive,send")
+
+# Verify the permissions
+all_perms <- mc_list_permissions(conn, "*")
+multisig_perms <- all_perms[all_perms$address == multisig_addr, ]
+print(multisig_perms)
+```
+
+## 5. Cryptographic Message Signing
+
+Digital signatures are used to prove that a specific message was written by the owner of a private key. This is done without revealing the private key itself.
+
+```{r messaging}
+# 1. Pick one of the generated private keys to sign a message
+my_privkey <- key_set$privkey[1]
+my_address <- key_set$address[1]
+message <- "This is a secure contract signed via R."
+
+# 2. Sign the message
+signature <- mc_sign_message(conn, my_privkey, message)
+cat("Generated Signature:", signature, "\n")
+
+# 3. Verify the message
+# Anyone with the public address and the signature can verify the message
+is_valid <- mc_verify_message(conn, my_address, signature, message)
+
+if (is_valid) {
+  print("The signature is authentic and verified!")
+} else {
+  print("Signature verification failed.")
+}
+```
+
+## 6. Cleanup
+
+Shut down the node and remove the temporary data.
+
+```{r cleanup}
+# Stop the node
+mc_node_stop(conn)
+Sys.sleep(2)
+
+# Determine data directory
+if (.Platform$OS.type == "windows") {
+  base_dir <- file.path(Sys.getenv("APPDATA"), "MultiChain")
+} else if (Sys.info()["sysname"] == "Darwin") {
+  base_dir <- file.path(Sys.getenv("HOME"), "Library/Application Support/MultiChain")
+} else {
+  base_dir <- file.path(Sys.getenv("HOME"), ".multichain")
+}
+
+chain_dir <- file.path(base_dir, chain_name)
+if (dir.exists(chain_dir)) {
+  unlink(chain_dir, recursive = TRUE)
+}
+```
+
+## Summary
+
+In this vignette, we demonstrated how to:
+
+1. **Generate Keys**: Using `mc_create_keypairs` for external key management.
+2. **Multisig Setup**: Creating a 2-of-3 P2SH address with `mc_add_multisig_address`.
+3. **Audit and Validate**: Inspecting address properties with `mc_validate_address`.
+4. **Cryptography**: Proving ownership and agreement through `mc_sign_message` and `mc_verify_message`.

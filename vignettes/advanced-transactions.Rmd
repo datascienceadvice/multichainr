@@ -1,0 +1,161 @@
+---
+title: "Atomic Swaps and Raw Transactions"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Atomic Swaps and Raw Transactions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+## Introduction
+
+In a MultiChain network, atomic swaps are performed using a sequence of "raw exchange" commands. This process involves locking a transaction output (UTXO), creating a partial transaction offer, and having a counterparty complete and broadcast that transaction.
+
+```{r setup}
+library(multichainr)
+
+# Set the path to your MultiChain binaries
+mc_set_path(Sys.getenv("MULTICHAIN_PATH"))
+```
+
+## 1. Node Initialization
+
+We start by setting up our environment and a temporary blockchain.
+
+```{r init}
+chain_name <- "swap_demo_chain"
+
+# Create and start the node
+mc_node_init(chain_name)
+mc_node_start(chain_name)
+
+# Wait for the node to initialize
+Sys.sleep(3) 
+
+# Connect to the local node
+config <- mc_get_config(chain_name)
+conn <- mc_connect(config)
+```
+
+## 2. Preparing the Trade
+
+To demonstrate a swap, we need two participants and two different assets. 
+
+```{r prepare_trade}
+# Create addresses for two traders
+trader_a <- mc_get_new_address(conn)
+trader_b <- mc_get_new_address(conn)
+
+# Grant necessary permissions
+mc_grant(conn, trader_a, "receive,send,issue")
+mc_grant(conn, trader_b, "receive,send,issue")
+
+# Issue 'AssetA' to Trader A and 'AssetB' to Trader B
+mc_issue(conn, trader_a, "AssetA", 100)
+mc_issue(conn, trader_b, "AssetB", 100)
+
+# Verify balances
+print(mc_get_address_balances(conn, trader_a))
+print(mc_get_address_balances(conn, trader_b))
+```
+
+## 3. Step 1: Trader A Creates an Offer
+
+Trader A wants to exchange **10 units of AssetA** for **5 units of AssetB**. First, Trader A must "lock" their AssetA to prepare it for the exchange.
+
+```{r create_offer}
+# 1. Prepare and lock the output (10 AssetA)
+# This creates a specific UTXO that can only be spent in an exchange
+lock_res <- mc_prepare_lock_unspent_from(conn, 
+                                        from_address = trader_a, 
+                                        amounts = list(AssetA = 10))
+
+# 2. Create the raw exchange offer
+# Trader A specifies what they are giving (lock_res) and what they want (5 AssetB)
+offer_hex <- mc_create_raw_exchange(conn, 
+                                    txid = lock_res$txid, 
+                                    vout = lock_res$vout, 
+                                    amounts = list(AssetB = 5))
+
+# The 'offer_hex' is a partial transaction string that Trader A can send 
+# to Trader B via any communication channel (email, chat, etc.)
+print(offer_hex)
+```
+
+## 4. Step 2: Trader B Completes the Swap
+
+Trader B receives the `offer_hex`, inspects it, and decides to accept it by providing the requested **5 units of AssetB**.
+
+```{r complete_swap}
+# 1. Trader B inspects the offer to ensure it is fair
+decoded_offer <- mc_decode_raw_exchange(conn, offer_hex)
+print(decoded_offer)
+
+# 2. Trader B completes the exchange using their own funds
+# This requires providing an output of 5 AssetB
+# Here, we let MultiChain automatically find the best UTXO for Trader B
+complete_res <- mc_prepare_lock_unspent_from(conn, 
+                                             from_address = trader_b, 
+                                             amounts = list(AssetB = 5))
+
+final_tx_hex <- mc_complete_raw_exchange(conn, 
+                                         tx_hex = offer_hex, 
+                                         txid = complete_res$txid, 
+                                         vout = complete_res$vout, 
+                                         amounts = list(AssetA = 10))
+```
+
+## 5. Step 3: Broadcasting the Transaction
+
+The exchange is now a fully formed raw transaction. It must be broadcast to the network to be included in a block.
+
+```{r broadcast}
+# Broadcast the finalized transaction
+swap_txid <- mc_send_raw_transaction(conn, final_tx_hex)
+
+# Confirm the swap by checking balances
+# Trader A should have +5 AssetB, Trader B should have +10 AssetA
+Sys.sleep(1) # Wait for mempool processing
+print(mc_get_address_balances(conn, trader_a))
+print(mc_get_address_balances(conn, trader_b))
+```
+
+## 6. Cleanup
+
+Finally, we stop the node and remove the temporary data directory.
+
+```{r cleanup}
+mc_node_stop(conn)
+Sys.sleep(2)
+
+if (.Platform$OS.type == "windows") {
+  base_dir <- file.path(Sys.getenv("APPDATA"), "MultiChain")
+} else if (Sys.info()["sysname"] == "Darwin") {
+  base_dir <- file.path(Sys.getenv("HOME"), "Library/Application Support/MultiChain")
+} else {
+  base_dir <- file.path(Sys.getenv("HOME"), ".multichain")
+}
+
+chain_dir <- file.path(base_dir, chain_name)
+if (dir.exists(chain_dir)) {
+  unlink(chain_dir, recursive = TRUE)
+}
+```
+
+## Summary
+
+In this vignette, we demonstrated how to:
+
+1. **Prepare Locked Outputs**: Using `mc_prepare_lock_unspent_from` to set aside specific assets for trade.
+2. **Create Offers**: Generating a partial transaction hex with `mc_create_raw_exchange`.
+3. **Audit Offers**: Using `mc_decode_raw_exchange` to verify the contents of a trade before signing.
+4. **Complete and Finalize**: Combining multiple parties' inputs into a single transaction with `mc_complete_raw_exchange`.
+5. **Execution**: Broadcasting raw hex to the blockchain using `mc_send_raw_transaction`.

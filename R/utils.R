@@ -32,7 +32,10 @@ mc_rpc <- function(conn, method, params = list()) {
   
   req <- httr2::request(conn$url) %>%
     httr2::req_auth_basic(conn$user, conn$password) %>%
-    httr2::req_body_json(body) %>%
+    httr2::req_body_raw(
+      jsonlite::toJSON(body, auto_unbox = TRUE, digits = 22), 
+      "application/json"
+    ) %>%
     httr2::req_retry(max_tries = 3) %>%
     httr2::req_error(is_error = function(resp) FALSE)
   
@@ -48,7 +51,7 @@ mc_rpc <- function(conn, method, params = list()) {
   }
   
   content <- tryCatch({
-    httr2::resp_body_json(resp, check_type = FALSE)
+    httr2::resp_body_json(resp, check_type = FALSE, simplifyVector = FALSE)
   }, error = function(e) {
     stop(sprintf("MultiChain Error: Empty or invalid response from node (Status: %s).", status), call. = FALSE)
   })
@@ -81,29 +84,29 @@ mc_rpc <- function(conn, method, params = list()) {
 rpc_res_to_df <- function(res) {
   if (is.null(res) || length(res) == 0) return(data.frame())
   
-  all_names <- unique(unlist(lapply(res, names)))
-  
-  # case 1: list of vectors (simple values)
-  if (is.null(all_names)) {
-    df <- data.frame(value = unname(unlist(res)), stringsAsFactors = FALSE)
-    return(df)
+  if (!is.list(res[[1]]) && is.null(names(res))) {
+    return(data.frame(value = unname(unlist(res)), stringsAsFactors = FALSE))
   }
   
-  # case 2: list of objects (named records)
+  if (!is.null(names(res))) {
+    res <- list(res)
+  }
+  
+  all_names <- unique(unlist(lapply(res, names)))
+  
+  if (is.null(all_names)) {
+    return(data.frame(value = unname(unlist(res)), stringsAsFactors = FALSE))
+  }
+  
   df_list <- lapply(res, function(x) {
-    row_list <- lapply(all_names, function(name) {
-      val <- x[[name]]
-      
+    row_data <- lapply(all_names, function(nm) {
+      val <- x[[nm]]
       if (is.null(val)) return(NA)
-      
-      # Handle nested lists as list-columns
-      if (is.list(val)) return(I(list(val)))
-      
+      if (is.list(val)) return(I(list(val))) 
       return(val)
     })
-    
-    names(row_list) <- all_names
-    as.data.frame(row_list, stringsAsFactors = FALSE)
+    names(row_data) <- all_names
+    return(as.data.frame(row_data, stringsAsFactors = FALSE))
   })
   
   df <- do.call(rbind, df_list)

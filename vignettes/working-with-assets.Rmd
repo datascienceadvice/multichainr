@@ -1,0 +1,175 @@
+---
+title: "Managing Assets and Tokens"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Managing Assets and Tokens}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+## Introduction
+
+The `multichainr` package provides a high-level R interface to the MultiChain JSON-RPC API. This vignette demonstrates the lifecycle of managing both **fungible assets** (like currencies or loyalty points) and **non-fungible tokens (NFTs)**.
+
+To follow this guide, ensure you have the MultiChain binaries (`multichaind` and `multichain-util`) installed on your system.
+
+```{r setup}
+library(multichainr)
+
+# Set the path to your MultiChain binaries
+mc_set_path(Sys.getenv("MULTICHAIN_PATH"))
+```
+
+## 1. Node Initialization
+
+MultiChain operates as a permissioned blockchain. We start by initializing a new chain and launching the daemon.
+
+```{r init}
+chain_name <- "asset_demo_chain"
+
+# Create the blockchain configuration
+mc_node_init(chain_name)
+
+# Start the node in the background
+mc_node_start(chain_name)
+
+# Allow the node a few seconds to initialize the wallet and network
+Sys.sleep(3) 
+
+# Connect to the local node
+config <- mc_get_config(chain_name)
+conn <- mc_connect(config)
+```
+
+## 2. Permissions and Addresses
+
+By default, MultiChain is secure. Addresses must be granted specific permissions to issue or receive assets.
+
+```{r addresses}
+# Generate new wallet addresses
+issuer_addr <- mc_get_new_address(conn)
+recipient_addr <- mc_get_new_address(conn)
+
+# Grant 'issue' and 'send' permissions to the issuer
+mc_grant(conn, issuer_addr, "issue,send,receive")
+
+# Grant 'receive' permissions to the recipient
+mc_grant(conn, recipient_addr, "receive")
+```
+
+## 3. Fungible Assets
+
+Fungible assets are divisible and interchangeable. We can create an "open" asset to allow the supply to be increased later.
+
+```{r fungible}
+# Define an asset named 'gold' with 2 decimal places (units = 0.01)
+gold_params <- list(name = "gold", open = TRUE)
+
+# Initial issuance of 1,000 units
+mc_issue(conn, issuer_addr, gold_params, quantity = 1000, units = 0.01)
+
+# Increase the total supply by an additional 500 units
+mc_issue_more(conn, issuer_addr, "gold", 500)
+
+# Verify the balance of the issuer
+issuer_balances <- mc_get_address_balances(conn, issuer_addr)
+print(issuer_balances)
+```
+
+## 4. Non-Fungible Tokens (NFTs)
+
+In MultiChain 2.x, NFTs are managed as unique tokens within a non-fungible "Parent Asset."
+
+### Creating the NFT Parent
+To support individual tokens, the parent asset must be created with `fungible = FALSE` and an initial quantity of `0`.
+
+```{r nft_parent}
+art_params <- list(
+  name = "art", 
+  fungible = FALSE, 
+  open = TRUE
+)
+
+# Issue the parent container
+mc_issue(conn, address = issuer_addr, name = art_params, quantity = 0, units = 1)
+```
+
+### Issuing Unique Tokens
+Once the parent exists, we can issue individual tokens (NFTs). Each token can include custom JSON metadata.
+
+```{r issue_tokens}
+# Issue a unique token "painting_001" with specific metadata
+mc_issue_token(conn,
+               address = issuer_addr, 
+               asset = "art", 
+               token = "painting_001", 
+               quantity = 1, 
+               token_details = list(artist = "Leonardo da Vinci", year = 1503))
+
+# Retrieve specific token metadata
+token_info <- mc_get_token_info(conn, "art", "painting_001")
+print(token_info)
+```
+
+## 5. Transfers and Multibalances
+
+We can transfer assets using specific convenience functions or the general-purpose `mc_send` function for complex transactions (like NFTs).
+
+```{r transfers}
+# 1. Send 100 units of fungible 'gold'
+mc_send_asset(conn, recipient_addr, "gold", 100)
+
+# 2. Send the NFT 'painting_001'
+# NFTs require a nested list structure specifying the parent and the token name
+nft_transfer <- list(
+  art = list(
+    token = "painting_001",
+    qty = 1
+  )
+)
+mc_send(conn, recipient_addr, nft_transfer)
+
+# 3. Inspect the recipient's token balances
+# The output is a clean data frame with an 'address' column
+recipient_tokens <- mc_get_token_balances(conn, recipient_addr)
+print(recipient_tokens)
+```
+
+## 6. Node Shutdown and Cleanup
+
+When the work is complete, it is important to stop the node and, if necessary, remove the data directory.
+
+```{r cleanup}
+mc_node_stop(conn)
+Sys.sleep(2)
+
+# Determine data directory for cleanup
+if (.Platform$OS.type == "windows") {
+  base_dir <- file.path(Sys.getenv("APPDATA"), "MultiChain")
+} else if (Sys.info()["sysname"] == "Darwin") {
+  base_dir <- file.path(Sys.getenv("HOME"), "Library/Application Support/MultiChain")
+} else {
+  base_dir <- file.path(Sys.getenv("HOME"), ".multichain")
+}
+
+chain_dir <- file.path(base_dir, chain_name)
+if (dir.exists(chain_dir)) unlink(chain_dir, recursive = TRUE)
+```
+
+## Summary
+
+In this vignette, we demonstrated how to:
+
+1. Configure permissions using `mc_grant`.
+2. Issue open fungible assets using `mc_issue` and `mc_issue_more`.
+3. Set up a non-fungible environment by setting `fungible = FALSE`.
+4. Issue and query unique tokens (NFTs) via `mc_issue_token` and `mc_get_token_info`.
+5. Perform multi-asset transfers and monitor balances.

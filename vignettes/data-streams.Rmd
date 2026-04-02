@@ -1,0 +1,151 @@
+---
+title: "Storing Data in Streams"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Storing Data in Streams}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+## Introduction
+
+MultiChain streams allow for the storage and retrieval of arbitrary data. Each item in a stream is associated with one or more keys, a publisher, and a timestamp (block time). Streams are ideal for audit logs, supply chain tracking, and sharing data between participants without the overhead of native assets.
+
+```{r setup}
+library(multichainr)
+
+# Set the path to MultiChain binaries
+mc_set_path(Sys.getenv("MULTICHAIN_PATH"))
+```
+
+## 1. Node Initialization
+
+We begin by setting up a local node and a temporary blockchain.
+
+```{r init}
+chain_name <- "streams_demo_chain"
+
+# Create and start the node
+mc_node_init(chain_name)
+mc_node_start(chain_name)
+
+# Wait for the node to initialize
+Sys.sleep(3) 
+
+# Connect to the local node
+config <- mc_get_config(chain_name)
+conn <- mc_connect(config)
+```
+
+## 2. Creating and Subscribing to Streams
+
+A stream can be **open** (anyone with global `send` permissions can write) or **restricted** (only specific addresses with `write` permissions on that stream can publish).
+
+```{r create_stream}
+stream_name <- "sensor_data"
+
+# Create an open stream
+mc_create_stream(conn, stream_name, open = TRUE)
+
+# Before reading from a stream, the node must be subscribed to it.
+# This instructs the node to index the stream's items locally.
+mc_subscribe(conn, stream_name)
+
+# Verify stream information
+info <- mc_get_stream_info(conn, stream_name)
+print(info$name)
+```
+
+## 3. Publishing Data
+
+Data can be published as plain text, JSON, or raw hexadecimal strings.
+
+```{r publishing}
+# 1. Publish a simple text message
+mc_publish(conn, stream_name, "device_01", list(text = "Temperature: 22.5C"))
+
+# 2. Publish structured JSON data
+sensor_log <- list(
+  temp = 23.1,
+  humidity = 45,
+  status = "OK"
+)
+mc_publish(conn, stream_name, "device_01", list(json = sensor_log))
+
+# 3. Publish an item with multiple keys
+mc_publish(conn, stream_name, c("device_02", "alert"), list(text = "Critical Battery Level"))
+```
+
+## 4. Retrieving and Querying Items
+
+You can retrieve items by their specific transaction ID, or list multiple items using various filters.
+
+```{r retrieval}
+# List the 10 most recent items in the stream
+# Returns a data frame with columns: publishers, key, data, blocktime, etc.
+recent_items <- mc_list_stream_items(conn, stream_name, count = 10)
+print(recent_items)
+
+# List all items associated with a specific key
+device_history <- mc_list_stream_key_items(conn, stream_name, "device_01")
+print(device_history)
+```
+
+## 5. Stream Summaries (State Tracking)
+
+MultiChain can automatically merge multiple JSON objects published under the same key. This is useful for tracking the "current state" of an object without manual aggregation.
+
+```{r summary}
+# Update the status of device_01
+mc_publish(conn, stream_name, "device_01", list(json = list(status = "MAINTENANCE")))
+
+# Get the merged summary for 'device_01'. 
+# We use "jsonobjectmerge,ignoreother" to skip the plain text items 
+# we published earlier.
+current_state <- mc_get_stream_key_summary(conn, 
+                                           stream_name, 
+                                           "device_01", 
+                                           mode = "jsonobjectmerge,ignoreother")
+print(current_state)
+```
+
+## 6. Cleanup
+
+Shut down the node and clean up the data directory.
+
+```{r cleanup}
+# Stop the node
+mc_node_stop(conn)
+Sys.sleep(2)
+
+# Determine data directory
+if (.Platform$OS.type == "windows") {
+  base_dir <- file.path(Sys.getenv("APPDATA"), "MultiChain")
+} else if (Sys.info()["sysname"] == "Darwin") {
+  base_dir <- file.path(Sys.getenv("HOME"), "Library/Application Support/MultiChain")
+} else {
+  base_dir <- file.path(Sys.getenv("HOME"), ".multichain")
+}
+
+chain_dir <- file.path(base_dir, chain_name)
+if (dir.exists(chain_dir)) {
+  unlink(chain_dir, recursive = TRUE)
+}
+```
+
+## Summary
+
+In this vignette, we demonstrated how to:
+
+1. **Create and Subscribe**: Using `mc_create_stream` and `mc_subscribe` to initialize data storage.
+2. **Publish Data**: Using `mc_publish` to store text and JSON payloads associated with keys.
+3. **Retrieve History**: Using `mc_list_stream_items` and `mc_list_stream_key_items` to query the blockchain ledger.
+4. **State Management**: Using `mc_get_stream_key_summary` to aggregate JSON data and view the current state of a specific key.

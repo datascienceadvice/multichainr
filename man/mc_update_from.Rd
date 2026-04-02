@@ -32,7 +32,17 @@ txid <- mc_update_from(conn, "1A...", "mycoin", list(open = FALSE))
 \seealso{
 \code{\link{mc_update}} for simpler usage.
 
-Other asset management: 
+Other assets: 
+\code{\link{mc_get_asset_info}()},
+\code{\link{mc_get_token_info}()},
+\code{\link{mc_issue}()},
+\code{\link{mc_issue_from}()},
+\code{\link{mc_issue_more}()},
+\code{\link{mc_issue_more_from}()},
+\code{\link{mc_issue_token}()},
+\code{\link{mc_issue_token_from}()},
+\code{\link{mc_list_asset_issues}()},
+\code{\link{mc_list_assets}()},
 \code{\link{mc_update}()}
 }
-\concept{asset management}
+\concept{assets}

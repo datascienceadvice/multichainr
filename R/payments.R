@@ -65,7 +65,7 @@ mc_send <- function(conn, address, amounts, comment = "", comment_to = "") {
 #' @family transactions
 #' @export
 mc_send_asset <- function(conn, address, asset, quantity, native_amount = 0, comment = "", comment_to = "") {
-  params <- list(address, asset, as.numeric(quantity), as.numeric(native_amount), comment, comment_to)
+  params <- list(address, asset, quantity, as.numeric(native_amount), comment, comment_to)
   mc_rpc(conn, "sendasset", params)
 }
 

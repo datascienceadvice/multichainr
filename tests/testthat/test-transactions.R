@@ -60,7 +60,7 @@ test_that("mc_get_multi_balances returns a complex list", {
 })
 
 test_that("mc_get_token_balances returns data.frame of NFT tokens", {
-  fake_body <- '{"result":[{"name":"NFT_Asset","token":"token1","qty":1}],"error":null,"id":1}'
+  fake_body <- '{"result": {"1AddressXYZ": [{"name": "NFT_Asset", "token": "token1", "qty": 1}]}, "error": null, "id": 1}'
   
   httr2::with_mocked_responses(
     function(req) {
@@ -72,9 +72,11 @@ test_that("mc_get_token_balances returns data.frame of NFT tokens", {
     },
     {
       df <- mc_get_token_balances(conn_mock)
+      
       expect_s3_class(df, "data.frame")
       expect_equal(nrow(df), 1)
       expect_equal(df$token[1], "token1")
+      expect_equal(df$address[1], "1AddressXYZ")
     }
   )
 })

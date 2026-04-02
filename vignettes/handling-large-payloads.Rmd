@@ -1,0 +1,146 @@
+---
+title: "Handling Large Payloads with Binary Cache"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Handling Large Payloads with Binary Cache}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+## Introduction
+
+The Binary Cache is a temporary workspace provided by the MultiChain node. It allows R users to bypass memory limits by streaming data into the node in small pieces, publishing it as a single unit, and retrieving large outputs efficiently.
+
+```{r setup}
+library(multichainr)
+
+# Set the path to your MultiChain binaries
+mc_set_path(Sys.getenv("MULTICHAIN_PATH"))
+```
+
+## 1. Node Initialization
+
+We start by initializing a local node and a temporary blockchain.
+
+```{r init}
+chain_name <- "cache_demo_chain"
+
+# Create and start the node
+mc_node_init(chain_name)
+mc_node_start(chain_name)
+
+# Wait for the node to initialize
+Sys.sleep(3) 
+
+# Connect to the local node
+config <- mc_get_config(chain_name)
+conn <- mc_connect(config)
+```
+
+## 2. Creating and Appending to Cache
+
+When dealing with large data, you create a cache item and append data to it. This is more memory-efficient than creating one massive string in R.
+
+```{r create_cache}
+# 1. Create a new empty binary cache item
+cache_id <- mc_create_binary_cache(conn)
+cat("Binary Cache Identifier:", cache_id, "\n")
+
+# 2. Append data in chunks (simulating a large file upload)
+chunk1 <- "Binary-part-1-xyz-"
+chunk2 <- "Binary-part-2-abc"
+
+size1 <- mc_append_binary_cache(conn, cache_id, chunk1)
+size2 <- mc_append_binary_cache(conn, cache_id, chunk2)
+
+cat("Final size in cache:", size2, "bytes\n")
+```
+
+## 3. Publishing Off-chain Data
+
+Once the data is assembled in the cache, we can publish it to a stream. By using the `offchain` option, the data remains in the node's local storage, and only its hash is recorded on the blockchain.
+
+```{r publish_offchain}
+# Create a stream and subscribe to it
+mc_create_stream(conn, "large_files", open = TRUE)
+mc_subscribe(conn, "large_files")
+
+# Publish the data from the cache to the stream
+# We pass the cache_id as the data parameter
+txid <- mc_publish(conn, "large_files", "doc_01", cache_id, options = "offchain")
+
+cat("Published off-chain item. Transaction ID:", txid, "\n")
+```
+
+## 4. Retrieving Data to a New Cache
+
+When you need to read a large item published by another node, you can copy it directly from the transaction output into a *new* binary cache item.
+
+```{r retrieve_cache}
+# 1. Create a new cache item for the downloaded data
+download_id <- mc_create_binary_cache(conn)
+
+# 2. Copy the data from the blockchain transaction to the new cache
+# MultiChain identifies stream data in the first output (vout = 0)
+new_size <- mc_txout_to_binary_cache(conn, download_id, txid, vout = 0)
+
+cat("Data successfully retrieved to cache item:", download_id, "(Size:", new_size, ")\n")
+```
+
+## 5. Inspecting and Deleting Cache
+
+Finally, we can extract the hex data from the cache (or a specific part of it) and then delete the temporary items to free up disk space.
+
+```{r cleanup_cache}
+# Retrieve the full hex string from the output
+# For extremely large items, you would use count_bytes and start_byte to read in chunks
+hex_data <- mc_get_tx_out_data(conn, txid, vout = 0)
+
+# Delete the cache items manually (important for long-running nodes)
+mc_delete_binary_cache(conn, cache_id)
+mc_delete_binary_cache(conn, download_id)
+
+cat("Binary cache cleaned up.\n")
+```
+
+## 6. Cleanup
+
+Always stop the node and remove the temporary data directory.
+
+```{r cleanup}
+# Stop the node
+mc_node_stop(conn)
+Sys.sleep(2)
+
+# Determine data directory
+if (.Platform$OS.type == "windows") {
+  base_dir <- file.path(Sys.getenv("APPDATA"), "MultiChain")
+} else if (Sys.info()["sysname"] == "Darwin") {
+  base_dir <- file.path(Sys.getenv("HOME"), "Library/Application Support/MultiChain")
+} else {
+  base_dir <- file.path(Sys.getenv("HOME"), ".multichain")
+}
+
+chain_dir <- file.path(base_dir, chain_name)
+if (dir.exists(chain_dir)) {
+  unlink(chain_dir, recursive = TRUE)
+}
+```
+
+## Summary
+
+In this vignette, we demonstrated how to:
+
+1.  **Initialize Binary Cache**: Creating a new temporary data item with `mc_create_binary_cache`.
+2.  **Append Data**: Uploading data in chunks with `mc_append_binary_cache`.
+3.  **Publish Off-chain**: Recording only a hash on the blockchain while keeping the large payload locally with `mc_publish`.
+4.  **Retrieve to Cache**: Moving data from a transaction output directly back into a cache item with `mc_txout_to_binary_cache`.
+5.  **Examine and Cleanup**: Reading the final data and deleting the temporary cache items with `mc_get_tx_out_data` and `mc_delete_binary_cache`.

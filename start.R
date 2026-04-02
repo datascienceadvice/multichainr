@@ -32,7 +32,9 @@ usethis::use_r("assets")
 usethis::use_r("permissions")
 usethis::use_r("addresses")
 
-
+usethis::edit_r_environ("project")
+Sys.setenv(MULTICHAIN_PATH = "E:/multichain")
+mc_set_path(Sys.getenv("MULTICHAIN_PATH"))
 
 
 usethis::use_testthat()
@@ -45,7 +47,19 @@ usethis::use_test("streams")
 #usethis::use_build_ignore(c("pdf", "..pdf", "copy.R", "start.R", "test.R"))
 
 
+usethis::use_vignette("getting-started", "Introduction to multichainr")
+usethis::use_vignette("working-with-assets", "Managing Assets and Tokens")
+usethis::use_vignette("data-streams", "Storing Data in Streams")
+usethis::use_vignette("permissions-and-governance", "Network Permissions and Governance")
+usethis::use_vignette("advanced-transactions", "Atomic Swaps and Raw Transactions")
 
+# виньетки в том же стиле (init/cleanup/summary)
+usethis::use_vignette("multi-signature-wallets", "Multi-Signature Wallets and Security")
+usethis::use_vignette("handling-large-payloads", "Handling Large Payloads with Binary Cache")
+usethis::use_vignette("global-variables", "Global Variables and State History")
+usethis::use_vignette("smart-filters", "Smart Filters and On-Chain Logic")
+usethis::use_vignette("", "")
+usethis::use_vignette("", "")
 
 # test -------------------------------------------------------------------------
 devtools::document()
@@ -85,6 +99,8 @@ Sys.setFileTime(files, Sys.time())
 covr::report()
 
 lintr::lint_package() # проверить warnings()
+
+разобраться с путями - как все таки установить путь к mc
 
 # проверить @seealso, @family!
 

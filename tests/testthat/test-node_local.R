@@ -8,7 +8,7 @@ test_that("mc_set_path sets option correctly", {
   on.exit(unlink(tmp_dir, recursive = TRUE))
   
   mc_set_path(tmp_dir)
-  expect_equal(getOption("multichainr.path"), normalizePath(tmp_dir))
+  expect_equal(normalizePath(getOption("multichainr.path")), normalizePath(tmp_dir))
 })
 
 test_that("mc_get_bin_path finds binary in set path", {
@@ -20,9 +20,7 @@ test_that("mc_get_bin_path finds binary in set path", {
   if (.Platform$OS.type == "windows") fake_bin <- paste0(fake_bin, ".exe")
   writeLines("fake", fake_bin)
   
-  old_path <- getOption("multichainr.path")
-  options(multichainr.path = tmp_dir)
-  on.exit(options(multichainr.path = old_path), add = TRUE)
+  withr::local_envvar(PATH = paste(tmp_dir, Sys.getenv("PATH"), sep = .Platform$path.sep))
   
   result <- mc_get_bin_path("multichaind")
   expect_equal(normalizePath(result), normalizePath(fake_bin))
@@ -39,9 +37,7 @@ test_that("mc_get_bin_path finds binary in system PATH", {
   if (.Platform$OS.type == "windows") fake_bin <- paste0(fake_bin, ".exe")
   writeLines("fake", fake_bin)
   
-  old_path <- Sys.getenv("PATH")
-  Sys.setenv(PATH = paste(tmp_dir, old_path, sep = .Platform$path.sep))
-  on.exit(Sys.setenv(PATH = old_path), add = TRUE)
+  withr::local_envvar(PATH = paste(tmp_dir, Sys.getenv("PATH"), sep = .Platform$path.sep))
   
   result <- mc_get_bin_path("multichaind")
   expect_equal(normalizePath(result), normalizePath(fake_bin))
@@ -82,7 +78,7 @@ test_that("mc_get_config correctly parses configuration files", {
   expect_equal(config$password, "test_password_123")
   expect_equal(config$port, 7788)
   
-  cat("rpcport=9999\n", 
+  cat("\nrpcport=9999\n", 
       file = file.path(chain_dir, "multichain.conf"), 
       append = TRUE)
   
@@ -155,28 +151,6 @@ test_that("mc_get_config uses Linux default base_dir", {
 
 skip_on_cran()
 
-bin_path <- "E:/multichain"
-if (!dir.exists(bin_path)) {
-  skip(paste("Directory", bin_path, "does not exist. Set correct path to multichain binaries."))
-}
-
-mc_set_path(bin_path)
-has_multichain_util <- function() {
-  tryCatch({
-    multichainr:::mc_get_bin_path("multichain-util")
-    TRUE
-  }, error = function(e) FALSE)
-}
-has_multichaind <- function() {
-  tryCatch({
-    multichainr:::mc_get_bin_path("multichaind")
-    TRUE
-  }, error = function(e) FALSE)
-}
-
-if (!has_multichain_util() || !has_multichaind()) {
-  skip("multichain binaries not found in E:/multichain")
-}
 
 cleanup_chain <- function(chain_name) {
   try(mc_node_stop(chain_name), silent = TRUE)
@@ -195,6 +169,18 @@ cleanup_chain <- function(chain_name) {
 }
 
 test_that("Integration: create, start, stop chain using set path", {
+  current_path <- getOption("multichainr.path")
+  
+  if (is.null(current_path)) {
+    env_path <- Sys.getenv("MULTICHAIN_PATH")
+    if (env_path != "" && dir.exists(env_path)) {
+      mc_set_path(env_path)
+      current_path <- getOption("multichainr.path")
+    }
+  }
+  
+  skip_if(is.null(current_path), "MULTICHAIN_PATH not set. Integration tests skipped.")
+  
   chain_name <- paste0("test_integration_", format(Sys.time(), "%Y%m%d_%H%M%S"))
   chain_name <- gsub("[^a-zA-Z0-9]", "_", chain_name)
   

@@ -167,6 +167,17 @@ mc_list_streams <- function(conn, streams = "*", verbose = FALSE, count = NULL, 
 mc_publish <- function(conn, stream, keys, data, options = NULL) {
   keys_param <- if (length(keys) > 1) as.list(keys) else keys
   
+  if (is.character(data)) {
+    if (grepl("^cache-", data)) {
+      data <- list(cacheitem = data)
+    } else {
+      is_valid_hex <- nchar(data) > 0 && nchar(data) %% 2 == 0 && grepl("^[0-9a-fA-F]+$", data)
+      if (!is_valid_hex) {
+        data <- paste(charToRaw(as.character(data)), collapse = "")
+      }
+    }
+  }
+  
   params <- list(stream, keys_param, data)
   if (!is.null(options)) params <- c(params, list(options))
   
@@ -197,6 +208,10 @@ mc_publish <- function(conn, stream, keys, data, options = NULL) {
 #' @export
 mc_publish_from <- function(conn, from_address, stream, keys, data, options = NULL) {
   keys_param <- if (length(keys) > 1) as.list(keys) else keys
+  
+  if (is.character(data) && grepl("^cache-", data)) {
+    data <- list(cacheitem = data)
+  }
   
   params <- list(from_address, stream, keys_param, data)
   if (!is.null(options)) params <- c(params, list(options))
@@ -236,6 +251,13 @@ mc_publish_from <- function(conn, from_address, stream, keys, data, options = NU
 #' @family stream items
 #' @export
 mc_publish_multi <- function(conn, stream, items, options = NULL) {
+  items <- lapply(items, function(item) {
+    if (is.character(item$data) && grepl("^cache-", item$data)) {
+      item$data <- list(cacheitem = item$data)
+    }
+    return(item)
+  })
+  
   params <- list(stream, items)
   if (!is.null(options)) params <- c(params, list(options))
   

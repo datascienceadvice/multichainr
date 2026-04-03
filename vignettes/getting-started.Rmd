@@ -36,7 +36,7 @@ If you prefer not to use environment variables, you can set the path manually at
 library(multichainr)
 
 # Provide the path to the folder containing MultiChain executables
-mc_set_path("E:/multichain") 
+mc_set_path(Sys.getenv("MULTICHAIN_PATH"))
 ```
 
 ## 2. Initializing a Temporary Blockchain

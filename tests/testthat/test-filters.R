@@ -1,5 +1,42 @@
 conn_mock <- mc_connect(port = 8570, user = "u", password = "p")
 
+test_that("prep_filter_options leaves non-list options unchanged", {
+  expect_equal(prep_filter_options(NA), NA)
+  expect_equal(prep_filter_options("string"), "string")
+  expect_equal(prep_filter_options(NULL), NULL)
+  expect_equal(prep_filter_options(123), 123)
+})
+
+test_that("prep_filter_options leaves list without libraries unchanged", {
+  opts <- list(a = 1, b = 2)
+  expect_identical(prep_filter_options(opts), opts)
+})
+
+test_that("prep_filter_options converts single string libraries to list", {
+  opts <- list(libraries = "mylib")
+  expected <- list(libraries = list("mylib"))
+  expect_identical(prep_filter_options(opts), expected)
+})
+
+test_that("prep_filter_options leaves character vector of length > 1 as is", {
+  opts <- list(libraries = c("lib1", "lib2"))
+  expected <- list(libraries = c("lib1", "lib2"))  # не меняется
+  expect_identical(prep_filter_options(opts), expected)
+})
+
+test_that("prep_filter_options leaves already-list libraries unchanged", {
+  opts <- list(libraries = list("lib1", "lib2"))
+  expect_identical(prep_filter_options(opts), opts)
+})
+
+test_that("prep_filter_options converts single string libraries to list (flat list)", {
+  opts <- list(libraries = "single", restrict = "write")
+  expected <- list(libraries = list("single"), restrict = "write")
+  result <- prep_filter_options(opts)
+  expect_identical(result$libraries, expected$libraries)
+  expect_identical(result$restrict, opts$restrict)
+})
+
 test_that("mc_create_stream_filter calls create with streamfilter", {
   fake_txid <- "streamfilter_txid"
   fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)

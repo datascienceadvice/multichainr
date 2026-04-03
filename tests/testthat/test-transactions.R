@@ -81,6 +81,32 @@ test_that("mc_get_token_balances returns data.frame of NFT tokens", {
   )
 })
 
+test_that("mc_get_token_balances returns empty data.frame when RPC returns NULL", {
+  fake_body <- '{"result": null, "error": null, "id": 1}'
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      df <- mc_get_token_balances(conn_mock)
+      expect_s3_class(df, "data.frame")
+      expect_equal(nrow(df), 0)
+    }
+  )
+})
+
+test_that("mc_get_token_balances returns empty data.frame when RPC returns empty list", {
+  fake_body <- '{"result": {}, "error": null, "id": 1}'
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      df <- mc_get_token_balances(conn_mock)
+      expect_s3_class(df, "data.frame")
+      expect_equal(nrow(df), 0)
+    }
+  )
+})
+
 test_that("mc_get_total_balances returns data.frame of all assets", {
   fake_body <- '{"result":[{"name":"assetA","qty":1000},{"name":"assetB","qty":50.5}],"error":null,"id":1}'
   

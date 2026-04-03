@@ -69,6 +69,83 @@ test_that("rpc_res_to_df handles simple lists of strings", {
   expect_equal(df$value[1], "address1")
 })
 
+test_that("rpc_res_to_df handles NULL input", {
+  expect_equal(rpc_res_to_df(NULL), data.frame())
+})
+
+test_that("rpc_res_to_df handles empty list", {
+  expect_equal(rpc_res_to_df(list()), data.frame())
+})
+
+test_that("rpc_res_to_df converts atomic vector to data.frame with column 'value'", {
+  res <- c("a", "b", "c")
+  df <- rpc_res_to_df(res)
+  expect_s3_class(df, "data.frame")
+  expect_equal(colnames(df), "value")
+  expect_equal(df$value, c("a", "b", "c"))
+})
+
+test_that("rpc_res_to_df wraps named list into list of one element", {
+  res <- list(name = "Alice", age = 30)
+  df <- rpc_res_to_df(res)
+  expect_s3_class(df, "data.frame")
+  expect_equal(nrow(df), 1)
+  expect_equal(df$name, "Alice")
+  expect_equal(df$age, 30)
+})
+
+test_that("rpc_res_to_df handles list of empty lists (all_names = character(0))", {
+  res <- list(list(), list())
+  df <- rpc_res_to_df(res)
+
+  expect_s3_class(df, "data.frame")
+  expect_equal(ncol(df), 0)
+  expect_equal(nrow(df), 0)
+})
+
+test_that("rpc_res_to_df handles all_names = NULL (list of unnamed lists)", {
+  res <- list(list(1), list(2))
+  df <- rpc_res_to_df(res)
+  expect_s3_class(df, "data.frame")
+  expect_equal(colnames(df), "value")
+  expect_equal(nrow(df), 2)
+  expect_equal(df$value, c(1, 2))
+})
+
+test_that("rpc_res_to_df converts NULL values to NA", {
+  res <- list(list(a = 1, b = NULL), list(a = 2, b = "text"))
+  df <- rpc_res_to_df(res)
+  expect_equal(df$a, c(1, 2))
+  expect_equal(df$b, c(NA, "text"))
+})
+
+test_that("rpc_res_to_df wraps list values with I()", {
+  res <- list(list(name = "John", hobbies = list("chess", "music")))
+  df <- rpc_res_to_df(res)
+  expect_s3_class(df, "data.frame")
+  expect_true(is.list(df$hobbies))
+
+  expect_true(inherits(df$hobbies, "AsIs") || inherits(df$hobbies[[1]], "AsIs"))
+
+  if (inherits(df$hobbies, "AsIs")) {
+    expect_equal(unclass(df$hobbies)[[1]], list("chess", "music"))
+  } else {
+    expect_equal(unclass(df$hobbies[[1]]), list("chess", "music"))
+  }
+})
+
+test_that("rpc_res_to_df works with typical MultiChain output: list of named lists", {
+  res <- list(
+    list(txid = "abc", vout = 0, amount = 1.5),
+    list(txid = "def", vout = 1, amount = 0.3)
+  )
+  df <- rpc_res_to_df(res)
+  expect_s3_class(df, "data.frame")
+  expect_equal(nrow(df), 2)
+  expect_equal(colnames(df), c("txid", "vout", "amount"))
+  expect_equal(df$txid, c("abc", "def"))
+})
+
 test_that("mc_rpc throw error on wrong object", {
   expect_error(mc_rpc(list(), "getinfo"), "must be a 'multichain_conn' object")
 })

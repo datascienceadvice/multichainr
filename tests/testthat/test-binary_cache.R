@@ -41,6 +41,91 @@ test_that("mc_append_binary_cache handles text lists", {
   )
 })
 
+# tests/testthat/test-binary-cache.R
+
+test_that("mc_append_binary_cache works with empty data (default)", {
+  fake_size <- 100
+  fake_body <- sprintf('{"result":%d,"error":null,"id":1}', fake_size)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_append_binary_cache(conn_mock, "cache_id")
+      expect_equal(res, fake_size)
+    }
+  )
+})
+
+test_that("mc_append_binary_cache works with string data that is already hex", {
+  fake_size <- 200
+  fake_body <- sprintf('{"result":%d,"error":null,"id":1}', fake_size)
+  hex_data <- "48656c6c6f"  # "Hello"
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_append_binary_cache(conn_mock, "cache_id", data = hex_data)
+      expect_equal(res, fake_size)
+    }
+  )
+})
+
+test_that("mc_append_binary_cache converts non-hex string to hex", {
+  fake_size <- 300
+  fake_body <- sprintf('{"result":%d,"error":null,"id":1}', fake_size)
+  text_data <- "Hello world"
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_append_binary_cache(conn_mock, "cache_id", data = text_data)
+      expect_equal(res, fake_size)
+    }
+  )
+})
+
+test_that("mc_append_binary_cache works with list containing text", {
+  fake_size <- 400
+  fake_body <- sprintf('{"result":%d,"error":null,"id":1}', fake_size)
+  data_list <- list(text = "Hello from list")
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_append_binary_cache(conn_mock, "cache_id", data = data_list)
+      expect_equal(res, fake_size)
+    }
+  )
+})
+
+test_that("mc_append_binary_cache works with list containing json", {
+  fake_size <- 500
+  fake_body <- sprintf('{"result":%d,"error":null,"id":1}', fake_size)
+  data_list <- list(json = list(a = 1, b = "value"))
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_append_binary_cache(conn_mock, "cache_id", data = data_list)
+      expect_equal(res, fake_size)
+    }
+  )
+})
+
+test_that("mc_append_binary_cache handles list without text or json (no conversion)", {
+  fake_size <- 600
+  fake_body <- sprintf('{"result":%d,"error":null,"id":1}', fake_size)
+  data_list <- list(other = "field")
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_append_binary_cache(conn_mock, "cache_id", data = data_list)
+      expect_equal(res, fake_size)
+    }
+  )
+})
+
 test_that("mc_txout_to_binary_cache returns size", {
   fake_body <- '{"result":5000,"error":null,"id":1}'
   

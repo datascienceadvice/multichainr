@@ -258,6 +258,85 @@ test_that("mc_publish works with options", {
   )
 })
 
+test_that("mc_publish handles single key and character data (not hex)", {
+  fake_txid <- "publish_txid_001"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish(conn_mock, "mystream", "key1", "Hello, world!")
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_publish handles single key and character data that is already hex", {
+  fake_txid <- "publish_txid_002"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  hex_data <- "48656c6c6f"  # "Hello"
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish(conn_mock, "mystream", "key1", hex_data)
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_publish handles data starting with 'cache-' (cacheitem)", {
+  fake_txid <- "publish_txid_003"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish(conn_mock, "mystream", "key1", "cache-123")
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_publish handles multiple keys", {
+  fake_txid <- "publish_txid_004"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish(conn_mock, "mystream", c("key1", "key2"), "data")
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_publish handles list data (no transformation)", {
+  fake_txid <- "publish_txid_005"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish(conn_mock, "mystream", "key1", list(text = "data"))
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_publish includes options when provided", {
+  fake_txid <- "publish_txid_006"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish(conn_mock, "mystream", "key1", "data", options = "offchain")
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
 test_that("mc_publish_from works without options", {
   fake_txid <- "publish_from_txid_001"
   fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
@@ -280,6 +359,58 @@ test_that("mc_publish_from works with options", {
     {
       res <- mc_publish_from(conn_mock, "from_addr", "mystream", "key1",
                              list(text = "data"), options = "offchain")
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_publish_from works with single key, non-cache data, no options", {
+  fake_txid <- "publish_from_txid_001"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish_from(conn_mock, "from_addr", "mystream", "key1", "data")
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_publish_from works with multiple keys and cache data", {
+  fake_txid <- "publish_from_txid_002"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish_from(conn_mock, "from_addr", "mystream", c("key1", "key2"), "cache-123")
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_publish_from works with single key, non-cache data, and options", {
+  fake_txid <- "publish_from_txid_003"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish_from(conn_mock, "from_addr", "mystream", "key1", "data", options = "offchain")
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_publish_from works with list data (not character)", {
+  fake_txid <- "publish_from_txid_004"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish_from(conn_mock, "from_addr", "mystream", "key1", list(text = "data"))
       expect_equal(res, fake_txid)
     }
   )
@@ -356,6 +487,57 @@ test_that("mc_publish_multi_from works with options", {
     function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
     {
       res <- mc_publish_multi_from(conn_mock, "from_addr", "mystream", items, options = "offchain")
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_publish_multi works with items that have regular data (no cache)", {
+  fake_txid <- "publish_multi_txid_001"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  items <- list(
+    list(key = "k1", data = "Hello"),
+    list(key = "k2", data = list(json = list(a = 1)))
+  )
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish_multi(conn_mock, "mystream", items)
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_publish_multi works with items where data starts with 'cache-'", {
+  fake_txid <- "publish_multi_txid_002"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  items <- list(
+    list(key = "k1", data = "cache-123"),
+    list(key = "k2", data = "regular")
+  )
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish_multi(conn_mock, "mystream", items)
+      expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_publish_multi works with options parameter", {
+  fake_txid <- "publish_multi_txid_003"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  items <- list(list(key = "k1", data = "data"))
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_publish_multi(conn_mock, "mystream", items, options = "offchain")
       expect_equal(res, fake_txid)
     }
   )

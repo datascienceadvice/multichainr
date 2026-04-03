@@ -106,6 +106,16 @@ mc_set_runtime_param <- function(conn, name, value) {
   
   name <- match.arg(name, supported_params)
   
+  int_params <- c("acceptfiltertimeout", "lockadminminerounds", 
+                  "maxshowndata", "maxqueryscanitems", "mineemptyrounds")
+  bool_params <- c("miningrequirespeers", "lockblock")
+  
+  if (name %in% int_params) {
+    value <- as.integer(value)
+  } else if (name %in% bool_params) {
+    value <- as.logical(value)
+  }
+  
   mc_rpc(conn, "setruntimeparam", list(name, value))
 }
 

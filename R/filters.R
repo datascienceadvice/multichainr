@@ -1,7 +1,20 @@
+#' Prepare filter options for JSON-RPC conversion
+#'
+#' This internal helper function ensures that the `libraries` element of the
+#' options list is formatted as a list (JSON array) when a single string is
+#' provided. MultiChain expects libraries to be an array even when only one
+#' library is specified. The function leaves other options unchanged.
+#'
+#' @param options A list of filter options (e.g., for `mc_create_stream_filter`
+#'   or `mc_create_tx_filter`). May contain a `libraries` element.
+#'
+#' @return A list with the same structure as the input, except that if
+#'   `options$libraries` is a character string of length 1, it is converted
+#'   to a list containing that string.
+#'
+#' @keywords internal
 prep_filter_options <- function(options) {
   if (is.list(options) && !is.null(options$libraries)) {
-    # Если передана одна строка, превращаем ее в список, 
-    # чтобы jsonlite сохранил ее как JSON array []
     if (is.character(options$libraries) && length(options$libraries) == 1) {
       options$libraries <- as.list(options$libraries)
     }

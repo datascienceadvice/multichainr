@@ -101,6 +101,7 @@ covr::report()
 lintr::lint_package() # проверить warnings()
 
 разобраться с путями - как все таки установить путь к mc
+создать функцию для ожидания отклика - mc_wait_for_confirmation - УЖЕ СОЗДАНО :) НАПИХАТЬ куда можно
 
 # проверить @seealso, @family!
 

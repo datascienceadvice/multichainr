@@ -217,3 +217,80 @@ test_that("mc_get_tx_out_data handles count_bytes and start_byte", {
     }
   )
 })
+
+conn_mock <- mc_connect(port = 8570, user = "u", password = "p")
+
+test_that("mc_wait_for_confirmation returns TRUE if confirmed immediately", {
+  fake_body <- '{"result":{"txid":"abc","confirmations":1},"error":null,"id":1}'
+  
+  httr2::with_mocked_responses(
+    function(req) {
+      httr2::response(
+        status_code = 200,
+        headers = list("Content-Type" = "application/json"),
+        body = charToRaw(fake_body)
+      )
+    },
+    {
+      res <- mc_wait_for_confirmation(conn_mock, "abc", timeout = 2)
+      expect_true(res)
+    }
+  )
+})
+
+test_that("mc_wait_for_confirmation retries and then succeeds", {
+  resp_unconfirmed <- httr2::response(
+    status_code = 200,
+    body = charToRaw('{"result":{"txid":"abc","confirmations":0},"error":null,"id":1}')
+  )
+  
+  resp_confirmed <- httr2::response(
+    status_code = 200,
+    body = charToRaw('{"result":{"txid":"abc","confirmations":1},"error":null,"id":1}')
+  )
+  
+  httr2::with_mocked_responses(
+    list(resp_unconfirmed, resp_confirmed),
+    {
+      res <- mc_wait_for_confirmation(conn_mock, "abc", timeout = 5)
+      expect_true(res)
+    }
+  )
+})
+
+test_that("mc_wait_for_confirmation throws error on timeout", {
+  fake_body <- '{"result":{"txid":"abc","confirmations":0},"error":null,"id":1}'
+  
+  httr2::with_mocked_responses(
+    function(req) {
+      httr2::response(status_code = 200, body = charToRaw(fake_body))
+    },
+    {
+      expect_error(
+        mc_wait_for_confirmation(conn_mock, "abc", timeout = 1),
+        "Timeout waiting for transaction"
+      )
+    }
+  )
+})
+
+test_that("mc_wait_for_confirmation handles RPC errors during wait", {
+  resp_error <- httr2::response(
+    status_code = 200,
+    body = charToRaw('{"result":null,"error":{"code":-5,"message":"Invalid txid"},"id":1}')
+  )
+  
+  resp_ok <- httr2::response(
+    status_code = 200,
+    body = charToRaw('{"result":{"confirmations":1},"error":null,"id":1}')
+  )
+  
+  httr2::with_mocked_responses(
+    list(resp_error, resp_ok),
+    {
+      res <- mc_wait_for_confirmation(conn_mock, "abc", timeout = 5)
+      expect_true(res)
+    }
+  )
+})
+

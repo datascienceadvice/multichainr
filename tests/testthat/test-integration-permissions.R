@@ -19,7 +19,7 @@ test_that("Integration: Permissions lifecycle", {
   }
   chain_dir <- file.path(base_dir, chain_name)
   
-  # clenaup on exit
+  # cleanup on exit
   on.exit({
     try(mc_node_stop(chain_name), silent = TRUE)
     Sys.sleep(2)
@@ -28,14 +28,22 @@ test_that("Integration: Permissions lifecycle", {
   
   # init
   mc_node_init(chain_name)
+  
+  # Speed up block generation (Blockchain Params)
+  params_path <- file.path(base_dir, chain_name, "params.dat")
+  writeLines(gsub("target-block-time = 15", "target-block-time = 2 ", readLines(params_path)), params_path)
+  
   mc_node_start(chain_name)
   
-  # wait
+  # wait for node startup
   message("Waiting for node to initialize RPC...")
   Sys.sleep(5) 
   
   config <- mc_get_config(chain_name)
   conn <- mc_connect(config)
+  
+  # solo mining ON (Runtime Param)
+  mc_set_runtime_param(conn, "miningrequirespeers", FALSE)
   
   # The default address created at genesis is our admin
   admin_addr <- mc_get_addresses(conn)[1]
@@ -47,6 +55,9 @@ test_that("Integration: Permissions lifecycle", {
   g_tx1 <- mc_grant(conn, test_addr_1, "send,receive")
   expect_type(g_tx1, "character")
   
+  # wait
+  mc_wait_for_confirmation(conn, g_tx1)
+  
   # 2. mc_verify_permission ----------------------------------------------------
   expect_true(mc_verify_permission(conn, test_addr_1, "send"))
   expect_true(mc_verify_permission(conn, test_addr_1, "receive"))
@@ -56,14 +67,18 @@ test_that("Integration: Permissions lifecycle", {
   # Grant from the specific admin address
   g_tx2 <- mc_grant_from(conn, admin_addr, test_addr_2, "connect,issue")
   expect_type(g_tx2, "character")
-
+  
+  mc_wait_for_confirmation(conn, g_tx2)
   expect_true(mc_verify_permission(conn, test_addr_2, "issue"))
   
   # 4. mc_grant_with_data ------------------------------------------------------
   # Grant with string metadata
   g_tx3 <- mc_grant_with_data(conn, test_addr_1, "mine", data = "Incentivized miner")
   expect_type(g_tx3, "character")
-
+  
+  # wait
+  mc_wait_for_confirmation(conn, g_tx3)
+  
   expect_true(mc_verify_permission(conn, test_addr_1, "mine"))
   
   # 5. mc_grant_with_data_from -------------------------------------------------
@@ -71,7 +86,9 @@ test_that("Integration: Permissions lifecycle", {
   meta <- list(dept = "IT", level = 5)
   g_tx4 <- mc_grant_with_data_from(conn, admin_addr, test_addr_2, "admin", data = meta)
   expect_type(g_tx4, "character")
-
+  
+  # wait
+  mc_wait_for_confirmation(conn, g_tx4)
   expect_true(mc_verify_permission(conn, test_addr_2, "admin"))
   
   # 6. mc_list_permissions -----------------------------------------------------
@@ -89,6 +106,9 @@ test_that("Integration: Permissions lifecycle", {
   r_tx1 <- mc_revoke(conn, test_addr_1, "mine")
   expect_type(r_tx1, "character")
   
+  # wait
+  mc_wait_for_confirmation(conn, r_tx1)
+  
   expect_false(mc_verify_permission(conn, test_addr_1, "mine"))
   # 'send' should still be there
   expect_true(mc_verify_permission(conn, test_addr_1, "send"))
@@ -98,6 +118,8 @@ test_that("Integration: Permissions lifecycle", {
   r_tx2 <- mc_revoke_from(conn, admin_addr, test_addr_2, "admin")
   expect_type(r_tx2, "character")
   
+  # wait
+  mc_wait_for_confirmation(conn, r_tx2)
   expect_false(mc_verify_permission(conn, test_addr_2, "admin"))
-
+  
 })

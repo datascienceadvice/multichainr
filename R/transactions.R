@@ -192,3 +192,26 @@ mc_get_tx_out_data <- function(conn, txid, vout, count_bytes = NULL, start_byte 
   
   mc_rpc(conn, "gettxoutdata", params)
 }
+
+#' Wait for transaction confirmation
+#'
+#' Blocks execution until a transaction is included in a block.
+#'
+#' @param conn A connection object.
+#' @param txid Character string. Transaction ID.
+#' @param timeout Integer. Maximum time to wait in seconds (default 30).
+#'
+#' @return Logical TRUE if confirmed, throws error if timeout reached.
+#' @export
+mc_wait_for_confirmation <- function(conn, txid, timeout = 30) {
+  start_time <- Sys.time()
+  while (as.numeric(difftime(Sys.time(), start_time, units = "secs")) < timeout) {
+    tx_info <- tryCatch(mc_get_wallet_transaction(conn, txid), error = function(e) NULL)
+    
+    if (!is.null(tx_info) && !is.null(tx_info$confirmations) && tx_info$confirmations > 0) {
+      return(TRUE)
+    }
+    Sys.sleep(1)
+  }
+  stop(sprintf("Timeout waiting for transaction %s to be confirmed after %s seconds", txid, timeout))
+}

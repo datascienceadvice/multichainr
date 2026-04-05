@@ -39,19 +39,21 @@
 #' @family raw transactions
 #' @export
 mc_create_raw_transaction <- function(conn, inputs, outputs, data = list(), action = "") {
-  inputs <- lapply(inputs, function(x) {
+  inputs_param <- lapply(inputs, function(x) {
     x$vout <- as.integer(x$vout)
     x
   })
   
+  data_param <- list()
   if (length(data) > 0) {
-    data <- lapply(data, function(d) {
+    data_param <- lapply(data, function(d) {
       if (is.list(d)) d <- jsonlite::toJSON(d, auto_unbox = TRUE)
       paste(charToRaw(as.character(d)), collapse = "")
     })
+    data_param <- I(data_param)
   }
   
-  mc_rpc(conn, "createrawtransaction", list(inputs, outputs, data, action))
+  mc_rpc(conn, "createrawtransaction", list(I(inputs_param), outputs, data_param, action))
 }
 
 #' Create and fund a raw transaction from a specific address
@@ -183,11 +185,13 @@ mc_append_raw_data <- function(conn, tx_hex, data) {
 #' @family raw transactions
 #' @export
 mc_append_raw_transaction <- function(conn, tx_hex, inputs = list(), outputs = list()) {
-  inputs <- lapply(inputs, function(x) {
+  inputs_param <- lapply(inputs, function(x) {
     x$vout <- as.integer(x$vout)
     x
   })
-  mc_rpc(conn, "appendrawtransaction", list(tx_hex, inputs, outputs))
+
+  inputs_arg <- if (length(inputs_param) > 0) I(inputs_param) else list()
+  mc_rpc(conn, "appendrawtransaction", list(tx_hex, inputs_arg, outputs))
 }
 
 #' Decode a raw transaction hex
@@ -246,7 +250,24 @@ mc_decode_raw_transaction <- function(conn, tx_hex) {
 #' @family raw transactions
 #' @export
 mc_sign_raw_transaction <- function(conn, tx_hex, parents = NULL, private_keys = NULL, sighashtype = "ALL") {
-  params <- list(tx_hex, parents, private_keys, sighashtype)
+  parents_param <- parents %||% list()
+  if (length(parents_param) > 0) {
+    parents_param <- lapply(parents_param, function(p) {
+      if (!is.null(p$assets)) p$assets <- I(p$assets)
+      return(p)
+    })
+    parents_param <- I(parents_param)
+  }
+  
+  params <- list(tx_hex, parents_param)
+  
+  if (!is.null(private_keys)) {
+    params <- c(params, list(I(private_keys)))
+    params <- c(params, list(sighashtype))
+  } else if (sighashtype != "ALL") {
+    params <- c(params, list(list(), sighashtype))
+  }
+  
   mc_rpc(conn, "signrawtransaction", params)
 }
 

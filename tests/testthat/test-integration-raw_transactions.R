@@ -28,14 +28,13 @@ test_that("Integration: Raw Transactions full lifecycle", {
   
   # Set fast block time
   params_path <- file.path(base_dir, chain_name, "params.dat")
-  writeLines(gsub("target-block-time = 15", "target-block-time = 2", readLines(params_path)), params_path)
+  writeLines(gsub("target-block-time = 15", "target-block-time = 2 ", readLines(params_path)), params_path)
   
   mc_node_start(chain_name)
   Sys.sleep(5) 
   
   config <- mc_get_config(chain_name)
   conn <- mc_connect(config)
-  mc_set_runtime_param(conn, "miningrequirespeers", FALSE)
   
   addr_admin <- mc_get_addresses(conn)[1]
   addr_recipient <- mc_get_new_address(conn)
@@ -55,9 +54,7 @@ test_that("Integration: Raw Transactions full lifecycle", {
   raw_send_res <- mc_create_raw_send_from(conn, addr_admin, to_amounts_1, action = "send")
   mc_wait_for_confirmation(conn, raw_send_res)
   
-  # 2. MANUAL PIPELINE ---------------------------------------------------------
-  
-  # A. FIND THE CORRECT UTXO
+  # FIND THE CORRECT UTXO
   # We need a UTXO belonging to admin that has at least 6 tokens (5 + 1 for next steps)
   unspent <- mc_list_unspent(conn, addresses = addr_admin)
   
@@ -73,15 +70,18 @@ test_that("Integration: Raw Transactions full lifecycle", {
   utxo <- unspent[target_row_idx, ]
   inputs <- list(list(txid = utxo$txid, vout = utxo$vout))
   
-  # B. Build initial hex (5 tokens)
+  # 2. mc_create_raw_transaction -----------------------------------------------
+  # Build initial hex (5 tokens)
   outputs_manual <- list()
   outputs_manual[[addr_recipient]] <- list(rawtoken = 5)
   tx_hex <- mc_create_raw_transaction(conn, inputs, outputs_manual)
   
-  # C. Append Data
+  # 3. mc_append_raw_data ------------------------------------------------------
+  # Append Data
   tx_hex <- mc_append_raw_data(conn, tx_hex, list(info = "step-by-step"))
   
-  # D. Append Additional Output (1 token)
+  # 4. mc_append_raw_transaction -----------------------------------------------
+  # Append Additional Output (1 token)
   # IMPORTANT: Do this BEFORE adding change
   addr_extra <- mc_get_new_address(conn)
   mc_grant(conn, addr_extra, "receive")
@@ -90,26 +90,46 @@ test_that("Integration: Raw Transactions full lifecycle", {
   outputs_extra[[addr_extra]] <- list(rawtoken = 1)
   tx_hex <- mc_append_raw_transaction(conn, tx_hex, outputs = outputs_extra)
   
-  # E. Append Change
+  # 5. mc_append_raw_change ----------------------------------------------------
+  # Append Change
   # Now Inputs (e.g. 90) > Outputs (5 + 1). This should now succeed.
   tx_hex <- mc_append_raw_change(conn, tx_hex, addr_admin)
   expect_type(tx_hex, "character")
   
-  # F. Decode
+  # 6. mc_decode_raw_transaction -----------------------------------------------
+  # Decode
   decoded <- mc_decode_raw_transaction(conn, tx_hex)
   expect_true(length(decoded$vout) >= 4)
   
-  # G. Sign
-  signed_res <- mc_sign_raw_transaction(conn, tx_hex)
-  expect_true(signed_res$complete)
+  # 7. mc_sign_raw_transaction -------------------------------------------------
+  # prepare parents_data for sign
+  # extract data from AsIs
+  # scriptPubKey[[1]] - string
+  # assets[[1]] - list of objects
+  parents_data <- list(list(
+    txid         = utxo$txid,
+    vout         = as.integer(utxo$vout),
+    scriptPubKey = utxo$scriptPubKey[[1]], 
+    amount       = as.numeric(utxo$amount),
+    assets       = utxo$assets[[1]]
+  ))
   
-  # H. Send
+  # private_keys = NULL (default), to sign with own wallet
+  signed_res <- mc_sign_raw_transaction(conn, tx_hex, parents = parents_data)
+  
+  expect_true(signed_res$complete)
+
+  # 8. mc_send_raw_transaction -------------------------------------------------
   final_txid <- mc_send_raw_transaction(conn, signed_res$hex)
+  mc_wait_for_confirmation(conn, final_txid)
   expect_type(final_txid, "character")
   
-  # I. Verify final balance
+  # Verify final balance
   mc_wait_for_confirmation(conn, final_txid)
   balances <- mc_get_address_balances(conn, addr_recipient)
   # Total received by recipient: 10 (automated) + 5 (manual) = 15
   expect_equal(balances[balances$name == asset_name, ]$qty, 15)
+  
+  extra_bal <- mc_get_address_balances(conn, addr_extra)
+  expect_equal(extra_bal[extra_bal$name == asset_name, ]$qty, 1)
 })

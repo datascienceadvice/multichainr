@@ -341,7 +341,12 @@ mc_get_stream_item <- function(conn, stream, txid, verbose = FALSE) {
 #' @family stream summaries
 #' @export
 mc_get_stream_key_summary <- function(conn, stream, key, mode = "jsonobjectmerge") {
-  mc_rpc(conn, "getstreamkeysummary", list(stream, key, mode))
+  res <- mc_rpc(conn, "getstreamkeysummary", list(stream, key, mode))
+  
+  if (is.list(res) && !is.null(res$json)) {
+    return(res$json)
+  }
+  res
 }
 
 #' Get summary of JSON objects published by a specific address
@@ -362,8 +367,13 @@ mc_get_stream_key_summary <- function(conn, stream, key, mode = "jsonobjectmerge
 #'
 #' @family stream summaries
 #' @export
-mc_get_stream_publisher_summary <- function(conn, stream, address, mode = "jsonobjectmerge") { # nolint
-  mc_rpc(conn, "getstreampublishersummary", list(stream, address, mode))
+mc_get_stream_publisher_summary <- function(conn, stream, address, mode = "jsonobjectmerge") {
+  res <- mc_rpc(conn, "getstreampublishersummary", list(stream, address, mode))
+  
+  if (is.list(res) && !is.null(res$json)) {
+    return(res$json)
+  }
+  res
 }
 
 #' List items in a stream (Enhanced version)
@@ -549,7 +559,19 @@ mc_list_stream_publishers <- function(conn, stream, addresses = "*", verbose = F
 #'
 #' @family stream queries
 #' @export
+#' @export
 mc_list_stream_query_items <- function(conn, stream, query, verbose = FALSE) {
+  if (is.null(query) || length(query) == 0) {
+    query <- structure(list(), names = character(0))
+  } else {
+    if (!is.null(query$keys)) {
+      query$keys <- I(as.list(query$keys))
+    }
+    if (!is.null(query$publishers)) {
+      query$publishers <- I(as.list(query$publishers))
+    }
+  }
+  
   res <- mc_rpc(conn, "liststreamqueryitems", list(stream, query, verbose))
   rpc_res_to_df(res)
 }
@@ -602,10 +624,18 @@ mc_list_stream_tx_items <- function(conn, stream, txid, verbose = FALSE) {
 #'
 #' @family stream items
 #' @export
+#' @export
 mc_list_stream_block_items <- function(conn, stream, blocks, verbose = FALSE, count = NULL, start = NULL) {
-  params <- list(stream, blocks, verbose)
-  if (!is.null(count)) params <- c(params, list(as.integer(count)))
-  if (!is.null(start)) params <- c(params, list(as.integer(start)))
+  blocks_param <- if (length(blocks) == 1) I(list(blocks)) else as.list(blocks)
+  
+  params <- list(stream, blocks_param, verbose)
+  
+  if (!is.null(count)) {
+    params <- c(params, list(as.integer(count)))
+    if (!is.null(start)) {
+      params <- c(params, list(as.integer(start)))
+    }
+  }
   
   res <- mc_rpc(conn, "liststreamblockitems", params)
   rpc_res_to_df(res)

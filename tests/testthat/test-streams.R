@@ -337,6 +337,22 @@ test_that("mc_publish includes options when provided", {
   )
 })
 
+test_that("mc_publish converts cache list to string", {
+  fake_txid <- "publish_cache_txid"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res1 <- mc_publish(conn_mock, "mystream", "key1", list(cacheitem = "cache-123"))
+      expect_equal(res1, fake_txid)
+      
+      res2 <- mc_publish(conn_mock, "mystream", "key2", list(`cache-item` = "cache-456"))
+      expect_equal(res2, fake_txid)
+    }
+  )
+})
+
 test_that("mc_publish_from works without options", {
   fake_txid <- "publish_from_txid_001"
   fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
@@ -412,6 +428,24 @@ test_that("mc_publish_from works with list data (not character)", {
     {
       res <- mc_publish_from(conn_mock, "from_addr", "mystream", "key1", list(text = "data"))
       expect_equal(res, fake_txid)
+    }
+  )
+})
+
+test_that("mc_publish_from converts cache list to string", {
+  fake_txid <- "publish_from_cache_txid"
+  fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res1 <- mc_publish_from(conn_mock, "from_addr", "mystream", "key1", 
+                              data = list(cacheitem = "cache-123"))
+      expect_equal(res1, fake_txid)
+      
+      res2 <- mc_publish_from(conn_mock, "from_addr", "mystream", "key2", 
+                              data = list(`cache-item` = "cache-456"))
+      expect_equal(res2, fake_txid)
     }
   )
 })

@@ -103,6 +103,14 @@ lintr::lint_package() # проверить warnings()
 разобраться с путями - как все таки установить путь к mc
 создать функцию для ожидания отклика - mc_wait_for_confirmation - УЖЕ СОЗДАНО :) НАПИХАТЬ куда можно
 однообразие имен, однообразие стиля!
-проверить @seealso, @family!
+раздробить @family - @seealse на меньшие части?
 
 переписать справку, примеры функций, аргументы!
+  
+  mc_list_permissions(conn, "admin")
+  
+cat("--- FACILITY QMS OVERVIEW ---\n")
+cat("Total SOP Registry Entries: ", totals$streams, "\n")
+cat("Total SOP Registry Transactions: ", totals$transactions, "\n")
+cat("Total Digital Permits Issued: ", totals$assets, "\n")
+cat("Total Authorized Addresses:  ", totals$addresses, "\n")

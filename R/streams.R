@@ -162,25 +162,30 @@ mc_list_streams <- function(conn, streams = "*", verbose = FALSE, count = NULL, 
 #' @seealso \code{\link{mc_publish_from}} to specify publisher address,
 #'   \code{\link{mc_publish_multi}} for multiple items.
 #'
-#' @family stream items
+#' @family streams
 #' @export
 mc_publish <- function(conn, stream, keys, data, options = NULL) {
   keys_param <- if (length(keys) > 1) as.list(keys) else keys
   
+  if (is.list(data)) {
+    is_cache <- !is.null(data$cacheitem) || !is.null(data[["cache-item"]])
+    if (is_cache) {
+      data <- as.character(data[[1]])
+    }
+  }
+  
   if (is.character(data)) {
-    if (grepl("^cache-", data)) {
-      data <- list(cacheitem = data)
-    } else {
-      is_valid_hex <- nchar(data) > 0 && nchar(data) %% 2 == 0 && grepl("^[0-9a-fA-F]+$", data)
-      if (!is_valid_hex) {
-        data <- paste(charToRaw(as.character(data)), collapse = "")
-      }
+    is_valid_hex <- nchar(data) > 0 && nchar(data) %% 2 == 0 && grepl("^[0-9a-fA-F]+$", data)
+
+    is_cache_id <- grepl("-", data)
+    
+    if (!is_valid_hex && !is_cache_id) {
+      data <- paste(charToRaw(as.character(data)), collapse = "")
     }
   }
   
   params <- list(stream, keys_param, data)
   if (!is.null(options)) params <- c(params, list(options))
-  
   mc_rpc(conn, "publish", params)
 }
 
@@ -204,18 +209,29 @@ mc_publish <- function(conn, stream, keys, data, options = NULL) {
 #'
 #' @seealso \code{\link{mc_publish}}
 #'
-#' @family stream items
+#' @family streams
 #' @export
 mc_publish_from <- function(conn, from_address, stream, keys, data, options = NULL) {
   keys_param <- if (length(keys) > 1) as.list(keys) else keys
   
-  if (is.character(data) && grepl("^cache-", data)) {
-    data <- list(cacheitem = data)
+  if (is.list(data)) {
+    is_cache <- !is.null(data$cacheitem) || !is.null(data[["cache-item"]])
+    if (is_cache) {
+      data <- as.character(data[[1]])
+    }
+  }
+  
+  if (is.character(data)) {
+    is_valid_hex <- nchar(data) > 0 && nchar(data) %% 2 == 0 && grepl("^[0-9a-fA-F]+$", data)
+    is_cache_id <- grepl("-", data)
+    
+    if (!is_valid_hex && !is_cache_id) {
+      data <- paste(charToRaw(as.character(data)), collapse = "")
+    }
   }
   
   params <- list(from_address, stream, keys_param, data)
   if (!is.null(options)) params <- c(params, list(options))
-  
   mc_rpc(conn, "publishfrom", params)
 }
 
@@ -248,16 +264,9 @@ mc_publish_from <- function(conn, from_address, stream, keys, data, options = NU
 #'
 #' @seealso \code{\link{mc_publish_multi_from}} for specifying the sender.
 #'
-#' @family stream items
+#' @family streams
 #' @export
 mc_publish_multi <- function(conn, stream, items, options = NULL) {
-  items <- lapply(items, function(item) {
-    if (is.character(item$data) && grepl("^cache-", item$data)) {
-      item$data <- list(cacheitem = item$data)
-    }
-    return(item)
-  })
-  
   params <- list(stream, items)
   if (!is.null(options)) params <- c(params, list(options))
   
@@ -284,7 +293,7 @@ mc_publish_multi <- function(conn, stream, items, options = NULL) {
 #'
 #' @seealso \code{\link{mc_publish_multi}}
 #'
-#' @family stream items
+#' @family streams
 #' @export
 mc_publish_multi_from <- function(conn, from_address, stream, items, options = NULL) {
   params <- list(from_address, stream, items)
@@ -312,7 +321,7 @@ mc_publish_multi_from <- function(conn, from_address, stream, items, options = N
 #'
 #' @seealso \code{\link{mc_list_stream_items}} to list items.
 #'
-#' @family stream items
+#' @family streams
 #' @export
 mc_get_stream_item <- function(conn, stream, txid, verbose = FALSE) {
   mc_rpc(conn, "getstreamitem", list(stream, txid, verbose))
@@ -338,7 +347,7 @@ mc_get_stream_item <- function(conn, stream, txid, verbose = FALSE) {
 #'
 #' @seealso \code{\link{mc_get_stream_publisher_summary}}
 #'
-#' @family stream summaries
+#' @family streams
 #' @export
 mc_get_stream_key_summary <- function(conn, stream, key, mode = "jsonobjectmerge") {
   res <- mc_rpc(conn, "getstreamkeysummary", list(stream, key, mode))
@@ -365,7 +374,7 @@ mc_get_stream_key_summary <- function(conn, stream, key, mode = "jsonobjectmerge
 #' summary <- mc_get_stream_publisher_summary(conn, "mystream", "1A...")
 #' }
 #'
-#' @family stream summaries
+#' @family streams
 #' @export
 mc_get_stream_publisher_summary <- function(conn, stream, address, mode = "jsonobjectmerge") {
   res <- mc_rpc(conn, "getstreampublishersummary", list(stream, address, mode))
@@ -402,7 +411,7 @@ mc_get_stream_publisher_summary <- function(conn, stream, address, mode = "jsono
 #'
 #' @seealso \code{\link{mc_list_stream_key_items}}, \code{\link{mc_list_stream_publisher_items}}
 #'
-#' @family stream items
+#' @family streams
 #' @export
 mc_list_stream_items <- function(conn, stream, verbose = FALSE, count = 10, start = NULL, local_ordering = FALSE) {
   actual_start <- if (is.null(start)) -as.integer(count) else as.integer(start)
@@ -431,7 +440,7 @@ mc_list_stream_items <- function(conn, stream, verbose = FALSE, count = 10, star
 #' items <- mc_list_stream_key_items(conn, "mystream", "mykey")
 #' }
 #'
-#' @family stream items
+#' @family streams
 #' @export
 mc_list_stream_key_items <- function(conn, stream, key, verbose = FALSE, count = 10, start = NULL, local_ordering = FALSE) {
   actual_start <- if (is.null(start)) -as.integer(count) else as.integer(start)
@@ -460,7 +469,7 @@ mc_list_stream_key_items <- function(conn, stream, key, verbose = FALSE, count =
 #' keys <- mc_list_stream_keys(conn, "mystream")
 #' }
 #'
-#' @family stream keys
+#' @family streams
 #' @export
 mc_list_stream_keys <- function(conn, stream, keys = "*", verbose = FALSE, count = NULL, start = NULL, local_ordering = FALSE) {
   params <- list(stream, keys, verbose)
@@ -494,7 +503,7 @@ mc_list_stream_keys <- function(conn, stream, keys = "*", verbose = FALSE, count
 #' items <- mc_list_stream_publisher_items(conn, "mystream", "1A...")
 #' }
 #'
-#' @family stream items
+#' @family streams
 #' @export
 mc_list_stream_publisher_items <- function(conn, stream, address, verbose = FALSE, count = 10, start = NULL, local_ordering = FALSE) {
   actual_start <- if (is.null(start)) -as.integer(count) else as.integer(start)
@@ -523,7 +532,7 @@ mc_list_stream_publisher_items <- function(conn, stream, address, verbose = FALS
 #' publishers <- mc_list_stream_publishers(conn, "mystream")
 #' }
 #'
-#' @family stream publishers
+#' @family streams
 #' @export
 mc_list_stream_publishers <- function(conn, stream, addresses = "*", verbose = FALSE, count = NULL, start = NULL, local_ordering = FALSE) {
   params <- list(stream, addresses, verbose)
@@ -557,8 +566,7 @@ mc_list_stream_publishers <- function(conn, stream, addresses = "*", verbose = F
 #' items <- mc_list_stream_query_items(conn, "mystream", query)
 #' }
 #'
-#' @family stream queries
-#' @export
+#' @family streams
 #' @export
 mc_list_stream_query_items <- function(conn, stream, query, verbose = FALSE) {
   if (is.null(query) || length(query) == 0) {
@@ -593,7 +601,7 @@ mc_list_stream_query_items <- function(conn, stream, query, verbose = FALSE) {
 #' items <- mc_list_stream_tx_items(conn, "mystream", "txid...")
 #' }
 #'
-#' @family stream items
+#' @family streams
 #' @export
 mc_list_stream_tx_items <- function(conn, stream, txid, verbose = FALSE) {
   res <- mc_rpc(conn, "liststreamtxitems", list(stream, txid, verbose))
@@ -622,8 +630,7 @@ mc_list_stream_tx_items <- function(conn, stream, txid, verbose = FALSE) {
 #' items <- mc_list_stream_block_items(conn, "mystream", c(100, 101, 102))
 #' }
 #'
-#' @family stream items
-#' @export
+#' @family streams
 #' @export
 mc_list_stream_block_items <- function(conn, stream, blocks, verbose = FALSE, count = NULL, start = NULL) {
   blocks_param <- if (length(blocks) == 1) I(list(blocks)) else as.list(blocks)

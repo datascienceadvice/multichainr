@@ -574,6 +574,30 @@ test_that("mc_get_stream_key_summary returns merged JSON list", {
   )
 })
 
+test_that("mc_get_stream_key_summary strips the 'json' wrapper", {
+  conn <- mc_connect(port = 8570, user = "u", password = "p")
+  
+  fake_body <- '{"result":{"json":{"status":"active","value":42}},"error":null,"id":1}'
+  
+  httr2::with_mocked_responses(
+    function(req) {
+      httr2::response(
+        status_code = 200,
+        headers = list("Content-Type" = "application/json"),
+        body = charToRaw(fake_body)
+      )
+    },
+    {
+      res <- mc_get_stream_key_summary(conn, "mystream", "key1")
+
+      expect_type(res, "list")
+      expect_equal(res$status, "active")
+      expect_equal(res$value, 42)
+      expect_null(res$json)
+    }
+  )
+})
+
 test_that("mc_get_stream_publisher_summary works", {
   fake_summary <- list(address = "1A...", items = 5)
   fake_body <- jsonlite::toJSON(list(result = fake_summary), auto_unbox = TRUE)
@@ -583,6 +607,25 @@ test_that("mc_get_stream_publisher_summary works", {
     {
       res <- mc_get_stream_publisher_summary(conn_mock, "mystream", "1A...")
       expect_equal(res$address, "1A...")
+    }
+  )
+})
+
+test_that("mc_get_stream_publisher_summary strips the 'json' wrapper", {
+  conn <- mc_connect(port = 8570, user = "u", password = "p")
+
+  fake_body <- '{"result":{"json":{"user_role":"admin","active":true}},"error":null,"id":1}'
+  
+  httr2::with_mocked_responses(
+    function(req) {
+      httr2::response(status_code = 200, body = charToRaw(fake_body))
+    },
+    {
+      res <- mc_get_stream_publisher_summary(conn, "mystream", "1ADDR")
+      
+      expect_type(res, "list")
+      expect_equal(res$user_role, "admin")
+      expect_null(res$json)
     }
   )
 })
@@ -820,6 +863,37 @@ test_that("mc_list_stream_query_items returns filtered data.frame", {
   )
 })
 
+test_that("mc_list_stream_query_items handles NULL query", {
+  conn <- mc_connect(port = 8570, user = "u", password = "p")
+
+  fake_body <- '{"result":[],"error":null,"id":1}'
+  
+  httr2::with_mocked_responses(
+    function(req) {
+      httr2::response(status_code = 200, body = charToRaw(fake_body))
+    },
+    {
+      res <- mc_list_stream_query_items(conn, "mystream", query = NULL)
+      
+      expect_s3_class(res, "data.frame")
+      expect_equal(nrow(res), 0)
+    }
+  )
+})
+
+test_that("mc_list_stream_query_items handles empty list query", {
+  conn <- mc_connect(port = 8570, user = "u", password = "p")
+  fake_body <- '{"result":[],"error":null,"id":1}'
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_list_stream_query_items(conn, "mystream", query = list())
+      expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
 test_that("mc_list_stream_tx_items returns data.frame", {
   fake_body <- '{"result":[{"key":"k1","data":"cc"}],"error":null,"id":1}'
   
@@ -874,6 +948,30 @@ test_that("mc_list_stream_block_items works with start parameter", {
     {
       res <- mc_list_stream_block_items(conn_mock, "mystream", blocks = 100, start = 10)
       expect_s3_class(res, "data.frame")
+    }
+  )
+})
+
+test_that("mc_list_stream_block_items handles both count and start", {
+  conn <- mc_connect(port = 8570, user = "u", password = "p")
+  
+  fake_body <- '{"result":[],"error":null,"id":1}'
+  
+  httr2::with_mocked_responses(
+    function(req) {
+      httr2::response(status_code = 200, body = charToRaw(fake_body))
+    },
+    {
+      res <- mc_list_stream_block_items(
+        conn, 
+        stream = "mystream", 
+        blocks = 1000, 
+        count = 10, 
+        start = 5
+      )
+      
+      expect_s3_class(res, "data.frame")
+      expect_equal(nrow(res), 0)
     }
   )
 })

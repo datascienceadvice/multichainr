@@ -106,7 +106,7 @@ rpc_res_to_df <- function(res) {
       return(val)
     })
     names(row_data) <- all_names
-    return(as.data.frame(row_data, stringsAsFactors = FALSE))
+    return(as.data.frame(row_data, stringsAsFactors = FALSE, check.names = FALSE))
   })
   
   df <- do.call(rbind, df_list)

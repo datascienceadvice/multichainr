@@ -93,6 +93,7 @@ mc_create_raw_send_from <- function(conn, from_address, to_amounts, data = list(
       if (is.list(d)) d <- jsonlite::toJSON(d, auto_unbox = TRUE)
       paste(charToRaw(as.character(d)), collapse = "")
     })
+    data <- I(data)
   }
   mc_rpc(conn, "createrawsendfrom", list(from_address, to_amounts, data, action))
 }

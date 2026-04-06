@@ -136,14 +136,58 @@ test_that("mc_set_runtime_param handles RPC error correctly", {
   )
 })
 
+test_that("mc_set_runtime_param handles integer conversion", {
+  conn <- mc_connect(port = 8570, user = "u", password = "p")
+  
+  fake_body <- '{"result":null,"error":null,"id":1}'
+  
+  httr2::with_mocked_responses(
+    function(req) {
+      httr2::response(
+        status_code = 200,
+        headers = list("Content-Type" = "application/json"),
+        body = charToRaw(fake_body)
+      )
+    },
+    {
+      res <- mc_set_runtime_param(conn, "maxshowndata", 50.0)
+      expect_null(res)
+      
+      res2 <- mc_set_runtime_param(conn, "acceptfiltertimeout", 30)
+      expect_null(res2)
+    }
+  )
+})
 
+test_that("mc_set_runtime_param handles boolean params", {
+  conn <- mc_connect(port = 8570, user = "u", password = "p")
+  fake_body <- '{"result":null,"error":null,"id":1}'
+  
+  httr2::with_mocked_responses(
+    function(req) {
+      httr2::response(status_code = 200, body = charToRaw(fake_body))
+    },
+    {
+      res <- mc_set_runtime_param(conn, "lockblock", TRUE)
+      expect_null(res)
+    }
+  )
+})
 
-
-
-
-
-
-
+test_that("mc_set_runtime_param handles string params", {
+  conn <- mc_connect(port = 8570, user = "u", password = "p")
+  fake_body <- '{"result":null,"error":null,"id":1}'
+  
+  httr2::with_mocked_responses(
+    function(req) {
+      httr2::response(status_code = 200, body = charToRaw(fake_body))
+    },
+    {
+      res <- mc_set_runtime_param(conn, "autosubscribe", "assets,streams")
+      expect_null(res)
+    }
+  )
+})
 
 test_that("mc_get_info returns a list with expected node information", {
   conn <- mc_connect(port = 8570, user = "u", password = "p")

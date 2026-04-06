@@ -43,15 +43,24 @@ mc_publish(conn, "mystream", "large", list(text = "big data"), options = "offcha
 \code{\link{mc_publish_from}} to specify publisher address,
 \code{\link{mc_publish_multi}} for multiple items.
 
-Other stream items: 
+Other streams: 
+\code{\link{mc_create_stream}()},
+\code{\link{mc_create_stream_from}()},
+\code{\link{mc_get_stream_info}()},
 \code{\link{mc_get_stream_item}()},
+\code{\link{mc_get_stream_key_summary}()},
+\code{\link{mc_get_stream_publisher_summary}()},
 \code{\link{mc_list_stream_block_items}()},
 \code{\link{mc_list_stream_items}()},
 \code{\link{mc_list_stream_key_items}()},
+\code{\link{mc_list_stream_keys}()},
 \code{\link{mc_list_stream_publisher_items}()},
+\code{\link{mc_list_stream_publishers}()},
+\code{\link{mc_list_stream_query_items}()},
 \code{\link{mc_list_stream_tx_items}()},
+\code{\link{mc_list_streams}()},
 \code{\link{mc_publish_from}()},
 \code{\link{mc_publish_multi}()},
 \code{\link{mc_publish_multi_from}()}
 }
-\concept{stream items}
+\concept{streams}

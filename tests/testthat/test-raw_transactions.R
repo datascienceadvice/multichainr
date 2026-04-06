@@ -218,6 +218,53 @@ test_that("mc_sign_raw_transaction returns hex and status", {
   )
 })
 
+test_that("mc_sign_raw_transaction covers parents with assets logic", {
+  conn <- mc_connect(port = 8570, user = "u", password = "p")
+  fake_body <- '{"result":{"hex":"signed_hex","complete":true},"error":null,"id":1}'
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      parents <- list(list(
+        txid = "abc", 
+        vout = 0, 
+        scriptPubKey = "76a...",
+        amount = 0.1,
+        assets = list(list(name = "token", qty = 10))
+      ))
+      
+      res <- mc_sign_raw_transaction(conn, "unsigned_hex", parents = parents)
+      expect_true(res$complete)
+    }
+  )
+})
+
+test_that("mc_sign_raw_transaction handles explicit private keys", {
+  conn <- mc_connect(port = 8570, user = "u", password = "p")
+  fake_body <- '{"result":{"hex":"signed_hex","complete":true},"error":null,"id":1}'
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_sign_raw_transaction(conn, "unsigned_hex", private_keys = c("L5key..."))
+      expect_true(res$complete)
+    }
+  )
+})
+
+test_that("mc_sign_raw_transaction handles custom sighashtype without keys", {
+  conn <- mc_connect(port = 8570, user = "u", password = "p")
+  fake_body <- '{"result":{"hex":"signed_hex","complete":true},"error":null,"id":1}'
+  
+  httr2::with_mocked_responses(
+    function(req) httr2::response(status_code = 200, body = charToRaw(fake_body)),
+    {
+      res <- mc_sign_raw_transaction(conn, "unsigned_hex", sighashtype = "SINGLE")
+      expect_true(res$complete)
+    }
+  )
+})
+
 test_that("mc_send_raw_transaction works", {
   fake_txid <- "sent_txid"
   fake_body <- sprintf('{"result":"%s","error":null,"id":1}', fake_txid)

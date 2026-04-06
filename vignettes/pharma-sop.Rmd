@@ -1,0 +1,1266 @@
+---
+title: "Data Integrity in Pharma: Managing SOP Lifecycles with multichainr"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Data Integrity in Pharma: Managing SOP Lifecycles with multichainr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+## Introduction
+
+In the pharmaceutical industry, **Data Integrity** is governed by the ALCOA+ principles (Attributable, Legible, Contemporaneous, Original, and Accurate). Regulatory frameworks such as **FDA 21 CFR Part 11** and **EU GMP Annex 11** require computer systems to maintain secure, computer-generated, time-stamped audit trails.
+
+The `multichainr` package provides an R interface to MultiChain, a permissioned blockchain platform. This vignette demonstrates a complete "Change Control" workflow for Standard Operating Procedures (SOPs), showcasing how blockchain can enforce GxP compliance at the protocol level.
+
+---
+  
+This section establishes the foundational infrastructure for a GxP-compliant digital environment. In the pharmaceutical industry, system initialization and user identification are governed by strict regulations such as **FDA 21 CFR Part 11** and **EU GMP Annex 11**, which mandate that every system interaction be attributable to a unique, authorized individual or department.
+
+### 1. Infrastructure Setup and Role-Based Access Control (RBAC)
+
+**Pharmaceutical Perspective:** Before any data entry occurs, a computerized system must undergo a **System Suitability Test (SST)**. We must ensure the infrastructure is "Ready" and that the **Segregation of Duties (SoD)** is enforced. By assigning unique blockchain addresses to different departments, we ensure that the "Electronic Signature" of the Quality Assurance (QA) department cannot be forged by the Production department.
+
+**Programmer Perspective:** We use the `mc_node_` suite of functions to manage the local MultiChain daemon lifecycle and the `mc_connect` suite to establish a secure JSON-RPC communication channel.
+
+#### 1.1 Environment Initialization and Validated Connection
+
+The first step involves defining the binary paths and ensuring the blockchain node is active and synchronized.
+
+```{r connection_setup}
+library(multichainr)
+
+# 1.1.1 Path Configuration
+# Specify the directory containing MultiChain executables (multichaind, multichain-util).
+# This ensures the R session can interact with the underlying blockchain engine.
+mc_set_path(Sys.getenv("MULTICHAIN_PATH"))
+
+# 1.1.2 Unique Chain Initialization
+# We generate a unique name for our pharmaceutical ledger to avoid collision 
+# with existing validated environments.
+chain_name <- paste0("pharma_chain_", round(as.numeric(Sys.time())))
+
+# Create the blockchain configuration and start the node as a background daemon.
+mc_node_init(chain_name)
+mc_node_start(chain_name)
+
+# 1.1.3 Establishing the communication link
+# mc_get_config reads the automatically generated 'multichain.conf' to retrieve 
+# the RPC username, password, and port required for authentication.
+conf <- mc_get_config(chain_name)
+conn <- mc_connect(conf)
+
+# 1.1.4 Verification of Initialization Status
+# We must confirm the node is fully initialized before proceeding with 
+# regulatory data entries.
+status <- mc_get_init_status(conn)
+if (status$initialized) {
+  message("Infrastructure Status: Blockchain network is fully initialized and ready for GxP operations.")
+}
+```
+
+#### 1.2 Creation of Departmental Digital Identities
+
+**Pharma Perspective:** Every department involved in the **Standard Operating Procedure (SOP)** lifecycle requires a unique identifier. This provides the basis for the **Audit Trail**, allowing inspectors to see exactly which department initiated or approved a document.
+
+**Programmer Perspective:** We generate new wallet addresses that serve as public keys within the permissioned network.
+
+```{r departmental_identities}
+# 1.2.1 Quality Assurance (QA) Address
+# The QA department acts as the 'Document Owner' and 'System Administrator'.
+addr_qa <- mc_get_new_address(conn)
+
+# 1.2.2 Production Department Address
+# The Production unit represents the 'Data Consumers' who execute the SOPs.
+addr_prod <- mc_get_new_address(conn)
+
+# 1.2.3 Regulatory Auditor Address
+# Represents an external inspector (e.g., FDA or EMA) who requires read-only access.
+addr_auditor <- mc_get_new_address(conn)
+
+cat("QA Department Digital Signature Address:     ", addr_qa, "\n")
+cat("Production Department Digital Identity:      ", addr_prod, "\n")
+cat("External Regulatory Auditor Access Point:   ", addr_auditor, "\n")
+```
+
+#### 1.3 Governance: Enforcing Segregation of Duties (SoD)
+
+**Pharma Perspective:** Access rights must be restricted based on the principle of **Least Privilege**. Only the Quality Department should have the authority to "Issue" or "Create" document registries. Production should only have the authority to "Receive" (Read) the approved documents to prevent unauthorized modifications.
+
+**Programmer Perspective:** We use the `mc_grant` function to modify the global permissions of the blockchain.
+
+```{r permission_governance}
+# 1.3.1 Identify the Master Administrator
+# At genesis, the address that initialized the chain holds 'admin' rights.
+admin_perms <- mc_list_permissions(conn, "admin")
+master_admin <- admin_perms$address[1]
+
+# 1.3.2 QA Privileges: FULL MANAGEMENT
+# QA is granted 'send' (publish data), 'receive' (interact), and 'create' (spawn new registries).
+mc_grant(conn, addr_qa, "send,receive,create")
+
+# 1.3.3 Production Privileges: RESTRICTED ACCESS
+# Production is restricted to 'receive' only, preventing them from 
+# tampering with the Master Document Registry.
+mc_grant(conn, addr_prod, "receive")
+
+# 1.3.4 Auditor Privileges: READ-ONLY OBSERVATION
+# Auditors are granted 'receive' to monitor transactions without 
+# having authority to alter the ledger.
+mc_grant(conn, addr_auditor, "receive")
+```
+
+#### 1.4 System Suitability Test: Validating the RBAC Model
+
+**Pharma Perspective:** Before the system is released for productive use, we perform a verification step to ensure the security controls are functioning as intended. This is analogous to an **Installation Qualification (IQ)** or **Operational Qualification (OQ)** check.
+
+**Programmer Perspective:** We use `mc_verify_permission` to perform a logical check of the current state of the blockchain.
+
+```{r verification}
+# 1.4.1 Logical Verification
+# Ensure that the Change Control process can be initiated by QA but not by unauthorized parties.
+can_qa_publish <- mc_verify_permission(conn, addr_qa, "send")
+can_prod_read <- mc_verify_permission(conn, addr_prod, "receive")
+
+if (can_qa_publish && can_prod_read) {
+  message("Quality Control: RBAC model successfully deployed.")
+} else {
+  # If the permissions are not correctly set, we stop the workflow to prevent compliance breaches.
+  stop("Regulatory Alert: Permission mismatch detected. The validated session cannot continue.")
+}
+
+# 1.4.2 Documenting the Initial State
+# We pull a full list of active permissions to be included in the validation report.
+audit_trail_permissions <- mc_list_permissions(conn)
+print(audit_trail_permissions)
+```
+
+By completing this section, the blockchain-based Quality Management System (QMS) is now configured with a verified roled-based access model, ready for the immutable storage of SOP records.
+
+---
+  
+### 2. Creating Immutable Registries (Streams)
+
+**Pharmaceutical Perspective:** In a traditional Quality Management System (QMS), the **Master Document Register** is a critical component that tracks all effective Standard Operating Procedures (SOPs). To comply with GxP requirements, this register must be protected against unauthorized deletion, backdating, or modification. In MultiChain, **Streams** serve as an electronic version of an append-only paper notebook, providing an **Immutable Audit Trail** where each entry is permanently time-stamped and signed.
+
+**Programmer Perspective:** We use the `mc_create_stream` family of functions to initialize a data-storage object. By setting permissions and metadata at the stream level, we define the technical boundaries of our document registry.
+
+#### 2.1 Initializing the Master Document Registry (Restricted Stream Creation)
+
+**Pharma focus:** We define the "locked" nature of the registry. Only authorized personnel (QA) should be able to insert new SOP records. By setting `open = FALSE`, we enforce a security policy where the blockchain rejects any data entry from unauthorized addresses.
+
+**Programmer focus:** `mc_create_stream_from` allows us to create the stream and simultaneously record the QA department as its owner/creator. We use `custom_fields` to store static metadata about the registry itself.
+
+```{r registry_initialization}
+# 2.1.1 Define Registry Metadata
+# These fields provide context for the entire SOP ledger, such as the facility 
+# location and the governing quality standards.
+registry_metadata <- list(
+  site_id = "PLANT-01",
+  quality_standard = "ISO-9001:2015 / GMP",
+  department_owner = "Quality Assurance"
+)
+
+# 2.1.2 Create a Restricted Stream
+# 'open = FALSE' is critical: it prevents the 'Production' department or 
+# any guest from writing to this stream. Only QA will be granted 'write' access.
+tx_stream_id <- mc_create_stream_from(
+  conn, 
+  from_address = addr_qa, 
+  name = "SOP_Registry", 
+  open = FALSE,                  # Enforce strict write-access control
+  custom_fields = registry_metadata
+)
+
+message("Registry Status: Master SOP Stream created. Transaction ID: ", tx_stream_id)
+
+# 2.1.3 Ensure Data Persistence
+# We block execution until the registry creation is confirmed in a block. 
+# This ensures that the registry exists before we attempt to grant write permissions.
+mc_wait_for_confirmation(conn, tx_stream_id)
+```
+
+#### 2.2 Inspecting the "Birth Certificate" of the Registry
+
+**Pharma focus:** Regulatory inspectors often require proof of system configuration. We can retrieve the "technical dossier" of our registry to prove that it is indeed restricted and has a unique, non-fungible identifier (`createtxid`).
+
+```{r inspect_registry}
+# Retrieve detailed technical metadata about the "SOP_Registry"
+sop_registry_info <- mc_get_stream_info(conn, "SOP_Registry", verbose = TRUE)
+
+# The 'createtxid' acts as the permanent digital fingerprint of this registry.
+print(sop_registry_info)
+
+# The 'restrict' field in the output confirms that 'write' access is NOT public.
+```
+
+#### 2.3 System Oversight: Inventory of Active Ledgers
+
+**Pharma focus:** A manufacturing site may have dozens of separate ledgers (e.g., Equipment Logs, Deviation Reports, Training Records). `mc_list_streams` provides a high-level inventory for system administrators.
+
+```{r list_registries}
+all_registries <- mc_list_streams(conn)
+
+# Displaying all active document registries currently hosted on this node.
+print(all_registries[, c("name", "createtxid", "subscribed")])
+```
+
+#### 2.4 Enabling Active Synchronization (Subscription)
+
+**Pharma focus:** A node must "Subscribe" to a stream to act as an active validator and indexer of that stream's data. For an auditor's node, subscription ensures that all SOP changes are tracked and searchable in real-time, fulfilling the **Contemporaneous** requirement of ALCOA+.
+
+```{r synchronize_registry}
+# 2.4.1 Activate Indexing
+# Subscribing tells the node to start building a local database of the stream's contents.
+# 'rescan = TRUE' ensures that even if we joined the network late, we download all 
+# historical SOP records from the genesis block.
+mc_subscribe(conn, "SOP_Registry", rescan = TRUE)
+
+# 2.4.2 Verify Synchronization Status
+updated_list <- mc_list_streams(conn, "SOP_Registry")
+if (updated_list$subscribed[1]) {
+  message("Compliance Sync: Node is now actively indexing the SOP_Registry.")
+}
+```
+
+#### 2.5 Granting Specific Authorization (Stream-Level Permissions)
+
+**Pharma focus:** Now that the registry exists, we must authorize the Quality Assurance department to populate it. We grant the specific permission `SOP_Registry.write`. This is a classic example of **Access Governance**: just because QA has a wallet doesn't mean they can write to *any* stream; they must be explicitly authorized for this specific SOP ledger.
+
+```{r authorize_qa}
+# 2.5.1 Grant Write Access
+# We use the master_admin (from Section 1) to authorize the QA address.
+mc_grant(conn, addr_qa, "SOP_Registry.write")
+
+# 2.5.2 Operation Verification Check
+# Perform a final check before opening the registry for data entry.
+if (mc_verify_permission(conn, addr_qa, "SOP_Registry.write")) {
+  message("GxP Readiness: QA Department successfully authorized to manage SOP records.")
+}
+```
+
+By the end of this section, we have established a **Master Document Register** that is technically restricted to authorized QA personnel and is being actively monitored by our system. The environment is now ready for the actual registration of SOP documents.
+
+---
+  
+### 3. Registration of New SOP Versions (Immutable Data Entry)
+
+**Pharmaceutical Perspective:** According to **ALCOA+** principles, every electronic record must be **Original**, **Accurate**, and **Attributable**. Simply uploading a file to a server is insufficient for GxP compliance because file timestamps can be altered. By publishing document metadata and a **SHA-256 cryptographic hash** (a digital fingerprint) to a blockchain, we create a permanent, non-repudiable proof of the document's state at a specific point in time. Any subsequent unauthorized change to the physical SOP file would result in a hash mismatch during an audit, immediately flagging a breach of integrity.
+
+**Programmer Perspective:** We use the `mc_publish_` suite of functions to write data to a stream. MultiChain allows for structured JSON data, which is ideal for storing document attributes. We prioritize the `_from` versions of these functions to ensure the `publishers` field in the blockchain metadata correctly identifies the department that initiated the entry.
+
+#### 3.1 Metadata Publication and Document Hashing
+
+**Pharma focus:** We register the initial version of a sampling procedure. Instead of storing a large PDF directly on-chain (which is inefficient), we store the metadata and the file's SHA-256 hash. This serves as a **Certificate of Originality**.
+
+```{r publishing_metadata}
+# 3.1.1 Define SOP Attributes
+# We define the document key (SOP-QC-001) and its regulatory attributes.
+sop_key <- "SOP-QC-001"
+sop_metadata <- list(
+  json = list(
+    title = "Standard Procedure for Raw Material Sampling",
+    version = "1.0",
+    file_hash = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+    format = "PDF",
+    classification = "Restricted"
+  )
+)
+
+# 3.1.2 Attributable Publication
+# By using mc_publish_from with addr_qa, we satisfy the 'Attributable' requirement.
+# The blockchain will forever link this record to the QA Department's digital identity.
+tx_pub_1 <- mc_publish_from(conn, addr_qa, "SOP_Registry", sop_key, sop_metadata)
+
+message("Audit Trail: SOP-QC-001 version 1.0 registered. Transaction ID: ", tx_pub_1)
+```
+
+#### 3.2 Atomic Multi-Item Publication (Change Control Integrity)
+
+**Pharma focus:** In complex **Change Control** workflows, multiple related actions must occur simultaneously. For example, a new SOP should not be registered without an assigned **Custodian** or Responsible Person (RP). If these were separate actions, a system failure could leave a document "orphaned." Atomic publication ensures that either all related records are written to the ledger, or none are.
+
+```{r atomic_publishing}
+# 3.2.1 Define Linked Records
+# We bundle the SOP registration and the Personnel Assignment into a single list.
+multi_items <- list(
+  # Item 1: The document metadata
+  list(
+    key = "SOP-PROD-002", 
+    data = list(json = list(title = "Cleaning Validation", version = "2.0"))
+  ),
+  # Item 2: The assignment of responsibility
+  list(
+    key = "ASSIGNMENT-PROD-002", 
+    data = list(json = list(assignee = "Production_Manager_01", role = "Custodian"))
+  )
+)
+
+# 3.2.2 Atomic Execution
+# mc_publish_multi_from ensures that both items share the exact same Block Time and TXID.
+tx_pub_multi <- mc_publish_multi_from(conn, addr_qa, "SOP_Registry", multi_items)
+
+message("Compliance: Atomic SOP registration and Custodian assignment complete. TXID: ", tx_pub_multi)
+```
+
+#### 3.3 Managing Technical Dossiers (Binary Cache Workflow)
+
+**Pharma focus:** Some regulatory documents, such as **Master Batch Records (MBR)** or complex technical dossiers, contain massive amounts of data that may exceed standard transaction size limits. To handle this without compromising the R session's performance, we use the node's **Binary Cache**. This acts as a validated staging area for "Big Data" before it is permanently "burned" into the blockchain.
+
+```{r binary_cache_workflow}
+# 3.3.1 Initialize Cache Item
+# Create a temporary, unique staging identifier on the MultiChain node.
+cache_id <- mc_create_binary_cache(conn)
+
+# 3.3.2 Data Upload (Staging)
+# Simulate a large manufacturing specification (e.g., detailed equipment settings).
+large_spec_content <- paste0("MBR_START_", paste(rep("DATA_SEGMENT_", 1000), collapse=""), "_MBR_END")
+
+# Upload the data to the node's local cache. 
+# The function returns the total size in bytes once the upload is confirmed.
+actual_size <- mc_append_binary_cache(conn, cache_id, list(text = large_spec_content))
+message("System: Large document staged in binary cache. Size: ", actual_size, " bytes.")
+
+# 3.3.3 Commit Staged Data to Blockchain
+# We publish a reference to the cache item. The node will automatically 
+# retrieve the binary data and wrap it into a permanent transaction.
+sop_large_key <- "SOP-TECH-003"
+tx_pub_cache <- mc_publish_from(conn, addr_qa, "SOP_Registry", 
+                                sop_large_key, 
+                                list(cacheitem = cache_id))
+
+# 3.3.4 Buffer Cleanup
+# Once the data is recorded in the blockchain, the temporary cache item is deleted
+# to maintain node hygiene and storage efficiency.
+mc_delete_binary_cache(conn, cache_id)
+
+message("Data Integrity: Technical Dossier SOP-TECH-003 committed to ledger. TXID: ", tx_pub_cache)
+```
+
+#### 3.4 Verification of Data Persistence and Retrieval
+
+**Pharma focus:** A core requirement of **Validated Systems** is the ability to retrieve the "Source of Truth." We must verify that the data we just wrote can be extracted accurately and that it matches our original input.
+
+```{r verify_publishing}
+# 3.4.1 Wait for Confirmation
+# Ensure the last transaction is included in a block and confirmed by the network validators.
+mc_wait_for_confirmation(conn, tx_pub_cache)
+
+# 3.4.2 Retrieve and Verify Metadata
+# We use mc_get_stream_item to pull the original JSON record by its TXID.
+item_info <- mc_get_stream_item(conn, "SOP_Registry", tx_pub_1)
+
+# Output the verified data to show that the 'Source' remains unchanged.
+cat("--- VERIFIED SOP RECORD ---\n")
+cat("SOP Identifier: ", item_info$key[[1]], "\n")
+cat("Approved Title: ", item_info$data$json$title, "\n")
+cat("Document Hash:   ", item_info$data$json$file_hash, "\n")
+cat("Time of Entry:  ", as.character(as.POSIXct(item_info$blocktime, origin="1970-01-01")), "\n")
+```
+
+By completing this section, we have demonstrated the transition of a paper-based SOP into a **digital electronic record** that is mathematically secured, attributed to the Quality department, and capable of handling complex linked entries and large data sets.
+
+---
+
+### 4. Digital Signatures and Competency Confirmation
+
+**Pharmaceutical Perspective:** Approval is a formal regulatory act. Under **FDA 21 CFR Part 11**, electronic signatures must be unique to one individual and provide a link to the record being signed. Blockchain-based digital signatures provide **Non-repudiation**: the signer cannot later deny having approved the record. Furthermore, once an SOP is approved, the next GxP requirement is ensuring that only **Qualified Personnel** can access it. By issuing "Training Tokens" as digital assets, we transform a passive training log into an active, machine-readable permit system.
+
+**Programmer Perspective:** We utilize `mc_sign_message` to generate a cryptographic proof of approval and `mc_issue` to create custom assets (tokens) representing qualifications. These assets carry metadata (trainer name, expiry date), effectively becoming "Smart Certificates."
+
+#### 4.1 Document Approval (The Electronic Signature)
+
+**Pharma focus:** The QA Manager reviews the metadata and the technical dossier staged in the previous steps. To signify formal approval, they apply an electronic signature to the **Document Hash**. This binds the person’s identity to the specific version of the document.
+
+```{r digital_signing}
+# 4.1.1 Define the Approval Target
+# We use the SHA-256 hash of the document (from Step 3) as the "message".
+# This ensures that even a single-character change in the PDF would invalidate the signature.
+doc_hash <- "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"
+
+# 4.1.2 Apply Cryptographic Signature
+# mc_sign_message uses the private key associated with addr_qa to sign the hash.
+# This results in a Base64-encoded signature string.
+qa_signature <- mc_sign_message(conn, addr_qa, doc_hash)
+
+cat("Regulatory Status: SOP-QC-001 has been digitally signed by QA.\n")
+cat("Approval Signature: ", qa_signature, "\n")
+```
+
+#### 4.2 Independent Regulatory Verification (External Audit)
+
+**Pharma focus:** A key benefit of blockchain is that an auditor can verify the authenticity of an approval without requiring access to the internal QA database. They only need the public signature, the original hash, and the QA department's public address.
+
+```{r signature_verification}
+# 4.2.1 Perform Independent Audit
+# The auditor runs mc_verify_message. The blockchain logic returns TRUE 
+# only if the signature was indeed generated by the QA address for this specific hash.
+is_legit <- mc_verify_message(conn, addr_qa, qa_signature, doc_hash)
+
+if (is_legit) {
+  message("Audit Success: Signature is authentic. Document integrity and authorship verified.")
+} else {
+  # In a real environment, this would trigger a major compliance investigation.
+  stop("Compliance Alert: Digital signature verification failed! Data integrity breach.")
+}
+```
+
+#### 4.3 Training Token Issuance (The Machine-Readable Permit)
+
+**Pharma focus:** Once the SOP is "Effective," employees must be trained. We issue a **Training Token** (a non-fungible digital asset) to the Production Department's wallet. This token serves as a "Digital Badge" or work permit. By setting `units = 1` and `open = FALSE`, we ensure these permits are unique and cannot be counterfeited or subdivided.
+
+```{r training_tokens}
+# 4.3.1 Define the Competency Asset
+training_asset_name <- "TRAIN-QC-001"
+
+# 4.3.2 Metadata-Enriched Permit
+# We attach training-specific context to the asset itself, fulfilling ALCOA+ 
+# requirements for comprehensive documentation.
+cert_metadata <- list(
+  sop_reference = "SOP-QC-001",
+  trainer = "Lead_Pharmacist_01",
+  training_method = "Read and Understand",
+  expiry_date = "2027-04-03"
+)
+
+# 4.3.3 Distribute the Permit
+# We issue 1 unit of the permit directly to the Production Department.
+tx_issue_token <- mc_issue(
+  conn, 
+  address = addr_prod, 
+  name = training_asset_name, 
+  quantity = 1,                 # One permit per training session
+  units = 1,                    # Asset is non-divisible
+  custom_fields = cert_metadata
+)
+
+message("Learning Management: Training permit issued to Production. TXID: ", tx_issue_token)
+mc_wait_for_confirmation(conn, tx_issue_token)
+```
+
+#### 4.4 Real-Time Qualification Check (Automated Compliance)
+
+**Pharma focus:** In a "Smart Factory," an automated manufacturing system (e.g., a tablet on the production line) can query the blockchain to verify if the operator holds the required training permit before allowing them to view the SOP or start a batch.
+
+```{r access_control}
+# 4.4.1 Query Active Qualifications
+# We check the balances for the Production Department's wallet.
+prod_balances <- mc_get_address_balances(conn, addr_prod)
+
+# 4.4.2 Decision Logic
+if (any(prod_balances$name == training_asset_name)) {
+  current_token <- prod_balances[prod_balances$name == training_asset_name, ]
+  message("Access Control: Production Department is QUALIFIED for this operation.")
+  
+  # Display the token details for the operator
+  print(current_token[, c("name", "qty")])
+} else {
+  stop("Access Denied: Required training permit not found in the department wallet.")
+}
+```
+
+By completing this section, we have demonstrated a **Validated Workflow** where document approval is cryptographically secured, and personnel qualification is enforced through the distribution of traceable, metadata-enriched digital assets.
+
+---
+  
+### 5. Automating Business Logic (Compliance-as-Code)
+
+**Pharmaceutical Perspective:** In a manual Quality Management System (QMS), business rules—such as ensuring SOP identifiers follow a specific format or that a new version correctly references the old one—are checked by human inspectors. This process is prone to error and "post-facto" detection. By implementing **Smart Filters**, we transition to **Compliance-as-Code**. These are real-time, programmable gatekeepers that enforce GxP rules at the protocol level, making it technically impossible to commit a non-compliant record to the ledger.
+
+**Programmer Perspective:** We use JavaScript-based filters and libraries. Libraries (`mc_create_library`) store reusable validation logic, while stream filters (`mc_create_stream_filter`) apply that logic to incoming data. We also demonstrate how to "Simulate" a filter to verify its behavior before permanent deployment.
+
+#### 5.1 Creating a Validation Library (Standardized Logic)
+
+**Pharma focus:** We define a centralized rule for SOP naming conventions (e.g., `SOP-123`). Using a library ensures that this rule is applied consistently across all departments and different document registries.
+
+```{r validation_library}
+# 5.1.1 Define Reusable JavaScript Logic
+# This function uses a Regular Expression to ensure the ID starts with 'SOP-' 
+# followed by numeric digits.
+lib_js <- "
+function isValidSopFormat(key) {
+    var regex = /^SOP-\\d+$/;
+    return regex.test(key);
+}
+"
+
+# 5.1.2 Deploy the Library
+# We use 'instant' update mode so the logic is available immediately for our demo.
+tx_lib <- mc_create_library(conn, "PharmaUtils", updatemode = "instant", js_code = lib_js)
+message("System: Validation library 'PharmaUtils' deployed. TXID: ", tx_lib)
+```
+
+#### 5.2 Testing Logic via Simulation (Verification Step)
+
+**Pharma focus:** Computerized System Validation (CSV) requires evidence that software logic works as intended. `mc_test_stream_filter` allows us to perform a "dry run" against real on-chain data to prove the filter correctly identifies valid or invalid entries without actually blocking any production traffic.
+
+```{r filter_simulation}
+# 5.2.1 Define Test Logic
+# In this simulation, we check for a specific prefix.
+test_filter_js <- "
+function filterstreamitem() {
+    var item = getfilterstreamitem();
+    var primaryKey = item.keys[0];
+    
+    if (primaryKey.indexOf('SOP-') !== 0) {
+        return 'Invalid Prefix: ' + primaryKey; // Returning a string REJECTS the TX
+    }
+    return null; // Returning null ACCEPTS the TX
+}
+"
+
+# 5.2.2 Run Simulation
+# We test the logic against tx_pub_1 (our valid record from Step 3).
+sim_res <- mc_test_stream_filter(conn, list(libraries = list()), 
+                                 test_filter_js, tx = tx_pub_1, vout = 0)
+
+# 5.2.3 Interpret Simulation Results
+if (sim_res$compiled) {
+    message("CSV Verification: JavaScript logic is syntactically valid.")
+}
+
+if (sim_res$passed) {
+    message("Simulation Result: The transaction was ACCEPTED (Compliant data).")
+} else {
+    cat("Simulation Result: REJECTED. Reason given by system:", sim_res$reason, "\n")
+}
+```
+
+#### 5.3 Developing the Production Stream Filter
+
+**Pharma focus:** We now implement a strict **Change Control** rule: any item marked as an "update" must contain a reference to the `prev_version_txid`. This creates a mathematically linked chain of custody between document versions.
+
+```{r production_filter}
+# 5.3.1 Define Complex Multi-Step Validation
+filter_js <- "
+function filterstreamitem() {
+    var item = getfilterstreamitem();
+    var primaryKey = item.keys[0];
+    
+    // Rule 1: Check ID format using the PharmaUtils library
+    if (!isValidSopFormat(primaryKey)) {
+        return 'Rejected: Key ' + primaryKey + ' does not match SOP-XXX format.';
+    }
+    
+    // Rule 2: Enforce Version Traceability (Change Control)
+    var data = item.data.json;
+    if (data && data.is_update === true && !data.prev_version_txid) {
+        return 'Rejected: SOP update must contain a reference to the previous version TXID.';
+    }
+    
+    return null; // The record is GxP compliant
+}
+"
+
+# 5.3.2 Global Filter Creation
+# We create the filter and declare its dependency on the 'PharmaUtils' library.
+tx_filter <- mc_create_stream_filter(conn, "SopChainValidator", 
+                                     options = list(libraries = list("PharmaUtils")), 
+                                     js_code = filter_js)
+
+message("Compliance Engineering: Stream filter created. TXID: ", tx_filter)
+mc_wait_for_confirmation(conn, tx_filter)
+```
+
+#### 5.4 Administrative Attachment (Segregation of Duties)
+
+**Pharma focus:** To prevent technical staff from unilaterally changing Quality rules, MultiChain requires an administrative "Approval" to attach a filter to a stream. Even the global admin needs specific rights to manage the `SOP_Registry`.
+
+```{r filter_activation}
+# 5.4.1 Grant Stream-Level Admin Rights
+# The master administrator must be authorized to manage this specific registry.
+grant_admin_tx <- mc_grant(conn, master_admin, "SOP_Registry.admin")
+mc_wait_for_confirmation(conn, grant_admin_tx)
+
+# 5.4.2 Official Attachment
+# Attach the 'SopChainValidator' logic specifically to the 'SOP_Registry' stream.
+attachment_logic <- list("for" = "SOP_Registry", approve = TRUE)
+
+tx_appr <- mc_approve_from(conn, master_admin, "SopChainValidator", 
+                           approve = attachment_logic)
+
+message("Regulatory Governance: Filter officially attached to SOP_Registry by Admin.")
+mc_wait_for_confirmation(conn, tx_appr)
+```
+
+#### 5.5 Demonstrating Enforcement (The Negative Test)
+
+**Pharma focus:** We prove the system prevents non-compliance. We attempt to publish an SOP using a lowercase ID (`sop-123`), which violates our library's regex rule.
+
+```{r negative_test}
+bad_sop_data <- list(json = list(title = "Non-compliant entry", version = "2.0"))
+
+tryCatch({
+    # Attempting to publish with a bad key 'sop-123'
+    mc_publish_from(conn, addr_qa, "SOP_Registry", "sop-123", bad_sop_data)
+}, error = function(e) {
+    # The blockchain rejects the transaction and R captures the error message
+    message("Success: The Smart Filter blocked the non-compliant entry!")
+    cat("Blockchain Error Message: ", e$message, "\n")
+})
+```
+
+#### 5.6 Demonstrating Compliance (The Positive Test)
+
+**Pharma focus:** Finally, we publish a record that satisfies all rules: correct format and clearly marked as an initial version (no parent required).
+
+```{r positive_test}
+good_sop_data <- list(
+  json = list(
+    title = "Validated Sampling Plan", 
+    version = "1.0",
+    is_update = FALSE # Satisfies the 'no previous version required' logic
+  )
+)
+
+# This transaction passes the format check and the change control check.
+tx_good <- mc_publish_from(conn, addr_qa, "SOP_Registry", "SOP-999", good_sop_data)
+message("Compliance: Valid record accepted by the ledger. TXID: ", tx_good)
+```
+
+By completing this section, we have shown how to replace manual document inspections with **automated, immutable enforcement logic**, ensuring that only data that meets pre-defined Quality Standards can ever enter the SOP registry.
+
+---
+  
+### 6. System State Control (Global Variables & Node Configuration)
+
+**Pharmaceutical Perspective:** Beyond individual document records, a Quality Management System (QMS) requires a "Single Source of Truth" for global system states. **Blockchain Variables** act as master switches or centralized identifiers that are visible to all authorized participants but protected from unauthorized tampering. For example, the current ID of a **Validation Master Plan (VMP)** or the plant's operational status (e.g., "Under Audit") can be broadcasted across the entire network. This ensures that every department is synchronized with the same high-level regulatory context.
+
+**Programmer Perspective:** We use the `mc_create_variable` family of functions to manage global key-value pairs. Unlike streams, which store a list of events, variables represent the current "State" of the system while still maintaining a full historical audit trail of how that state changed over time.
+
+#### 6.1 Initializing Global Quality Identifiers
+
+**Pharma focus:** We initialize a global variable to track the active **Validation Master Plan (VMP)**. This ensures that every automated report generated by the system can reference the correct master strategy currently in effect at the manufacturing site.
+
+```{r create_vmp_variable}
+# 6.1.1 Define the Variable Name
+# The VMP ID is a cornerstone of pharmaceutical facility management.
+vmp_name <- "Current_VMP_ID"
+
+# 6.1.2 Create the Variable
+# Protocol Note: We set open = TRUE as required by the MultiChain 2.x protocol.
+# Security Note: Access is still controlled; only nodes with 'create' 
+# permissions can initialize these global objects.
+tx_var_create <- mc_create_variable(
+  conn, 
+  name = vmp_name, 
+  open = TRUE, 
+  value = "VMP-2026-SITE01"
+)
+
+message("QMS Initialization: Global VMP Variable created. TXID: ", tx_var_create)
+
+# Standard GxP practice: wait for confirmation before attempting to use the new object.
+mc_wait_for_confirmation(conn, tx_var_create)
+```
+
+#### 6.2 Real-Time Status Tracking (Regulatory Audit Logging)
+
+**Pharma focus:** Transparency is essential during a regulatory inspection. By using a global variable to track the "Operational Status," the Quality department can signal to all connected systems that an audit is in progress, potentially triggering higher logging levels or restricting certain high-risk actions.
+
+```{r system_status_tracking}
+# 6.2.1 Initialize Operational Status
+status_var <- "QMS_Operational_Status"
+mc_create_variable(conn, status_var, open = TRUE, value = "Normal Operations")
+mc_wait_for_confirmation(conn, tx_var_create) # Brief pause for ledger indexing
+
+# 6.2.2 Update State (Contemporaneous Documentation)
+# Scenario: An FDA inspector arrives at the site. We update the global state.
+# This creates a permanent record of the exact moment the audit mode began.
+tx_var_update <- mc_set_variable_value(conn, status_var, value = "FDA Audit in Progress")
+
+message("Compliance Event: System status updated to 'FDA Audit in Progress'. TXID: ", tx_var_update)
+```
+
+#### 6.3 Historical Audit Trail of System States
+
+**Pharma focus:** During a post-audit review, inspectors may ask: "When exactly did the system enter Audit Mode, and who authorized the change?" While `mc_get_variable_value` provides the current state, `mc_get_variable_history` provides the **Traceability** required by ALCOA+.
+
+```{r variable_history}
+# 6.3.1 Retrieve Latest State
+current_status <- mc_get_variable_value(conn, status_var)
+cat("Current Validated Status: ", current_status, "\n")
+
+# 6.3.2 Extract Historical Audit Trail
+# 'verbose = TRUE' is used to see the 'writers' (addresses) and timestamps.
+status_history <- mc_get_variable_history(conn, status_var, verbose = TRUE)
+
+# We display the 'writers' column to prove who authorized each state change.
+print(status_history[, c("blocktime", "writers", "value")])
+```
+
+#### 6.4 Technical Guardrails (Configuring Node Runtime)
+
+**Pharma focus:** **Computerized System Validation (CSV)** requires that technical systems operate within defined specifications. To prevent a "Denial of Service" (unintentional or otherwise) caused by over-sized data fields in reports, we can set **Runtime Guardrails**. This manages the node's memory and display limits without requiring a restart, ensuring **Business Continuity**.
+
+```{r node_configuration}
+# 6.4.1 Set Technical Limits
+# We adjust 'maxshowndata' to 5001 bytes. This ensures that any technical 
+# metadata displayed in our QMS dashboard is truncated to a manageable size, 
+# preventing log-flooding while maintaining the integrity of the underlying data.
+mc_set_runtime_param(conn, "maxshowndata", 5001)
+
+message("IT Governance: Node runtime parameter 'maxshowndata' enforced.")
+
+# 6.4.2 Verify Active Parameters
+# It is vital to document that the technical controls are active.
+runtime_params <- mc_get_runtime_params(conn)
+cat("Active System Limit (maxshowndata): ", runtime_params$maxshowndata, " bytes.\n")
+```
+
+#### 6.5 System Snapshot (GXP Documentation)
+
+**Pharma focus:** Every validated session or batch report must start with a technical snapshot of the environment. This documents the software version and network identity, providing proof of the validated state of the infrastructure used for the records.
+
+```{r system_snapshot}
+# 6.5.1 Capture Environment Metadata
+node_info <- mc_get_info(conn)
+
+cat("--- VALIDATED INFRASTRUCTURE SNAPSHOT ---\n")
+cat("Software Version:   ", node_info$version, "\n")
+cat("Blockchain Height:  ", node_info$blocks, "\n")
+cat("Network Node ID:    ", node_info$nodeaddress, "\n")
+```
+
+By completing this section, we have demonstrated how to manage **Global QMS States** and **Technical Guardrails**. The system now provides a unified view of the facility's compliance status, protected by the same immutability as the document records themselves.
+
+---
+  
+### 7. Atomic Version Exchange (Automated Change Control Enforcement)
+
+**Pharmaceutical Perspective:** One of the most challenging aspects of **Change Control** is ensuring that old versions of documents (SOPs) or work permits are withdrawn exactly when new ones become effective. In a traditional system, there is always a risk that an employee might inadvertently follow a superseded version or, conversely, have no valid version at all during the transition. MultiChain’s **Atomic Exchange** mechanism solves this by enabling a "Delivery-vs-Delivery" swap. The exchange is binary: either the new permit is issued and the old one is surrendered in a single transaction, or nothing happens at all. This effectively automates the **Decommissioning** process for superseded regulatory assets.
+
+**Programmer Perspective:** We use a multi-step "Partial Transaction" workflow. One department creates an "Offer" (a partially built transaction), and the other department "Completes" and signs it. We use `mc_prepare_lock_unspent` to isolate the assets in a secure escrow-like state to prevent them from being spent elsewhere during the negotiation.
+
+#### 7.1 Setup: Establishing the Baseline
+
+**Pharma focus:** We simulate the starting state where the Production department holds a superseded permit (V1), and the Quality department has authorized a new version (V2).
+
+```{r exchange_setup}
+# 7.1.1 Define Permit Version Names
+# In a GxP system, these represent specific training qualifications.
+token_v1 <- "TRAIN-QC-003-V1"
+token_v2 <- "TRAIN-QC-003-V2"
+
+# 7.1.2 Initial Distribution (Baseline)
+# Production holds the old version that needs to be surrendered.
+tx_v1 <- mc_issue(conn, addr_prod, token_v1, 1)
+# QA holds the new approved version ready for distribution.
+tx_v2 <- mc_issue(conn, addr_qa, token_v2, 1)
+
+# Ensure the ledger reflects these issuances before attempting the swap.
+mc_wait_for_confirmation(conn, tx_v1)
+mc_wait_for_confirmation(conn, tx_v2)
+
+message("Pre-requisite: Superseded and Active permits confirmed on-chain.")
+```
+
+#### 7.2 QA Isolation: Preparing the New Permit
+
+**Pharma focus:** The Quality department "locks" the new permit. This represents the administrative act of setting aside a new document for a specific exchange, ensuring it cannot be assigned to anyone else while the transaction is pending.
+
+```{r qa_locking}
+# 7.2.1 Define the isolated quantity
+# We must use dynamic list assignment in R to ensure the variable evaluates 
+# to the asset name string "TRAIN-QC-003-V2".
+amounts_v2 <- list()
+amounts_v2[[token_v2]] <- 1
+
+# 7.2.2 Isolate the asset (Locking)
+# mc_prepare_lock_unspent_from moves the asset into a 'reserved' state.
+locked_v2 <- mc_prepare_lock_unspent_from(
+  conn, 
+  from_address = addr_qa, 
+  amounts = amounts_v2
+)
+
+message("Quality Assurance: New permit (V2) isolated and locked for issuance.")
+```
+
+#### 7.3 Creating the Regulatory Offer (The Partial Transaction)
+
+**Pharma focus:** QA creates a conditional offer. The logic is: "I will provide V2 to Production, but only on the condition that I receive V1 back into the archive." This creates a non-binding technical template for the exchange.
+
+```{r exchange_offer}
+# 7.3.1 Define the 'Return' requirement
+# QA requests exactly 1 unit of the superseded version (V1) in return.
+amounts_v1_req <- list()
+amounts_v1_req[[token_v1]] <- 1
+
+# 7.3.2 Construct the Offer
+# This returns a raw hexadecimal string representing a 'Proposal'.
+offer_hex <- mc_create_raw_exchange(
+  conn, 
+  txid = locked_v2$txid, 
+  vout = locked_v2$vout, 
+  amounts = amounts_v1_req
+)
+
+cat("System: Atomic Exchange Offer generated (Partial Hex created).\n")
+```
+
+#### 7.4 Production Authorization: Preparing the Superseded Permit
+
+**Pharma focus:** Before Production can participate, they must be authorized to "Surrender" assets. This fulfills the **Segregation of Duties** requirement where the user must explicitly acknowledge the withdrawal of their qualification.
+
+```{r production_surrender}
+# 7.4.1 Grant Surrender Authorization
+# To return a permit, the address must have 'send' and 'receive' permissions.
+grant_tx <- mc_grant(conn, addr_prod, "send,receive")
+mc_wait_for_confirmation(conn, grant_tx)
+
+# 7.4.2 Isolate the Superseded Asset
+amounts_v1_own <- list()
+amounts_v1_own[[token_v1]] <- 1
+
+# Production locks their V1 permit to signify readiness for the swap.
+locked_v1 <- mc_prepare_lock_unspent_from(
+  conn, 
+  from_address = addr_prod, 
+  amounts = amounts_v1_own
+)
+
+message("Production: Superseded permit (V1) locked and ready for decommissioning.")
+```
+
+#### 7.5 Finalizing the Exchange: Attaching the Rationale
+
+**Pharma focus:** Production accepts the offer. At this stage, we enrich the transaction with a **Change Control Rationale**. This metadata provides the "Why" behind the technical swap, linking the atomic action to the manufacturing facility's Quality Management System.
+
+```{r finalize_exchange}
+# 7.5.1 Define the Receipt
+# Production confirms they are receiving 1 unit of V2.
+amounts_v2_receive <- list()
+amounts_v2_receive[[token_v2]] <- 1
+
+# 7.5.2 Complete the Multi-Party Transaction
+# mc_complete_raw_exchange merges QA's offer with Production's acceptance.
+# We include a JSON metadata object for the Audit Trail.
+final_tx_hex <- mc_complete_raw_exchange(
+  conn, 
+  tx_hex = offer_hex, 
+  txid = locked_v1$txid, 
+  vout = locked_v1$vout, 
+  amounts = amounts_v2_receive,
+  data = list(
+    change_control_id = "CC-2026-0045",
+    rationale = "Replacing V1 with V2 due to annual document review."
+  )
+)
+
+message("Compliance: Atomic exchange finalized and ready for network commitment.")
+```
+
+#### 7.6 Broadcast: Atomic Execution of Change Control
+
+**Pharma focus:** The transaction is broadcast to the network. This is the moment of **Settlement**. Because it is atomic, it is mathematically impossible for the department to end up with both permits (creating a risk of using old data) or zero permits (causing production downtime).
+
+```{r broadcast_exchange}
+# 7.6.1 Broadcast the Final Transaction
+swap_txid <- mc_send_raw_transaction(conn, final_tx_hex)
+
+# 7.6.2 Confirm Perpetual Record
+mc_wait_for_confirmation(conn, swap_txid)
+
+message("Data Integrity: SOP Version Exchange complete! Transaction ID: ", swap_txid)
+
+# 7.6.3 Audit Verification
+# Verification of final balances to prove compliance
+prod_bal <- mc_get_address_balances(conn, addr_prod)
+if (token_v2 %in% prod_bal$name && !(token_v1 %in% prod_bal$name)) {
+    message("Regulatory Verification: Change Control successfully enforced. V1 removed, V2 active.")
+}
+```
+
+By completing this section, we have demonstrated how blockchain can be used to enforce **Operational Compliance**. We replaced a manual, high-risk administrative task with an **Atomic Logic Gate**, ensuring that document version transitions are handled with 100% accuracy and zero overlap.
+
+---
+  
+### 8. Audit and Regulatory Inspection (Traceability & Immutability)
+
+**Pharmaceutical Perspective:** The cornerstone of **GxP Compliance** is the ability to prove that records have remained unchanged since the moment of their creation. Under **FDA 21 CFR Part 11** and **EU GMP Annex 11**, systems must provide a secure, computer-generated, time-stamped **Audit Trail**. In a blockchain environment, we move beyond simple "logs" to **Mathematical Proof of Existence**. Every document registration, version update, and permit issuance is sealed into a block, making it technically impossible to backdate, delete, or alter records without detection.
+
+**Programmer Perspective:** We use the blockchain’s metadata and specialized stream-query functions to reconstruct the history of the system. We demonstrate how to drill down from a high-level summary to the raw, cryptographically sealed blocks that form the ledger's foundation.
+
+#### 8.1 Proving Immutability (The Mathematical Seal)
+
+**Pharma focus:** An inspector needs to see that the system is a "Bound Ledger." Each block height is like a numbered page in a laboratory notebook that cannot be ripped out. By locating a transaction in a specific block, we prove exactly when it entered the facility's official record.
+
+```{r blockchain_integrity}
+# 8.1.1 Retrieve Global Ledger Status
+# Get the current technical state of the blockchain.
+chain_info <- mc_get_blockchain_info(conn)
+cat("Current Facility Ledger Height (Total Blocks): ", chain_info$blocks, "\n")
+
+# 8.1.2 Locate a Specific Record in the "Vault"
+# We pick our initial SOP registration (tx_pub_1 from Step 3).
+tx_audit_info <- mc_get_wallet_transaction(conn, tx_pub_1)
+block_height <- tx_audit_info$blockheight
+
+# 8.1.3 Retrieve the Raw Block Data
+# We extract the specific block that "sealed" our SOP record.
+sop_block <- mc_get_block(conn, block_height)
+
+# This hash is the unique, immutable fingerprint of the entire block.
+cat("Regulatory Proof: SOP-QC-001 is sealed in Block Hash: ", sop_block$hash, "\n")
+# Documenting the exact time the record became official.
+cat("Block Timestamp (Contemporaneous Entry):      ", 
+    as.character(as.POSIXct(sop_block$time, origin="1970-01-01")), "\n")
+```
+
+#### 8.2 The Master Document List (Identifying Unique Entities)
+
+**Pharma focus:** An auditor often requests a "Master List" of all active and superseded SOPs. `mc_list_stream_keys` provides an inventory of every unique document ID registered in the system, showing how many versions exist for each.
+
+```{r master_list}
+# 8.2.1 Generate the Document Inventory
+# This acts as the "Table of Contents" for the SOP Registry.
+sop_registry_list <- mc_list_stream_keys(conn, "SOP_Registry")
+
+# We display the unique document IDs and the number of versions (items) for each.
+# 'confirmed' shows how many have been finalized in the blockchain.
+print(sop_registry_list[, c("key", "items", "confirmed")])
+```
+
+#### 8.3 Change History Audit (Chronological Traceability)
+
+**Pharma focus:** Traceability requires showing the full lifecycle of a document. If an inspector selects `SOP-QC-001`, we must provide the "Audit Trail" of every change, who made it, and when. This ensures the **Contemporaneous** and **Original** requirements of ALCOA+ are met.
+
+```{r document_traceability}
+# 8.3.1 Extract the Full Lifecycle of a specific SOP
+# mc_list_stream_key_items retrieves every transaction associated with this key.
+sop_history <- mc_list_stream_key_items(conn, "SOP_Registry", "SOP-QC-001")
+
+# 8.3.2 Display the Audit Trail
+# We format the blocktime to a human-readable date for the audit report.
+sop_history$timestamp <- as.POSIXct(sop_history$blocktime, origin="1970-01-01")
+
+# The 'publishers' column proves 'Who', 'timestamp' proves 'When', and 'txid' is the 'Proof'.
+print(sop_history[, c("timestamp", "txid", "publishers")])
+```
+
+#### 8.4 The "Single Source of Truth" (Latest Approved Metadata)
+
+**Pharma focus:** In daily operations, users need the "Current Effective Version" without sifting through historical logs. `mc_get_stream_key_summary` uses a "JSON Merge" logic to provide the latest validated state of a document key instantly.
+
+```{r single_source_truth}
+# 8.4.1 Aggregate the Latest Metadata
+# This function collapses all versions into one "Current Valid State" object.
+current_sop_state <- mc_get_stream_key_summary(conn, "SOP_Registry", "SOP-QC-001")
+
+cat("--- CURRENT EFFECTIVE SOP DASHBOARD ---\n")
+cat("SOP Title:             ", current_sop_state$title, "\n")
+cat("Effective Version:     ", current_sop_state$version, "\n")
+cat("Validated File Hash:   ", current_sop_state$file_hash, "\n")
+# This data can be used to verify the physical PDF file before a production run.
+```
+
+#### 8.5 Inspector's Report: Departmental Accountability
+
+**Pharma focus:** Regulatory bodies require proof of individual and departmental accountability. We can generate a report of all actions performed by a specific department (the **Attributable** part of ALCOA+).
+
+```{r publisher_audit}
+# 8.5.1 Generate Action Report for QA Department
+# We list every record ever published by the QA address (addr_qa).
+qa_audit_trail <- mc_list_stream_publisher_items(conn, "SOP_Registry", addr_qa)
+
+message("Compliance Report: Actions performed by QA Department (", addr_qa, "):")
+cat("Total regulatory records initiated: ", nrow(qa_audit_trail), "\n")
+
+# Provide the most recent 5 actions for quick review
+qa_audit_trail$date <- as.POSIXct(qa_audit_trail$blocktime, origin="1970-01-01")
+print(head(qa_audit_trail[, c("date", "keys", "txid")], 5))
+```
+
+#### 8.6 High-Level QMS Oversight (System Dashboard)
+
+**Pharma focus:** At the end of an inspection, a site manager needs a high-level view of the entire digital ecosystem to ensure all ledgers are synchronized and active.
+
+```{r system_oversight}
+# 8.6.1 Retrieve Global Chain Totals
+# This provides a snapshot of the volume of data in the QMS.
+totals <- mc_get_chain_totals(conn)
+
+cat("--- FACILITY QMS OVERVIEW ---\n")
+cat("Total SOP Registry Entries: ", totals$streams, "\n")
+cat("Total Digital Permits Issued: ", totals$assets, "\n")
+cat("Total Authorized Addresses:  ", length(mc_get_addresses(conn)), "\n")
+```
+
+By completing this section, we have demonstrated that the system is not just a database, but a **Regulatory Instrument**. It provides the transparency, immutability, and instant auditability required to satisfy even the most stringent pharmaceutical inspections.
+
+---
+  
+### 9. Raw Transactions (Advanced GxP Workflows & the "Four-Eyes" Principle)
+
+**Pharmaceutical Perspective:** In high-security GxP environments, critical actions—such as decommissioning a manufacturing permit or archiving a master record—often require a **"Four-Eyes Principle"** (dual-control) workflow. This means one system or person drafts the transaction, another independent person or system verifies and enriches it with validation metadata, and a third authorized party applies the final cryptographic signature. **Raw Transactions** allow us to decouple the construction, review, and signing phases, ensuring that metadata is inspected and verified *before* it is committed to the immutable ledger.
+
+**Programmer Perspective:** We transition from high-level "send" commands to a manual, multi-stage pipeline. We manipulate the transaction in its hexadecimal form (the "Raw Hex"), appending metadata and providing explicit context (the `parents` parameter) to ensure the blockchain engine can validate the digital signature for asset movements.
+
+#### 9.1 Dynamic Inventory Discovery: Locating the Permit to Archive
+
+**Pharma focus:** To initiate a decommissioning process, the system must first identify which specific permit is currently held by the Production unit. We perform a real-time inventory scan to find an active training asset.
+
+```{r discovery}
+# 9.1.1 Scan Departmental Inventory
+# We retrieve all unspent transaction outputs (UTXOs) for the Production address.
+unspent_prod <- mc_list_unspent(conn, addresses = addr_prod)
+
+# 9.1.2 Automated Asset Detection
+# We search the list-columns for any asset starting with "TRAIN" (our permit prefix).
+# This logic ensures the workflow is robust against naming variations in versioning.
+discovery <- sapply(unspent_prod$assets, function(row_assets) {
+  if (length(row_assets) == 0) return(NA)
+  names_in_row <- sapply(row_assets, function(a) a$name)
+  match <- names_in_row[grepl("^TRAIN", names_in_row)][1]
+  return(match)
+})
+
+# Identify the exact record for the manual archive pipeline
+target_row_idx <- which(!is.na(discovery))[1]
+target_asset   <- discovery[target_row_idx]
+target_utxo    <- unspent_prod[target_row_idx, ]
+
+# 9.1.3 Extract Precision Data
+# We extract the exact quantity using unlist() to ensure we have a plain numeric value.
+# This prevents type-mismatch errors during the raw transaction construction.
+row_assets_list <- target_utxo$assets[[1]][[1]]
+target_qty <- as.numeric(unlist(row_assets_list$qty[row_assets_list$name == target_asset]))
+
+message("Inventory Management: Discovered active permit '", target_asset, "' (Qty: ", target_qty, ")")
+
+# Prepare the blockchain input (UTXO pointer)
+inputs <- list(list(
+  txid = target_utxo$txid, 
+  vout = as.integer(target_utxo$vout)
+))
+```
+
+#### 9.2 Manual Transaction Construction and Target Authorization
+
+**Pharma focus:** We define the movement of the permit to a secure "Archive" address. In a permissioned system, we must explicitly authorize the archive address to "Receive" assets. This mimics the validation of an archival storage location.
+
+```{r manual_construction}
+# 9.2.1 Initialize Secure Archive Address
+archive_addr <- mc_get_new_address(conn)
+
+# 9.2.2 Regulatory Authorization (The Receive Grant)
+# No address can hold assets without an explicit grant, satisfying CFR 21 Part 11 
+# requirements for authorized system access.
+grant_tx <- mc_grant(conn, archive_addr, "receive")
+mc_wait_for_confirmation(conn, grant_tx)
+
+# 9.2.3 Construct the Balanced Output
+# We map the archive address to the exact asset quantity found in Step 9.1.
+outputs <- list()
+asset_movement <- list()
+asset_movement[[target_asset]] <- target_qty
+outputs[[archive_addr]] <- asset_movement
+
+# 9.2.4 Generate the Raw Hex
+# This creates a "Draft" transaction that exists only in our R session memory.
+raw_tx_hex <- mc_create_raw_transaction(conn, inputs, outputs)
+
+message("GxP Engineering: Draft transaction hex constructed for ", target_asset)
+```
+
+#### 9.3 Change Control Enrichment: Appending Validation Metadata
+
+**Pharma focus:** Before commitment, a second reviewer (Quality Control) attaches a unique **Validation ID** and a justification comment. This ensures that the technical movement of the asset is always linked to a business rationale.
+
+```{r data_enrichment}
+# 9.3.1 Define Compliance Metadata
+validation_metadata <- list(
+  validation_run_id = "VAL-RUN-2026-099",
+  inspector_comment = "Archiving permit due to site-wide software update."
+)
+
+# 9.3.2 Enforce the Audit Trail
+# We append this data to the existing raw hex. The transaction now carries 
+# both the asset transfer logic and the regulatory justification.
+raw_tx_hex <- mc_append_raw_data(conn, raw_tx_hex, validation_metadata)
+
+message("Compliance: Validation metadata successfully embedded into the draft.")
+```
+
+#### 9.4 Independent Verification (The "Human-in-the-Loop" Check)
+
+**Pharma focus:** To prevent "blind signing," an auditor uses `mc_decode_raw_transaction` to inspect the hex. They verify that the target address and the attached comments are correct according to the Change Control Plan.
+
+```{r technical_audit}
+# 9.4.1 Transparent Inspection
+# We convert the cryptic hex back into a human-readable R list.
+decoded_tx <- mc_decode_raw_transaction(conn, raw_tx_hex)
+
+# 9.4.2 Verification of Intent
+cat("--- PRE-SIGNING REGULATORY INSPECTION ---\n")
+cat("Target Archive:    ", decoded_tx$vout[[1]]$scriptPubKey$addresses[[1]], "\n")
+cat("Asset Identified: ", decoded_tx$vout[[1]]$assets[[1]]$name, "\n")
+# We use hex_to_char to read the embedded JSON comment
+cat("Embedded Comment: ", multichainr:::hex_to_char(decoded_tx$vout[[2]]$data[[1]]), "\n")
+```
+
+#### 9.5 Cryptographic Signing: Attributing the Action
+
+**Pharma focus:** Now that the draft is verified, the authorized department applies its digital signature. For asset movements, we must provide the `parents` information (the context of the input) so the node can verify the department's right to spend that specific permit.
+
+```{r signing}
+# 9.5.1 Provide Input Context
+# We re-package the original UTXO metadata to assist the signing engine.
+parents_info <- list(list(
+  txid         = target_utxo$txid,
+  vout         = as.integer(target_utxo$vout),
+  scriptPubKey = target_utxo$scriptPubKey[[1]],
+  amount       = as.numeric(target_utxo$amount),
+  assets       = target_utxo$assets[[1]]
+))
+
+# 9.5.2 Apply Departmental Signature
+# This finalizes the transaction, linking it to the department's private key.
+signed_obj <- mc_sign_raw_transaction(conn, raw_tx_hex, parents = parents_info)
+
+if (signed_obj$complete) {
+  message("Digital Signature: Transaction successfully signed and authorized.")
+}
+```
+
+#### 9.6 Final Commitment and Audit Reconciliation
+
+**Pharma focus:** The signed transaction is broadcast. Once confirmed, we perform a final reconciliation to prove that the permit has moved from the Production wallet to the Archive.
+
+```{r final_commitment}
+# 9.6.1 Broadcast to the Permanent Ledger
+final_txid <- mc_send_raw_transaction(conn, signed_obj$hex)
+mc_wait_for_confirmation(conn, final_txid)
+
+# 9.6.2 Final Reconciliation Report
+# Verify that Production no longer holds the archived permit.
+archive_bal <- mc_get_address_balances(conn, archive_addr)
+
+message("Audit Finalization: Permit archiving verified.")
+print(archive_bal[archive_bal$name == target_asset, c("name", "qty")])
+```
+
+By completing this section, we have demonstrated a **high-security GxP workflow**. We showed how the `multichainr` package allows for the careful construction, multi-stage enrichment, and independent audit of transactions, fulfilling the most complex requirements of **Change Control** and the **Four-Eyes Principle**.
+
+---
+  
+### 10. System Shutdown and Archiving (Ledger Lifecycle Management)
+
+**Pharmaceutical Perspective:** The final requirement of a **Validated Computerized System** is a robust strategy for **Business Continuity** and **Disaster Recovery**. According to GxP records retention policies, departmental keys and ledger data must be preserved for periods often exceeding 10 to 30 years. If the physical server hosting the blockchain fails, the Quality department must be able to restore the "Digital Identities" (private keys) and the transaction history from secure backups. This section demonstrates how to capture a final "Regulatory Snapshot" and secure the wallet data before decommissioning the active node session.
+
+**Programmer Perspective:** We use the wallet management suite of functions to export the node's internal database. We distinguish between a **Binary Backup** (a database snapshot for system restoration) and a **Text Dump** (human-readable keys for emergency recovery). Finally, we demonstrate the graceful shutdown of the MultiChain daemon using `mc_node_stop`.
+
+#### 10.1 Preparation of Validated Backup Storage
+
+**Pharma focus:** We define the target locations for our regulatory archives. In a production environment, these would be write-once-read-many (WORM) storage or encrypted network vaults. 
+
+```{r backup_prep}
+# 10.1.1 Define Archive Paths
+# Note: These paths are relative to the machine where the MultiChain daemon is running.
+backup_folder <- tempdir() 
+binary_backup_path <- file.path(backup_folder, "Pharma_Wallet_Backup.dat")
+text_dump_path     <- file.path(backup_folder, "Pharma_Keys_Export.txt")
+
+message("System Administration: Backup paths initialized in validated storage zone.")
+```
+
+#### 10.2 Comprehensive Binary Wallet Backup
+
+**Pharma focus:** This creates a **System-Level Backup**. It is a byte-for-byte copy of the `wallet.dat` file, containing all departmental addresses, their associated private keys, and local transaction metadata. This file is required to restore the node to its exact state in the event of hardware failure.
+
+```{r binary_backup}
+# 10.2.1 Execute Binary Backup
+# mc_backup_wallet performs a safe, hot-backup of the wallet database.
+mc_backup_wallet(conn, binary_backup_path)
+
+if (file.exists(binary_backup_path)) {
+  message("Disaster Recovery: Binary wallet backup successfully generated.")
+  cat("Binary Archive Location: ", binary_backup_path, "\n")
+}
+```
+
+#### 10.3 Human-Readable Key Export (The Emergency Recovery Kit)
+
+**Pharma focus:** Under **Data Governance** rules, we must ensure that our data is not "locked" into a single proprietary format. By dumping the keys into a text-based **Wallet Import Format (WIF)**, we ensure that the Quality department can recover their digital identities on any MultiChain-compatible system, even years later.
+
+```{r key_dump}
+# 10.3.1 Export Private Keys
+# mc_dump_wallet creates a text file listing every address and its private key.
+mc_dump_wallet(conn, text_dump_path)
+
+if (file.exists(text_dump_path)) {
+  message("Data Retention: Human-readable key export completed for safe-deposit archiving.")
+  # SAFETY WARNING: In a GxP environment, this file must be handled with 
+  # extreme security as it contains the "Master Keys" to the departmental identities.
+}
+```
+
+#### 10.4 Final Quality Snapshot (The End-of-Session Report)
+
+**Pharma focus:** Before the system is taken offline, we capture a final snapshot of the blockchain's technical state. This metadata serves as the "final page" of our digital audit trail, documenting the total number of blocks (pages) validated during this operational session.
+
+```{r final_snapshot}
+# 10.4.1 Capture Final Ledger Metadata
+final_stats <- mc_get_blockchain_info(conn)
+
+cat("--- FINAL REGULATORY LEDGER SUMMARY ---\n")
+cat("Chain Name:            ", chain_name, "\n")
+cat("Final Block Height:    ", final_stats$blocks, "\n")
+cat("Protocol Version:      ", final_stats$protocol, "\n")
+```
+
+#### 10.5 Graceful Shutdown and Environment Cleanup
+
+**Pharma focus:** To ensure **Data Consistency**, the system must be shut down gracefully. This allows the database to flush all pending indices to the disk. For this demonstration, we also perform a post-audit cleanup by removing the local blockchain directory.
+
+```{r system_shutdown}
+# 10.5.1 Terminate Blockchain Daemon
+# mc_node_stop sends the SIGTERM signal to the multichaind process.
+mc_node_stop(chain_name)
+
+# Allow the operating system to release file locks before directory removal.
+Sys.sleep(2)
+
+# 10.5.2 Post-Audit Cleanup
+# In a real validated environment, the chain_dir would be preserved. 
+# Here we remove it to reset the test environment.
+
+if (.Platform$OS.type == "windows") {
+  base_dir <- file.path(Sys.getenv("APPDATA"), "MultiChain")
+} else if (Sys.info()["sysname"] == "Darwin") {
+  base_dir <- file.path(Sys.getenv("HOME"), "Library/Application Support/MultiChain")
+} else {
+  base_dir <- file.path(Sys.getenv("HOME"), ".multichain")
+}
+
+chain_dir <- file.path(base_dir, chain_name)
+
+if (dir.exists(chain_dir)) {
+  unlink(chain_dir, recursive = TRUE)
+  message("IT Compliance: Local session data removed after successful archiving.")
+}
+
+message("Workflow Status: Pharma SOP Registry session successfully closed.")
+```
+
+***
+
+### Conclusion: The Future of Validated Data Management
+
+Through this vignette, we have demonstrated a complete GxP-compliant lifecycle for pharmaceutical documentation using the `multichainr` package. By leveraging a permissioned blockchain, we have moved beyond traditional "Database + Log" architectures to a **Unified Truth Engine**.
+
+**Key GxP Takeaways:**
+*   **Immutable Traceability:** We proved that SOP versions cannot be deleted or backdated.
+*   **Cryptographic Attribution:** Every action is mathematically tied to a departmental digital identity.
+*   **Automated Enforcement:** Smart Filters ensure that business rules are followed at the protocol level, preventing non-compliance before it occurs.
+*   **Efficient Auditing:** We reduced the effort required for a regulatory inspection from days of manual document searching to seconds of automated blockchain queries.
+
+The `multichainr` package provides the necessary bridge between R's powerful analytical capabilities and the uncompromising data integrity of blockchain technology, paving the way for the next generation of **Digital Quality Management Systems**.

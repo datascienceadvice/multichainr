@@ -33,7 +33,24 @@ summary <- mc_get_stream_publisher_summary(conn, "mystream", "1A...")
 
 }
 \seealso{
-Other stream summaries: 
-\code{\link{mc_get_stream_key_summary}()}
+Other streams: 
+\code{\link{mc_create_stream}()},
+\code{\link{mc_create_stream_from}()},
+\code{\link{mc_get_stream_info}()},
+\code{\link{mc_get_stream_item}()},
+\code{\link{mc_get_stream_key_summary}()},
+\code{\link{mc_list_stream_block_items}()},
+\code{\link{mc_list_stream_items}()},
+\code{\link{mc_list_stream_key_items}()},
+\code{\link{mc_list_stream_keys}()},
+\code{\link{mc_list_stream_publisher_items}()},
+\code{\link{mc_list_stream_publishers}()},
+\code{\link{mc_list_stream_query_items}()},
+\code{\link{mc_list_stream_tx_items}()},
+\code{\link{mc_list_streams}()},
+\code{\link{mc_publish}()},
+\code{\link{mc_publish_from}()},
+\code{\link{mc_publish_multi}()},
+\code{\link{mc_publish_multi_from}()}
 }
-\concept{stream summaries}
+\concept{streams}

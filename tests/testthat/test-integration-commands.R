@@ -78,10 +78,14 @@ test_that("Integration: Node Configuration and Information lifecycle", {
   
   expect_equal(mc_get_runtime_params(conn)$maxshowndata, 5001)
   
+  res2 <- mc_set_runtime_param(conn, "acceptfiltertimeout", 42)
+  expect_null(res2)
+  
   # Verify the changes via getruntimeparams
   updated_params <- mc_get_runtime_params(conn)
   expect_false(updated_params$miningrequirespeers)
   expect_equal(updated_params$maxshowndata, new_val)
+  expect_equal(mc_get_runtime_params(conn)$acceptfiltertimeout, 42)
   
   # 6. mc_help -----------------------------------------------------------------
   # General help returns an object of class mc_help

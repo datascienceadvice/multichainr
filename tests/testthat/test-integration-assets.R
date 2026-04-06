@@ -97,7 +97,7 @@ test_that("Integration: Assets and Tokens lifecycle", {
   expect_true(b_info_after$open)
   
   # 8. mc_issue_token ----------------------------------------------------------
-  # To issue tokens, parent asset must be created with type = 'nonfungible'
+  # To issue tokens, parent asset must be created with fungible = FALSE
   parent_nft <- list(name = "collection", fungible = FALSE, open = TRUE)
   mc_issue(conn, addr, parent_nft, quantity = 0)
   

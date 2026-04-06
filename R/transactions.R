@@ -47,8 +47,18 @@ mc_get_address_transaction <- function(conn, address, txid, verbose = FALSE) {
 #' @export
 mc_get_multi_balances <- function(conn, addresses = "*", assets = "*", minconf = 1, 
                                   include_watch_only = FALSE, include_locked = FALSE) {
-  params <- list(as.list(addresses), as.list(assets), as.integer(minconf), 
-                 include_watch_only, include_locked)
+  
+  addr_param <- if (identical(addresses, "*")) "*" else as.list(addresses)
+  asset_param <- if (identical(assets, "*")) "*" else as.list(assets)
+  
+  params <- list(
+    addr_param, 
+    asset_param, 
+    as.integer(minconf), 
+    include_watch_only, 
+    include_locked
+  )
+  
   mc_rpc(conn, "getmultibalances", params)
 }
 

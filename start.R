@@ -106,11 +106,4 @@ lintr::lint_package() # проверить warnings()
 раздробить @family - @seealse на меньшие части?
 
 переписать справку, примеры функций, аргументы!
-  
-  mc_list_permissions(conn, "admin")
-  
-cat("--- FACILITY QMS OVERVIEW ---\n")
-cat("Total SOP Registry Entries: ", totals$streams, "\n")
-cat("Total SOP Registry Transactions: ", totals$transactions, "\n")
-cat("Total Digital Permits Issued: ", totals$assets, "\n")
-cat("Total Authorized Addresses:  ", totals$addresses, "\n")
+

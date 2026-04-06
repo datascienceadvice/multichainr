@@ -107,10 +107,14 @@ test_that("Integration: Assets and Tokens lifecycle", {
                              token_details = list(artist = "Monet"))
   expect_type(token_tx, "character")
   
+  mc_wait_for_confirmation(conn, token_tx)
+  
   # 9. mc_issue_token_from -----------------------------------------------------
   token_from_tx <- mc_issue_token_from(conn, addr, addr, parent_nft$name, "painting2", 
                                        quantity = 1,
                                        token_details = list(artist = "Sisley"))
+  mc_wait_for_confirmation(conn, token_from_tx)
+  
   expect_type(token_from_tx, "character")
   
     # 10. mc_get_token_info ------------------------------------------------------

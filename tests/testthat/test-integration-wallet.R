@@ -48,12 +48,13 @@ test_that("Integration: Wallet and UTXO Management lifecycle", {
   
   # Create some UTXOs by issuing multiple small amounts
   for(i in 1:3) {
-    mc_issue(conn, admin_addr, paste0("asset_", i), 10)
+    mi <- mc_issue(conn, admin_addr, paste0("asset_", i), 10)
+    mc_wait_for_confirmation(conn, mi)
   }
-  Sys.sleep(3) # Wait for blocks
   
   # 2. mc_list_unspent ---------------------------------------------------------
   unspent <- mc_list_unspent(conn)
+  
   expect_s3_class(unspent, "data.frame")
   expect_true(nrow(unspent) >= 3)
   

@@ -45,10 +45,14 @@ test_that("mc_get_bin_path finds binary in system PATH", {
 
 test_that("mc_get_bin_path throws error if not found", {
   withr::local_options(list(multichainr.path = NULL))
+  withr::local_envvar(list(MULTICHAINR_PATH = "")) 
+  
   bin_name <- "this_program_does_not_exist_xyz"
-  expected_bin <- if (.Platform$OS.type == "windows") paste0(bin_name, ".exe") else bin_name
-  expect_error(mc_get_bin_path(bin_name), 
-               paste0("File '", expected_bin, "' not found. Use mc_set_path()."))
+  
+  expect_error(
+    mc_get_bin_path(bin_name),
+    regexp = "not found"
+  )
 })
 
 test_that("mc_get_config correctly parses configuration files", {

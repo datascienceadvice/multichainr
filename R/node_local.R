@@ -46,14 +46,26 @@ mc_get_bin_path <- function(bin_name) {
   if (.Platform$OS.type == "windows") {
     bin_name <- paste0(bin_name, ".exe")
   }
+  
   opt_path <- getOption("multichainr.path")
+  
+  if (is.null(opt_path)) {
+    opt_path <- Sys.getenv("MULTICHAIN_PATH", unset = "")
+    if (opt_path == "") opt_path <- NULL # Приводим к единому виду
+  }
+  
   if (!is.null(opt_path)) {
     full_path <- file.path(opt_path, bin_name)
-    if (file.exists(full_path)) return(full_path)
+    if (file.exists(full_path)) return(normalizePath(full_path))
   }
+  
   system_path <- Sys.which(bin_name)
   if (system_path != "") return(system_path)
-  stop(sprintf("File '%s' not found. Use mc_set_path().", bin_name), call. = FALSE)
+  
+  stop(
+    sprintf("File '%s' not found. \nSet path via options(multichainr.path = '...') or MULTICHAIN_PATH in .Renviron.", bin_name), 
+    call. = FALSE
+  )
 }
 
 #' Get MultiChain configuration

@@ -15,7 +15,7 @@ Invisibly returns the normalized path (as set in the option) or
 throws an error if the directory does not exist.
 }
 \description{
-This function sets the global option \code{multichainr.path} to the directory
+This function sets the global option \code{multichain.path} to the directory
 containing the MultiChain executables (\code{multichaind} and \code{multichain-util}).
 All other functions that need to locate the binaries will use this option.
 }
@@ -25,7 +25,7 @@ All other functions that need to locate the binaries will use this option.
 mc_set_path("/usr/local/bin")
 
 # Check that the option was set correctly
-getOption("multichainr.path")
+getOption("multichain.path")
 }
 
 }

@@ -17,7 +17,7 @@ test_that("Integration: Path Management and Node lifecycle", {
   
   # Test setting the path
   mc_set_path(mock_bin_dir)
-  expect_equal(normalizePath(getOption("multichainr.path")), normalizePath(mock_bin_dir))
+  expect_equal(normalizePath(getOption("multichain.path")), normalizePath(mock_bin_dir))
   
   # 2. mc_get_bin_path ---------------------------------------------------------
   # Test finding the binary in the custom path

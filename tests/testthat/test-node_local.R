@@ -8,7 +8,7 @@ test_that("mc_set_path sets option correctly", {
   on.exit(unlink(tmp_dir, recursive = TRUE))
   
   mc_set_path(tmp_dir)
-  expect_equal(normalizePath(getOption("multichainr.path")), normalizePath(tmp_dir))
+  expect_equal(normalizePath(getOption("multichain.path")), normalizePath(tmp_dir))
 })
 
 test_that("mc_get_bin_path finds binary in set path", {
@@ -27,25 +27,36 @@ test_that("mc_get_bin_path finds binary in set path", {
 })
 
 test_that("mc_get_bin_path finds binary in system PATH", {
-  options(multichainr.path = NULL)
+  withr::local_options(list(multichain.path = NULL))
+  withr::local_envvar(list(MULTICHAIN_PATH = "")) 
   
-  tmp_dir <- tempfile()
+  tmp_dir <- tempfile("bin_test")
   dir.create(tmp_dir)
   on.exit(unlink(tmp_dir, recursive = TRUE))
   
-  fake_bin <- file.path(tmp_dir, "multichaind")
-  if (.Platform$OS.type == "windows") fake_bin <- paste0(fake_bin, ".exe")
-  writeLines("fake", fake_bin)
+  bin_name <- "multichaind"
+  fake_bin_name <- if (.Platform$OS.type == "windows") paste0(bin_name, ".exe") else bin_name
+  fake_bin_path <- file.path(tmp_dir, fake_bin_name)
   
-  withr::local_envvar(PATH = paste(tmp_dir, Sys.getenv("PATH"), sep = .Platform$path.sep))
+  writeLines("fake", fake_bin_path)
   
-  result <- mc_get_bin_path("multichaind")
-  expect_equal(normalizePath(result), normalizePath(fake_bin))
+  if (.Platform$OS.type != "windows") {
+    Sys.chmod(fake_bin_path, "0755")
+  }
+  
+  withr::with_envvar(
+    list(PATH = paste(tmp_dir, Sys.getenv("PATH"), sep = .Platform$path.sep)), 
+    {
+      result <- mc_get_bin_path(bin_name)
+      
+      expect_equal(normalizePath(result), normalizePath(fake_bin_path))
+    }
+  )
 })
 
 test_that("mc_get_bin_path throws error if not found", {
-  withr::local_options(list(multichainr.path = NULL))
-  withr::local_envvar(list(MULTICHAINR_PATH = "")) 
+  withr::local_options(list(multichain.path = NULL))
+  withr::local_envvar(list(MULTICHAIN_PATH = "")) 
   
   bin_name <- "this_program_does_not_exist_xyz"
   
@@ -173,13 +184,13 @@ cleanup_chain <- function(chain_name) {
 }
 
 test_that("Integration: create, start, stop chain using set path", {
-  current_path <- getOption("multichainr.path")
+  current_path <- getOption("multichain.path")
   
   if (is.null(current_path)) {
     env_path <- Sys.getenv("MULTICHAIN_PATH")
     if (env_path != "" && dir.exists(env_path)) {
       mc_set_path(env_path)
-      current_path <- getOption("multichainr.path")
+      current_path <- getOption("multichain.path")
     }
   }
   

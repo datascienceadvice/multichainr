@@ -1,6 +1,6 @@
 #' Set path to MultiChain binaries
 #'
-#' This function sets the global option `multichainr.path` to the directory
+#' This function sets the global option `multichain.path` to the directory
 #' containing the MultiChain executables (`multichaind` and `multichain-util`).
 #' All other functions that need to locate the binaries will use this option.
 #'
@@ -16,7 +16,7 @@
 #' mc_set_path("/usr/local/bin")
 #'
 #' # Check that the option was set correctly
-#' getOption("multichainr.path")
+#' getOption("multichain.path")
 #' }
 #'
 #' @seealso \code{\link{mc_get_bin_path}} for the internal path resolution,
@@ -26,7 +26,7 @@
 #' @export
 mc_set_path <- function(path) {
   if (!dir.exists(path)) stop("Directory does not exist.")
-  options(multichainr.path = normalizePath(path, mustWork = TRUE))
+  options(multichain.path = normalizePath(path, mustWork = TRUE))
 }
 
 #' Internal function to locate executable files
@@ -47,7 +47,7 @@ mc_get_bin_path <- function(bin_name) {
     bin_name <- paste0(bin_name, ".exe")
   }
   
-  opt_path <- getOption("multichainr.path")
+  opt_path <- getOption("multichain.path")
   
   if (is.null(opt_path)) {
     opt_path <- Sys.getenv("MULTICHAIN_PATH", unset = "")
@@ -63,7 +63,7 @@ mc_get_bin_path <- function(bin_name) {
   if (system_path != "") return(system_path)
   
   stop(
-    sprintf("File '%s' not found. \nSet path via options(multichainr.path = '...') or MULTICHAIN_PATH in .Renviron.", bin_name), 
+    sprintf("File '%s' not found. \nSet path via options(multichain.path = '...') or MULTICHAIN_PATH in .Renviron.", bin_name), 
     call. = FALSE
   )
 }

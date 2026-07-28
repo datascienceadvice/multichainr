@@ -29,8 +29,6 @@ mc_help(conn)
 mc_help(conn, "getinfo")
 }
 
-}
-\seealso{
-\code{\link{mc_rpc}} for direct RPC calls.
+
 }
 \concept{node utilities}

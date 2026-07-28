@@ -12,7 +12,7 @@
 #'   `options$libraries` is a character string of length 1, it is converted
 #'   to a list containing that string.
 #'
-#' @keywords internal
+#' @noRd
 prep_filter_options <- function(options) {
   if (is.list(options) && !is.null(options$libraries)) {
     if (is.character(options$libraries) && length(options$libraries) == 1) {
@@ -350,7 +350,7 @@ mc_run_stream_filter <- function(conn, filter, tx, vout = NULL) {
   mc_rpc(conn, "runstreamfilter", params)
 }
 
-# --- Библиотеки (Libraries) ---
+# --- Libraries ---
 
 #' Create a new library
 #'
@@ -360,8 +360,8 @@ mc_run_stream_filter <- function(conn, filter, tx, vout = NULL) {
 #' @param conn A connection object created by \code{\link{mc_connect}}.
 #' @param name Character string. Library name (must be unique).
 #' @param updatemode Character string. How library updates are handled:
-#'   \code{"none"} – no updates allowed; \code{"instant"} – updates take effect
-#'   immediately; \code{"approve"} – updates require admin approval.
+#'   \code{"none"} -- no updates allowed; \code{"instant"} -- updates take effect
+#'   immediately; \code{"approve"} -- updates require admin approval.
 #' @param js_code Character string. The JavaScript code for the library.
 #'
 #' @return A list containing the result of the RPC call (usually transaction ID).
@@ -522,7 +522,7 @@ mc_test_library <- function(conn, library = NULL, updatename = NULL, js_code = N
   mc_rpc(conn, "testlibrary", params)
 }
 
-# --- Переменные (Variables) ---
+# --- Variables ---
 
 #' Create a new variable
 #'

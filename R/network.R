@@ -8,10 +8,10 @@
 #'   e.g., \code{"127.0.0.1:8571"}.
 #' @param command Character string. The action to perform:
 #'   \itemize{
-#'     \item \code{"add"} – add the node to the connection queue (will attempt to
+#'     \item \code{"add"} -- add the node to the connection queue (will attempt to
 #'           connect and stay connected).
-#'     \item \code{"remove"} – disconnect from the node if currently connected.
-#'     \item \code{"onetry"} – attempt a single connection; do not keep retrying.
+#'     \item \code{"remove"} -- disconnect from the node if currently connected.
+#'     \item \code{"onetry"} -- attempt a single connection; do not keep retrying.
 #'   }
 #'
 #' @return Invisibly returns \code{NULL} on success; throws an error if the
@@ -204,9 +204,9 @@ mc_ping <- function(conn) {
 #' @param node Character string. The IP address and port of the peer node.
 #' @param command Character string. Action to perform:
 #'   \itemize{
-#'     \item \code{"tryconnect"} – store the node and try to connect to it
+#'     \item \code{"tryconnect"} -- store the node and try to connect to it
 #'           (default).
-#'     \item \code{"ignore"} – ignore the node (do not attempt connections).
+#'     \item \code{"ignore"} -- ignore the node (do not attempt connections).
 #'   }
 #'
 #' @return Invisibly returns \code{NULL} on success.

@@ -19,4 +19,7 @@ a \%||\% b
 This infix operator provides a convenient way to handle \code{NULL} values
 by providing a default value.
 }
-\keyword{internal}
+\examples{
+"value" \%||\% "default"
+NULL \%||\% "default"
+}

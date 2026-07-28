@@ -10,7 +10,7 @@
 #' @param verbose Integer. Verbosity level from 0 to 4. Default is \code{1}.
 #'   * \code{0}: returns only the block hash as a string.
 #'   * \code{1}: returns a list with basic block information.
-#'   * \code{2–4}: include additional details (transactions, etc.).
+#'   * \code{2-4}: include additional details (transactions, etc.).
 #'
 #' @return Depends on \code{verbose}:
 #'   * If \code{verbose = 0}: a character string with the block hash.
@@ -32,7 +32,7 @@
 #' @family blockchain information
 #' @export
 mc_get_block <- function(conn, hash_or_height, verbose = 1) {
-  # hash_or_height может быть числом или строкой
+  # hash_or_height can be numeric or string
   arg <- if (is.numeric(hash_or_height)) as.integer(hash_or_height) else hash_or_height
   mc_rpc(conn, "getblock", list(arg, verbose))
 }

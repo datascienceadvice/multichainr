@@ -13,9 +13,9 @@ mc_store_node(conn, node, command = c("tryconnect", "ignore"))
 
 \item{command}{Character string. Action to perform:
 \itemize{
-\item \code{"tryconnect"} – store the node and try to connect to it
+\item \code{"tryconnect"} -- store the node and try to connect to it
 (default).
-\item \code{"ignore"} – ignore the node (do not attempt connections).
+\item \code{"ignore"} -- ignore the node (do not attempt connections).
 }}
 }
 \value{

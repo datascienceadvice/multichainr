@@ -17,8 +17,8 @@ mc_create_library(
 \item{name}{Character string. Library name (must be unique).}
 
 \item{updatemode}{Character string. How library updates are handled:
-\code{"none"} – no updates allowed; \code{"instant"} – updates take effect
-immediately; \code{"approve"} – updates require admin approval.}
+\code{"none"} -- no updates allowed; \code{"instant"} -- updates take effect
+immediately; \code{"approve"} -- updates require admin approval.}
 
 \item{js_code}{Character string. The JavaScript code for the library.}
 }

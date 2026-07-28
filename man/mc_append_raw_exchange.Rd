@@ -27,7 +27,7 @@ A list with two elements:
 \item{complete}{Logical; \code{TRUE} if the exchange is now complete.}
 }
 \description{
-Appends a new input–output pair to a partially constructed atomic exchange
+Appends a new input--output pair to a partially constructed atomic exchange
 transaction. This function is used when multiple parties are contributing
 to the exchange, each adding their own locked output and specifying what
 they want in return.

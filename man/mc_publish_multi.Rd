@@ -14,9 +14,9 @@ per item).}
 
 \item{items}{A list of item objects, each containing:
 \itemize{
-\item \code{key} or \code{keys} – the key(s) for the item.
-\item \code{data} – the data to publish.
-\item (optional) \code{stream} – override the default stream.
+\item \code{key} or \code{keys} -- the key(s) for the item.
+\item \code{data} -- the data to publish.
+\item (optional) \code{stream} -- override the default stream.
 }}
 
 \item{options}{Optional default \code{"offchain"} string.}

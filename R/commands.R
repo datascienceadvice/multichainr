@@ -205,7 +205,6 @@ mc_get_init_status <- function(conn) {
 #' mc_help(conn, "getinfo")
 #' }
 #'
-#' @seealso \code{\link{mc_rpc}} for direct RPC calls.
 #'
 #' @family node utilities
 #' @export

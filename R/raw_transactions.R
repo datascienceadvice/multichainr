@@ -7,8 +7,8 @@
 #' @param conn A connection object created by \code{\link{mc_connect}}.
 #' @param inputs A list of input objects, each containing:
 #'   \itemize{
-#'     \item \code{txid} – Transaction ID of the UTXO.
-#'     \item \code{vout} – Output index (vout) of the UTXO.
+#'     \item \code{txid} -- Transaction ID of the UTXO.
+#'     \item \code{vout} -- Output index (vout) of the UTXO.
 #'   }
 #' @param outputs A named list (or list of named lists) mapping addresses to
 #'   amounts. Example: \code{list("address1" = 0.5, "address2" = list(asset = 10))}.

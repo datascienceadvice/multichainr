@@ -30,7 +30,6 @@ getOption("multichain.path")
 
 }
 \seealso{
-\code{\link{mc_get_bin_path}} for the internal path resolution,
-and \code{\link{mc_connect}} for establishing a connection.
+\code{\link{mc_connect}} for establishing a connection.
 }
 \concept{path management}

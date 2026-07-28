@@ -245,9 +245,9 @@ mc_publish_from <- function(conn, from_address, stream, keys, data, options = NU
 #'   per item).
 #' @param items A list of item objects, each containing:
 #'   \itemize{
-#'     \item \code{key} or \code{keys} – the key(s) for the item.
-#'     \item \code{data} – the data to publish.
-#'     \item (optional) \code{stream} – override the default stream.
+#'     \item \code{key} or \code{keys} -- the key(s) for the item.
+#'     \item \code{data} -- the data to publish.
+#'     \item (optional) \code{stream} -- override the default stream.
 #'   }
 #' @param options Optional default \code{"offchain"} string.
 #'
@@ -553,8 +553,8 @@ mc_list_stream_publishers <- function(conn, stream, addresses = "*", verbose = F
 #' @param stream Character string. Stream name, reference, or txid.
 #' @param query A list with optional fields:
 #'   \itemize{
-#'     \item \code{keys} – vector of keys.
-#'     \item \code{publishers} – vector of publisher addresses.
+#'     \item \code{keys} -- vector of keys.
+#'     \item \code{publishers} -- vector of publisher addresses.
 #'   }
 #' @param verbose Logical. If \code{TRUE}, returns detailed information.
 #'

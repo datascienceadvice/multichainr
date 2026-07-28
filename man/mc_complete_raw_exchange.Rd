@@ -28,7 +28,7 @@ Character string. Raw transaction hex ready for sending via
 \code{\link{mc_send_raw_transaction}}.
 }
 \description{
-Completes a multi‑party atomic exchange by adding the final input–output
+Completes a multi-party atomic exchange by adding the final input--output
 pair. After this step, the transaction is fully built and ready to be
 broadcast.
 }

@@ -16,7 +16,7 @@ mc_get_block(conn, hash_or_height, verbose = 1)
 \itemize{
 \item \code{0}: returns only the block hash as a string.
 \item \code{1}: returns a list with basic block information.
-\item \code{2–4}: include additional details (transactions, etc.).
+\item \code{2-4}: include additional details (transactions, etc.).
 }}
 }
 \value{

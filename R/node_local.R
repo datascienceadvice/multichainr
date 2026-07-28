@@ -19,8 +19,7 @@
 #' getOption("multichain.path")
 #' }
 #'
-#' @seealso \code{\link{mc_get_bin_path}} for the internal path resolution,
-#'   and \code{\link{mc_connect}} for establishing a connection.
+#' @seealso \code{\link{mc_connect}} for establishing a connection.
 #'
 #' @family path management
 #' @export
@@ -41,7 +40,7 @@ mc_set_path <- function(path) {
 #' @return Character string with the full path to the binary, or stops with an
 #'   error if the binary is not found.
 #'
-#' @keywords internal
+#' @noRd
 mc_get_bin_path <- function(bin_name) {
   if (.Platform$OS.type == "windows") {
     bin_name <- paste0(bin_name, ".exe")
@@ -51,7 +50,7 @@ mc_get_bin_path <- function(bin_name) {
   
   if (is.null(opt_path)) {
     opt_path <- Sys.getenv("MULTICHAIN_PATH", unset = "")
-    if (opt_path == "") opt_path <- NULL # Приводим к единому виду
+    if (opt_path == "") opt_path <- NULL # Normalize to single format
   }
   
   if (!is.null(opt_path)) {
@@ -229,8 +228,7 @@ mc_node_start <- function(chain_name, datadir = NULL) {
 #' mc_node_stop(conn)
 #' }
 #'
-#' @seealso \code{\link{mc_connect}}, \code{\link{mc_rpc}},
-#'   \code{\link{mc_node_start}} to start a node.
+#' @seealso \code{\link{mc_connect}}, \code{\link{mc_node_start}} to start a node.
 #'
 #' @family node operations
 #' @export

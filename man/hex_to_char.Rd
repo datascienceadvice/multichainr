@@ -23,4 +23,6 @@ The function performs a basic validation to ensure the string is a valid
 hexadecimal representation (even length and containing only hex characters)
 before attempting to convert.
 }
-\keyword{internal}
+\examples{
+hex_to_char("48656c6c6f")  # Returns "Hello"
+}

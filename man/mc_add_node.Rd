@@ -14,10 +14,10 @@ e.g., \code{"127.0.0.1:8571"}.}
 
 \item{command}{Character string. The action to perform:
 \itemize{
-\item \code{"add"} – add the node to the connection queue (will attempt to
+\item \code{"add"} -- add the node to the connection queue (will attempt to
 connect and stay connected).
-\item \code{"remove"} – disconnect from the node if currently connected.
-\item \code{"onetry"} – attempt a single connection; do not keep retrying.
+\item \code{"remove"} -- disconnect from the node if currently connected.
+\item \code{"onetry"} -- attempt a single connection; do not keep retrying.
 }}
 }
 \value{

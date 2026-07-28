@@ -31,8 +31,7 @@ mc_node_stop(conn)
 
 }
 \seealso{
-\code{\link{mc_connect}}, \code{\link{mc_rpc}},
-\code{\link{mc_node_start}} to start a node.
+\code{\link{mc_connect}}, \code{\link{mc_node_start}} to start a node.
 
 Other node operations: 
 \code{\link{mc_node_init}()},

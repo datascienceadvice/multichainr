@@ -1104,7 +1104,7 @@ cat("--- PRE-SIGNING REGULATORY INSPECTION ---\n")
 cat("Target Archive:    ", decoded_tx$vout[[1]]$scriptPubKey$addresses[[1]], "\n")
 cat("Asset Identified: ", decoded_tx$vout[[1]]$assets[[1]]$name, "\n")
 # We use hex_to_char to read the embedded JSON comment
-cat("Embedded Comment: ", multichainr:::hex_to_char(decoded_tx$vout[[2]]$data[[1]]), "\n")
+cat("Embedded Comment: ", multichainr::hex_to_char(decoded_tx$vout[[2]]$data[[1]]), "\n")
 ```
 
 #### 9.5 Cryptographic Signing: Attributing the Action

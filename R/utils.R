@@ -15,8 +15,9 @@
 #' 
 #' @return The \code{result} field from the JSON-RPC response.
 #' 
-#' @importFrom httr2 request req_auth_basic req_body_json req_retry req_error req_perform resp_status resp_body_json
-#' @keywords internal
+#' @importFrom httr2 request req_auth_basic req_body_raw req_retry req_error req_perform resp_status resp_body_json
+#' @importFrom jsonlite toJSON
+#' @noRd
 mc_rpc <- function(conn, method, params = list()) {
   
   if (!inherits(conn, "multichain_conn")) {
@@ -80,7 +81,7 @@ mc_rpc <- function(conn, method, params = list()) {
 #' it is converted into a single-column data frame named \code{value}.
 #' 
 #' @return A data frame. Returns an empty data frame if the input is \code{NULL} or empty.
-#' @keywords internal
+#' @noRd
 rpc_res_to_df <- function(res) {
   if (is.null(res) || length(res) == 0) return(data.frame())
   
@@ -129,7 +130,9 @@ rpc_res_to_df <- function(res) {
 #' 
 #' @return A decoded character string. If the input is not a valid hex string 
 #' or an error occurs during decoding, the original \code{hex_str} is returned.
-#' @keywords internal
+#' @examples
+#' hex_to_char("48656c6c6f")  # Returns "Hello"
+#' @export
 hex_to_char <- function(hex_str) {
   if (is.null(hex_str) || nchar(as.character(hex_str)) == 0) return("")
   hex_str <- as.character(hex_str)
@@ -153,7 +156,10 @@ hex_to_char <- function(hex_str) {
 #' 
 #' @return \code{a} if it is not \code{NULL}, otherwise \code{b}.
 #' 
+#' @examples
+#' "value" %||% "default"
+#' NULL %||% "default"
 #' @name null_default
 #' @rdname null_default
-#' @keywords internal
+#' @export
 `%||%` <- function(a, b) if (!is.null(a)) a else b

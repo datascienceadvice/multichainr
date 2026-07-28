@@ -101,6 +101,8 @@ test_that("Integration: Assets and Tokens lifecycle", {
   parent_nft <- list(name = "collection", fungible = FALSE, open = TRUE)
   mc_issue(conn, addr, parent_nft, quantity = 0)
   
+  mc_grant(conn, addr, paste0(parent_nft$name, ".issue"))
+  
   token_name <- "painting1"
   token_tx <- mc_issue_token(conn, addr, parent_nft$name, token_name, 
                              quantity = 1, 

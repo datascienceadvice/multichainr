@@ -11,8 +11,8 @@ mc_create_raw_transaction(conn, inputs, outputs, data = list(), action = "")
 
 \item{inputs}{A list of input objects, each containing:
 \itemize{
-\item \code{txid} – Transaction ID of the UTXO.
-\item \code{vout} – Output index (vout) of the UTXO.
+\item \code{txid} -- Transaction ID of the UTXO.
+\item \code{vout} -- Output index (vout) of the UTXO.
 }}
 
 \item{outputs}{A named list (or list of named lists) mapping addresses to

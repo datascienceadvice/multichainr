@@ -8,3 +8,6 @@ extract_strings.R$
 todo.txt$
 .lintr$
 ^pdf$
+^dev$
+prepare_for_cran.R
+^cran-comments\.md$

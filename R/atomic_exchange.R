@@ -1,6 +1,6 @@
 #' Add to a raw atomic exchange transaction
 #'
-#' Appends a new input–output pair to a partially constructed atomic exchange
+#' Appends a new input--output pair to a partially constructed atomic exchange
 #' transaction. This function is used when multiple parties are contributing
 #' to the exchange, each adding their own locked output and specifying what
 #' they want in return.
@@ -37,7 +37,7 @@ mc_append_raw_exchange <- function(conn, tx_hex, txid, vout, amounts) {
 
 #' Finalize an atomic exchange transaction
 #'
-#' Completes a multi‑party atomic exchange by adding the final input–output
+#' Completes a multi-party atomic exchange by adding the final input--output
 #' pair. After this step, the transaction is fully built and ready to be
 #' broadcast.
 #'

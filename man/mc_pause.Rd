@@ -12,9 +12,9 @@ mc_pause(conn, tasks)
 \item{tasks}{A character vector or a comma‑separated string of tasks to pause.
 Valid task names are:
 \itemize{
-\item \code{"mining"} – stop mining new blocks.
-\item \code{"incoming"} – stop accepting incoming connections.
-\item \code{"offchain"} – stop processing off‑chain data.
+\item \code{"mining"} -- stop mining new blocks.
+\item \code{"incoming"} -- stop accepting incoming connections.
+\item \code{"offchain"} -- stop processing off-chain data.
 }
 Multiple tasks can be specified, e.g., \code{c("mining", "incoming")}.}
 }

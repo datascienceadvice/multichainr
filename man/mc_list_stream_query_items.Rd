@@ -13,8 +13,8 @@ mc_list_stream_query_items(conn, stream, query, verbose = FALSE)
 
 \item{query}{A list with optional fields:
 \itemize{
-\item \code{keys} – vector of keys.
-\item \code{publishers} – vector of publisher addresses.
+\item \code{keys} -- vector of keys.
+\item \code{publishers} -- vector of publisher addresses.
 }}
 
 \item{verbose}{Logical. If \code{TRUE}, returns detailed information.}

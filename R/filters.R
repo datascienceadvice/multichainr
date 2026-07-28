@@ -60,7 +60,7 @@ mc_create_stream_filter <- function(conn, name, options, js_code) {
 #' @param name Character string. Name of the filter (must be unique).
 #' @param options List of filter options. Usually includes \code{for} (target
 #'   asset or stream) and \code{libraries} (list of library names). Example:
-#'   \code{list(for = "asset1", libraries = list("lib1"))}.
+#'   \code{list("for" = "asset1", libraries = list("lib1"))}.
 #' @param js_code Character string. The JavaScript code for the filter.
 #'
 #' @return A list containing the result of the RPC call (usually transaction ID).
@@ -68,7 +68,7 @@ mc_create_stream_filter <- function(conn, name, options, js_code) {
 #' @examples
 #' \dontrun{
 #' js_code <- "function filter(tx) { return tx.vin.length > 0; }"
-#' mc_create_tx_filter(conn, "myfilter", list(for = "asset1"), js_code)
+#' mc_create_tx_filter(conn, "myfilter", list("for" = "asset1"), js_code)
 #' }
 #'
 #' @seealso \code{\link{mc_create_stream_filter}}, \code{\link{mc_list_tx_filters}}
@@ -115,7 +115,7 @@ mc_create_upgrade <- function(conn, name, params) {
 #' @param from_address Character string. Admin address that issues the approval.
 #' @param entity Character string. Name or transaction ID of the upgrade/filter.
 #' @param approve Either a logical (for global upgrades/filters) or a list
-#'   of the form \code{list(for = "stream", approve = TRUE)} for stream‑specific
+#'   of the form \code{list("for" = "stream", approve = TRUE)} for stream‑specific
 #'   filter approval.
 #'
 #' @return A list containing the result of the RPC call (usually transaction ID).
@@ -127,7 +127,7 @@ mc_create_upgrade <- function(conn, name, params) {
 #'
 #' # Approve a stream filter for a specific stream
 #' mc_approve_from(conn, "admin_address", "myfilter",
-#'                 approve = list(for = "mystream", approve = TRUE))
+#'                 approve = list("for" = "mystream", approve = TRUE))
 #' }
 #'
 #' @seealso \code{\link{mc_create_upgrade}}, \code{\link{mc_create_stream_filter}}
@@ -246,7 +246,7 @@ mc_list_upgrades <- function(conn, upgrades = "*") {
 #'
 #' @examples
 #' \dontrun{
-#' result <- mc_test_tx_filter(conn, list(for = "asset1"),
+#' result <- mc_test_tx_filter(conn, list("for" = "asset1"),
 #'                             "function filter(tx) { return true; }",
 #'                             tx = "txid...")
 #' }

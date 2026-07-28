@@ -14,7 +14,7 @@ mc_approve_from(conn, from_address, entity, approve)
 \item{entity}{Character string. Name or transaction ID of the upgrade/filter.}
 
 \item{approve}{Either a logical (for global upgrades/filters) or a list
-of the form \code{list(for = "stream", approve = TRUE)} for stream‑specific
+of the form \code{list("for" = "stream", approve = TRUE)} for stream‑specific
 filter approval.}
 }
 \value{
@@ -32,7 +32,7 @@ mc_approve_from(conn, "admin_address", "speedup", approve = TRUE)
 
 # Approve a stream filter for a specific stream
 mc_approve_from(conn, "admin_address", "myfilter",
-                approve = list(for = "mystream", approve = TRUE))
+                approve = list("for" = "mystream", approve = TRUE))
 }
 
 }

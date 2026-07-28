@@ -13,7 +13,7 @@ mc_create_tx_filter(conn, name, options, js_code)
 
 \item{options}{List of filter options. Usually includes \code{for} (target
 asset or stream) and \code{libraries} (list of library names). Example:
-\code{list(for = "asset1", libraries = list("lib1"))}.}
+\code{list("for" = "asset1", libraries = list("lib1"))}.}
 
 \item{js_code}{Character string. The JavaScript code for the filter.}
 }
@@ -27,7 +27,7 @@ JavaScript programs that validate or transform transactions.
 \examples{
 \dontrun{
 js_code <- "function filter(tx) { return tx.vin.length > 0; }"
-mc_create_tx_filter(conn, "myfilter", list(for = "asset1"), js_code)
+mc_create_tx_filter(conn, "myfilter", list("for" = "asset1"), js_code)
 }
 
 }

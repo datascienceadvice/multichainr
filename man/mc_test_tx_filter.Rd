@@ -26,7 +26,7 @@ without permanently creating the filter.
 }
 \examples{
 \dontrun{
-result <- mc_test_tx_filter(conn, list(for = "asset1"),
+result <- mc_test_tx_filter(conn, list("for" = "asset1"),
                             "function filter(tx) { return true; }",
                             tx = "txid...")
 }

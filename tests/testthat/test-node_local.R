@@ -17,8 +17,13 @@ test_that("mc_get_bin_path finds binary in set path", {
   on.exit(unlink(tmp_dir, recursive = TRUE))
   
   fake_bin <- file.path(tmp_dir, "multichaind")
-  if (.Platform$OS.type == "windows") fake_bin <- paste0(fake_bin, ".exe")
+  if (.Platform$OS.type == "windows") {
+    fake_bin <- paste0(fake_bin, ".exe")
+  }
   writeLines("fake", fake_bin)
+  if (.Platform$OS.type != "windows") {
+    Sys.chmod(fake_bin, "755")
+  }
   
   withr::local_envvar(PATH = paste(tmp_dir, Sys.getenv("PATH"), sep = .Platform$path.sep))
   

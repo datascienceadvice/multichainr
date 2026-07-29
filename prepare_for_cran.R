@@ -95,6 +95,7 @@ usethis::use_version(which = c("patch", "minor", "major", "dev")[3])
 
 # Verify you're ready for release, and release ---------------------------------
 devtools::spell_check()
+devtools::build()
 devtools::release()
 
 # some checks ------------------------------------------------------------------

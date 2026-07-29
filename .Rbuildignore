@@ -8,3 +8,7 @@ test.R$
 ^dev$
 prepare_for_cran.R
 ^cran-comments\.md$
+^\.gitignore$
+^\.Renviron$
+^\.Rhistory$
+^\.git$

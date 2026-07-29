@@ -5,3 +5,6 @@
 pdf/*
 .Renviron
 inst/doc
+prepare_for_cran.R
+start.R
+test.R

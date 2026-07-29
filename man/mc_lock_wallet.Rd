@@ -10,7 +10,7 @@ mc_lock_wallet(conn)
 \item{conn}{A connection object to the MultiChain node.}
 }
 \value{
-Returns \code{NULL} on success.
+Invisibly returns the RPC result (typically \code{NULL}) on success.
 }
 \description{
 Removes the wallet encryption key from memory, requiring a passphrase for

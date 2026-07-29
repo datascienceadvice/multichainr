@@ -97,8 +97,8 @@ mc_get_new_address <- function(conn) {
 #' @param rescan Logical. If \code{TRUE} (default), the node will scan the
 #'   blockchain for transactions associated with this address.
 #'
-#' @return Invisibly returns \code{NULL} on success; throws an error if the
-#'   import fails.
+#' @return Invisibly returns the RPC result (typically \code{NULL}) on success;
+#'   throws an error if the import fails.
 #'
 #' @examples
 #' \dontrun{

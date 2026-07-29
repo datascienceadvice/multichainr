@@ -94,7 +94,7 @@ mc_lock_unspent <- function(conn, unlock, outputs = NULL) {
 #' @param filename Character. The full path and filename for the backup. 
 #'   \strong{Note:} This path is relative to the machine where the MultiChain node is running.
 #' 
-#' @return Returns \code{NULL} on success.
+#' @return Invisibly returns the RPC result (typically \code{NULL}) on success.
 #' @family wallet
 #' @export
 mc_backup_wallet <- function(conn, filename) {
@@ -120,7 +120,7 @@ mc_dump_privkey <- function(conn, address) {
 #' @param conn A connection object to the MultiChain node.
 #' @param filename Character. Full path for the text file on the node's machine.
 #' 
-#' @return Returns \code{NULL} on success.
+#' @return Invisibly returns the RPC result (typically \code{NULL}) on success.
 #' @family wallet
 #' @export
 mc_dump_wallet <- function(conn, filename) {
@@ -138,7 +138,8 @@ mc_dump_wallet <- function(conn, filename) {
 #' @param conn A connection object to the MultiChain node.
 #' @param passphrase Character. The new wallet password.
 #' 
-#' @return Returns a message indicating the node is shutting down.
+#' @return Invisibly returns the RPC result (a message indicating the node
+#'   is shutting down).
 #' @family wallet
 #' @export
 mc_encrypt_wallet <- function(conn, passphrase) {
@@ -196,7 +197,7 @@ mc_import_wallet <- function(conn, filename, rescan = 0) {
 #' 
 #' @param conn A connection object to the MultiChain node.
 #' 
-#' @return Returns \code{NULL} on success.
+#' @return Invisibly returns the RPC result (typically \code{NULL}) on success.
 #' @family wallet
 #' @export
 mc_lock_wallet <- function(conn) {
@@ -211,7 +212,7 @@ mc_lock_wallet <- function(conn) {
 #' @param passphrase Character. The wallet password.
 #' @param timeout Integer. Time in seconds to keep the wallet unlocked.
 #' 
-#' @return Returns \code{NULL} on success.
+#' @return Invisibly returns the RPC result (typically \code{NULL}) on success.
 #' @family wallet
 #' @export
 mc_unlock_wallet <- function(conn, passphrase, timeout) {
@@ -226,7 +227,7 @@ mc_unlock_wallet <- function(conn, passphrase, timeout) {
 #' @param old_passphrase Character. The current password.
 #' @param new_passphrase Character. The new password.
 #' 
-#' @return Returns \code{NULL} on success.
+#' @return Invisibly returns the RPC result (typically \code{NULL}) on success.
 #' @family wallet
 #' @export
 mc_change_wallet_passphrase <- function(conn, old_passphrase, new_passphrase) {

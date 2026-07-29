@@ -138,12 +138,15 @@ hex_to_char <- function(hex_str) {
   hex_str <- as.character(hex_str)
   is_valid_hex <- nchar(hex_str) %% 2 == 0 && grepl("^[0-9a-fA-F]+$", hex_str)
   if (!is_valid_hex) return(hex_str)
-  
+
   starts <- seq(1, nchar(hex_str), 2)
   bytes_str <- substring(hex_str, starts, starts + 1)
   ints <- strtoi(bytes_str, 16L)
   raw_val <- as.raw(ints)
-  rawToChar(raw_val)
+  tryCatch(
+    rawToChar(raw_val),
+    error = function(e) hex_str
+  )
 }
 
 #' Null-default operator

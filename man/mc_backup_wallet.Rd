@@ -13,7 +13,7 @@ mc_backup_wallet(conn, filename)
 \strong{Note:} This path is relative to the machine where the MultiChain node is running.}
 }
 \value{
-Returns \code{NULL} on success.
+Invisibly returns the RPC result (typically \code{NULL}) on success.
 }
 \description{
 Safely copies the \code{wallet.dat} file to a specified destination.

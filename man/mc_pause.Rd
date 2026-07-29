@@ -19,7 +19,7 @@ Valid task names are:
 Multiple tasks can be specified, e.g., \code{c("mining", "incoming")}.}
 }
 \value{
-Invisibly returns \code{NULL} on success.
+Invisibly returns the RPC result (typically \code{NULL}) on success.
 }
 \description{
 Temporarily suspends certain node operations without shutting down the node.

@@ -13,7 +13,7 @@ mc_resume(conn, tasks)
 Valid task names: \code{"mining"}, \code{"incoming"}, \code{"offchain"}.}
 }
 \value{
-Invisibly returns \code{NULL} on success.
+Invisibly returns the RPC result (typically \code{NULL}) on success.
 }
 \description{
 Restarts node tasks that were previously paused with \code{\link{mc_pause}}.

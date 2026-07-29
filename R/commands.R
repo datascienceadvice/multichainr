@@ -79,8 +79,8 @@ mc_get_runtime_params <- function(conn) {
 #' @param value The new value for the parameter. Type depends on the parameter:
 #'   logical, numeric, or character.
 #'
-#' @return Invisibly returns \code{NULL} on success; throws an error if the
-#'   parameter name is invalid or the value is inappropriate.
+#' @return Invisibly returns the RPC result (typically \code{NULL}) on success;
+#'   throws an error if the parameter name is invalid or the value is inappropriate.
 #'
 #' @examples
 #' \dontrun{
@@ -193,8 +193,9 @@ mc_get_init_status <- function(conn) {
 #' @param command Optional character string. The name of the command to get
 #'   detailed help for. If \code{NULL} (default), returns a list of all commands.
 #'
-#' @return An object of class \code{"mc_help"} (a character string) that prints
-#'   nicely using \code{\link{print.mc_help}}.
+#' @return An object of class \code{"mc_help"} (inheriting from \code{"character"})
+#'   that contains the help text and prints nicely via
+#'   \code{\link{print.mc_help}}.
 #'
 #' @examples
 #' \dontrun{

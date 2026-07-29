@@ -12,7 +12,7 @@ mc_dump_wallet(conn, filename)
 \item{filename}{Character. Full path for the text file on the node's machine.}
 }
 \value{
-Returns \code{NULL} on success.
+Invisibly returns the RPC result (typically \code{NULL}) on success.
 }
 \description{
 Exports all wallet private keys into a human-readable text file.

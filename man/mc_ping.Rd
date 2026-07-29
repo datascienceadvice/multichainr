@@ -10,7 +10,7 @@ mc_ping(conn)
 \item{conn}{A connection object created by \code{\link{mc_connect}}.}
 }
 \value{
-Invisibly returns \code{NULL} on success.
+Invisibly returns the RPC result (typically \code{NULL}) on success.
 }
 \description{
 Sends a ping message to all connected peers. The ping time (latency) is

@@ -7,7 +7,7 @@
 #'
 #' @param conn A connection object created by \code{\link{mc_connect}}.
 #'
-#' @return Invisibly returns \code{NULL} on success.
+#' @return Invisibly returns the RPC result (typically \code{NULL}) on success.
 #'
 #' @examples
 #' \dontrun{
@@ -95,7 +95,7 @@ mc_get_chunk_queue_totals <- function(conn) {
 #'   }
 #'   Multiple tasks can be specified, e.g., \code{c("mining", "incoming")}.
 #'
-#' @return Invisibly returns \code{NULL} on success.
+#' @return Invisibly returns the RPC result (typically \code{NULL}) on success.
 #'
 #' @examples
 #' \dontrun{
@@ -124,7 +124,7 @@ mc_pause <- function(conn, tasks) {
 #' @param tasks A character vector or a comma‑separated string of tasks to resume.
 #'   Valid task names: \code{"mining"}, \code{"incoming"}, \code{"offchain"}.
 #'
-#' @return Invisibly returns \code{NULL} on success.
+#' @return Invisibly returns the RPC result (typically \code{NULL}) on success.
 #'
 #' @examples
 #' \dontrun{

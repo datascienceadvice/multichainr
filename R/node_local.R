@@ -213,8 +213,13 @@ mc_node_start <- function(chain_name, datadir = NULL) {
 #' provided, it first retrieves the configuration and establishes a connection
 #' automatically.
 #'
-#' @param x Either a character string (the chain name) or an object of class
-#'   `"multichain_conn"` (a connection created by `mc_connect()`).
+#' @param x Either:
+#'   \itemize{
+#'     \item A character string (chain name) — automatically retrieves the
+#'           configuration and establishes a connection before stopping.
+#'     \item An object of class \code{"multichain_conn"} — sends the stop command
+#'           directly to that connected node.
+#'   }
 #'
 #' @return Invisibly returns the result of the RPC `stop` command.
 #'

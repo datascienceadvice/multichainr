@@ -7,8 +7,13 @@
 mc_node_stop(x)
 }
 \arguments{
-\item{x}{Either a character string (the chain name) or an object of class
-\code{"multichain_conn"} (a connection created by \code{mc_connect()}).}
+\item{x}{Either:
+\itemize{
+\item A character string (chain name) — automatically retrieves the
+configuration and establishes a connection before stopping.
+\item An object of class \code{"multichain_conn"} — sends the stop command
+directly to that connected node.
+}}
 }
 \value{
 Invisibly returns the result of the RPC \code{stop} command.

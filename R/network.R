@@ -14,8 +14,8 @@
 #'     \item \code{"onetry"} -- attempt a single connection; do not keep retrying.
 #'   }
 #'
-#' @return Invisibly returns \code{NULL} on success; throws an error if the
-#'   command fails.
+#' @return Invisibly returns the RPC result (typically \code{NULL}) on success;
+#'   throws an error if the command fails.
 #'
 #' @examples
 #' \dontrun{
@@ -177,7 +177,7 @@ mc_list_stored_nodes <- function(conn, include_old_ignores = FALSE) {
 #'
 #' @param conn A connection object created by \code{\link{mc_connect}}.
 #'
-#' @return Invisibly returns \code{NULL} on success.
+#' @return Invisibly returns the RPC result (typically \code{NULL}) on success.
 #'
 #' @examples
 #' \dontrun{
@@ -209,7 +209,7 @@ mc_ping <- function(conn) {
 #'     \item \code{"ignore"} -- ignore the node (do not attempt connections).
 #'   }
 #'
-#' @return Invisibly returns \code{NULL} on success.
+#' @return Invisibly returns the RPC result (typically \code{NULL}) on success.
 #'
 #' @examples
 #' \dontrun{

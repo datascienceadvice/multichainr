@@ -14,7 +14,7 @@ mc_change_wallet_passphrase(conn, old_passphrase, new_passphrase)
 \item{new_passphrase}{Character. The new password.}
 }
 \value{
-Returns \code{NULL} on success.
+Invisibly returns the RPC result (typically \code{NULL}) on success.
 }
 \description{
 Changes the encryption password of the wallet.

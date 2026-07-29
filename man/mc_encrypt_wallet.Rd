@@ -12,7 +12,8 @@ mc_encrypt_wallet(conn, passphrase)
 \item{passphrase}{Character. The new wallet password.}
 }
 \value{
-Returns a message indicating the node is shutting down.
+Invisibly returns the RPC result (a message indicating the node
+is shutting down).
 }
 \description{
 Encrypts the wallet with a passphrase for the first time.

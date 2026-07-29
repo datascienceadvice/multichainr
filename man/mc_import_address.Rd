@@ -18,8 +18,8 @@ Default is \code{""} (no label).}
 blockchain for transactions associated with this address.}
 }
 \value{
-Invisibly returns \code{NULL} on success; throws an error if the
-import fails.
+Invisibly returns the RPC result (typically \code{NULL}) on success;
+throws an error if the import fails.
 }
 \description{
 Adds an address (without a private key) to the node's wallet for monitoring.

@@ -19,7 +19,7 @@ mc_store_node(conn, node, command = c("tryconnect", "ignore"))
 }}
 }
 \value{
-Invisibly returns \code{NULL} on success.
+Invisibly returns the RPC result (typically \code{NULL}) on success.
 }
 \description{
 Stores a node address in the node's address manager. This can be used to

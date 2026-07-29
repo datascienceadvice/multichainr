@@ -13,8 +13,9 @@ mc_help(conn, command = NULL)
 detailed help for. If \code{NULL} (default), returns a list of all commands.}
 }
 \value{
-An object of class \code{"mc_help"} (a character string) that prints
-nicely using \code{\link{print.mc_help}}.
+An object of class \code{"mc_help"} (inheriting from \code{"character"})
+that contains the help text and prints nicely via
+\code{\link{print.mc_help}}.
 }
 \description{
 Returns a list of all available RPC commands, or detailed help for a

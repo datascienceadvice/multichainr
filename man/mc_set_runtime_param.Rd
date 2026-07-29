@@ -32,8 +32,8 @@ Must be one of:
 logical, numeric, or character.}
 }
 \value{
-Invisibly returns \code{NULL} on success; throws an error if the
-parameter name is invalid or the value is inappropriate.
+Invisibly returns the RPC result (typically \code{NULL}) on success;
+throws an error if the parameter name is invalid or the value is inappropriate.
 }
 \description{
 Changes a runtime parameter of the node without requiring a restart.

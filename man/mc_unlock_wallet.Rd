@@ -14,7 +14,7 @@ mc_unlock_wallet(conn, passphrase, timeout)
 \item{timeout}{Integer. Time in seconds to keep the wallet unlocked.}
 }
 \value{
-Returns \code{NULL} on success.
+Invisibly returns the RPC result (typically \code{NULL}) on success.
 }
 \description{
 Stores the wallet decryption key in memory for a specified duration.

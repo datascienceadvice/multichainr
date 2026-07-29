@@ -21,8 +21,8 @@ connect and stay connected).
 }}
 }
 \value{
-Invisibly returns \code{NULL} on success; throws an error if the
-command fails.
+Invisibly returns the RPC result (typically \code{NULL}) on success;
+throws an error if the command fails.
 }
 \description{
 Manages the node's peer connections. Can add a node to the connection queue,

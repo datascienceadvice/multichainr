@@ -10,7 +10,7 @@ mc_clear_mempool(conn)
 \item{conn}{A connection object created by \code{\link{mc_connect}}.}
 }
 \value{
-Invisibly returns \code{NULL} on success.
+Invisibly returns the RPC result (typically \code{NULL}) on success.
 }
 \description{
 Removes all unconfirmed transactions from the node's memory pool (mempool).

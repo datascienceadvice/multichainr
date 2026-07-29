@@ -668,8 +668,8 @@ mc_wait_for_confirmation(conn, tx_var_create)
 ```{r system_status_tracking}
 # 6.2.1 Initialize Operational Status
 status_var <- "QMS_Operational_Status"
-mc_create_variable(conn, status_var, open = TRUE, value = "Normal Operations")
-mc_wait_for_confirmation(conn, tx_var_create) # Brief pause for ledger indexing
+tx_status_init <- mc_create_variable(conn, status_var, open = TRUE, value = "Normal Operations")
+mc_wait_for_confirmation(conn, tx_status_init) # Brief pause for ledger indexing
 
 # 6.2.2 Update State (Contemporaneous Documentation)
 # Scenario: An FDA inspector arrives at the site. We update the global state.

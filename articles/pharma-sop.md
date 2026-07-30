@@ -1626,14 +1626,21 @@ package. By leveraging a permissioned blockchain, we have moved beyond
 traditional “Database + Log” architectures to a **Unified Truth
 Engine**.
 
-**Key GxP Takeaways:** \* **Immutable Traceability:** We proved that SOP
-versions cannot be deleted or backdated. \* **Cryptographic
-Attribution:** Every action is mathematically tied to a departmental
-digital identity. \* **Automated Enforcement:** Smart Filters ensure
-that business rules are followed at the protocol level, preventing
-non-compliance before it occurs. \* **Efficient Auditing:** We reduced
-the effort required for a regulatory inspection from days of manual
-document searching to seconds of automated blockchain queries.
+**Key GxP Takeaways:**
+
+- **Immutable Traceability:** We proved that SOP versions cannot be
+  deleted or backdated.
+
+- **Cryptographic Attribution:** Every action is mathematically tied to
+  a departmental digital identity.
+
+- **Automated Enforcement:** Smart Filters ensure that business rules
+  are followed at the protocol level, preventing non-compliance before
+  it occurs.
+
+- **Efficient Auditing:** We reduced the effort required for a
+  regulatory inspection from days of manual document searching to
+  seconds of automated blockchain queries.
 
 The `multichainr` package provides the necessary bridge between R’s
 powerful analytical capabilities and the uncompromising data integrity

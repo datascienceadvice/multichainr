@@ -8,3 +8,6 @@ inst/doc
 prepare_for_cran.R
 start.R
 test.R
+docs
+/doc/
+/Meta/

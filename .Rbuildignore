@@ -12,3 +12,8 @@ prepare_for_cran.R
 ^\.Renviron$
 ^\.Rhistory$
 ^\.git$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^doc$
+^Meta$

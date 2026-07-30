@@ -96,23 +96,6 @@ mc_node_stop(conn)
 
 ---
 
-## Vignettes
-
-| Vignette | Description |
-|----------|-------------|
-| [Getting Started](vignettes/getting-started.Rmd) | Set up a local node and run your first commands |
-| [Working with Assets](vignettes/working-with-assets.Rmd) | Issue, send, list, and manage assets and tokens |
-| [Data Streams](vignettes/data-streams.Rmd) | Create streams, publish items, and query data |
-| [Permissions & Governance](vignettes/permissions-and-governance.Rmd) | Grant, revoke, and verify permissions |
-| [Advanced Transactions](vignettes/advanced-transactions.Rmd) | Build, sign, and broadcast raw transactions |
-| [Multi-Signature Wallets](vignettes/multi-signature-wallets.Rmd) | Create and use multi-signature addresses |
-| [Smart Filters](vignettes/smart-filters.Rmd) | Write JavaScript filters and upgrades |
-| [Global Variables](vignettes/global-variables.Rmd) | Use on-chain variables for configuration |
-| [Handling Large Payloads](vignettes/handling-large-payloads.Rmd) | Off-chain data chunks and binary cache |
-| [Pharma SOP](vignettes/pharma-sop.Rmd) | Real-world example: pharmaceutical standard operating procedure on-chain |
-
----
-
 ## Documentation
 
 Full reference documentation is available at the [package website](https://datascienceadvice.github.io/multichainr/) (once published) or via R's built-in help:

@@ -8,6 +8,7 @@ the node in small pieces, publishing it as a single unit, and retrieving
 large outputs efficiently.
 
 ``` r
+
 library(multichainr)
 
 # Set the path to your MultiChain binaries
@@ -19,6 +20,7 @@ mc_set_path(Sys.getenv("MULTICHAIN_PATH"))
 We start by initializing a local node and a temporary blockchain.
 
 ``` r
+
 chain_name <- "cache_demo_chain"
 
 # Create and start the node
@@ -39,6 +41,7 @@ When dealing with large data, you create a cache item and append data to
 it. This is more memory-efficient than creating one massive string in R.
 
 ``` r
+
 # 1. Create a new empty binary cache item
 cache_id <- mc_create_binary_cache(conn)
 cat("Binary Cache Identifier:", cache_id, "\n")
@@ -60,6 +63,7 @@ By using the `offchain` option, the data remains in the node’s local
 storage, and only its hash is recorded on the blockchain.
 
 ``` r
+
 # Create a stream and subscribe to it
 mc_create_stream(conn, "large_files", open = TRUE)
 mc_subscribe(conn, "large_files")
@@ -78,6 +82,7 @@ copy it directly from the transaction output into a *new* binary cache
 item.
 
 ``` r
+
 # 1. Create a new cache item for the downloaded data
 download_id <- mc_create_binary_cache(conn)
 
@@ -94,6 +99,7 @@ Finally, we can extract the hex data from the cache (or a specific part
 of it) and then delete the temporary items to free up disk space.
 
 ``` r
+
 # Retrieve the full hex string from the output
 # For extremely large items, you would use count_bytes and start_byte to read in chunks
 hex_data <- mc_get_tx_out_data(conn, txid, vout = 0)
@@ -110,6 +116,7 @@ cat("Binary cache cleaned up.\n")
 Always stop the node and remove the temporary data directory.
 
 ``` r
+
 # Stop the node
 mc_node_stop(conn)
 Sys.sleep(2)

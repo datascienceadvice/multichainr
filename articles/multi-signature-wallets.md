@@ -7,6 +7,7 @@ multi-signature addresses, and use digital signatures to verify the
 authenticity of messages.
 
 ``` r
+
 library(multichainr)
 
 # Set the path to your MultiChain binaries
@@ -18,6 +19,7 @@ mc_set_path(Sys.getenv("MULTICHAIN_PATH"))
 As with any MultiChain project, we begin by initializing a local node.
 
 ``` r
+
 chain_name <- "crypto_demo_chain"
 
 # Create and start the node
@@ -39,6 +41,7 @@ stored in the node’s wallet. These are useful for creating “cold
 storage” or for participants who manage their own keys externally.
 
 ``` r
+
 # Generate three unique key pairs
 key_set <- mc_create_keypairs(conn, count = 3)
 
@@ -56,6 +59,7 @@ will be a Pay-to-Script-Hash (P2SH) address that requires two signatures
 to authorize spending.
 
 ``` r
+
 # Create the multisig address and add it to the node's wallet
 multisig_addr <- mc_add_multisig_address(conn, 
                                          n_required = 2, 
@@ -75,6 +79,7 @@ treats it as a standard entity for permissions. We can grant it the
 right to receive and send assets.
 
 ``` r
+
 # Grant 'receive' and 'send' permissions to the multisig address
 mc_grant(conn, multisig_addr, "receive,send")
 
@@ -91,6 +96,7 @@ by the owner of a private key. This is done without revealing the
 private key itself.
 
 ``` r
+
 # 1. Pick one of the generated private keys to sign a message
 my_privkey <- key_set$privkey[1]
 my_address <- key_set$address[1]
@@ -116,6 +122,7 @@ if (is_valid) {
 Shut down the node and remove the temporary data.
 
 ``` r
+
 # Stop the node
 mc_node_stop(conn)
 Sys.sleep(2)

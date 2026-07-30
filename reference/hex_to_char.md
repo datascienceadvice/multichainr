@@ -31,5 +31,5 @@ characters) before attempting to convert.
 
 ``` r
 hex_to_char("48656c6c6f")  # Returns "Hello"
-#> Error in hex_to_char("48656c6c6f"): could not find function "hex_to_char"
+#> [1] "Hello"
 ```

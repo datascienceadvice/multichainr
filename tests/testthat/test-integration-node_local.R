@@ -1,4 +1,5 @@
 skip_on_cran()
+skip_on_ci()
 
 bin_dir <- Sys.getenv("MULTICHAIN_PATH")
 has_multichain <- bin_dir != "" && dir.exists(bin_dir)

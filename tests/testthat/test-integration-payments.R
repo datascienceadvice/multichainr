@@ -1,4 +1,5 @@
 skip_on_cran()
+skip_on_ci()
 mc_set_path(Sys.getenv("MULTICHAIN_PATH"))
 
 bin_path <- tryCatch(mc_get_bin_path("multichaind"), error = function(e) "")

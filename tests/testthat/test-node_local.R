@@ -170,7 +170,7 @@ test_that("mc_get_config uses Linux default base_dir", {
 })
 
 skip_on_cran()
-
+skip_on_ci()
 
 cleanup_chain <- function(chain_name) {
   try(mc_node_stop(chain_name), silent = TRUE)

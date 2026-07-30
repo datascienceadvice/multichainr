@@ -8,6 +8,7 @@ output (UTXO), creating a partial transaction offer, and having a
 counterparty complete and broadcast that transaction.
 
 ``` r
+
 library(multichainr)
 
 # Set the path to your MultiChain binaries
@@ -19,6 +20,7 @@ mc_set_path(Sys.getenv("MULTICHAIN_PATH"))
 We start by setting up our environment and a temporary blockchain.
 
 ``` r
+
 chain_name <- "swap_demo_chain"
 
 # Create and start the node
@@ -39,6 +41,7 @@ To demonstrate a swap, we need two participants and two different
 assets.
 
 ``` r
+
 # Create addresses for two traders
 trader_a <- mc_get_new_address(conn)
 trader_b <- mc_get_new_address(conn)
@@ -63,6 +66,7 @@ AssetB**. First, Trader A must “lock” their AssetA to prepare it for the
 exchange.
 
 ``` r
+
 # 1. Prepare and lock the output (10 AssetA)
 # This creates a specific UTXO that can only be spent in an exchange
 lock_res <- mc_prepare_lock_unspent_from(conn, 
@@ -87,6 +91,7 @@ Trader B receives the `offer_hex`, inspects it, and decides to accept it
 by providing the requested **5 units of AssetB**.
 
 ``` r
+
 # 1. Trader B inspects the offer to ensure it is fair
 decoded_offer <- mc_decode_raw_exchange(conn, offer_hex)
 print(decoded_offer)
@@ -111,6 +116,7 @@ The exchange is now a fully formed raw transaction. It must be broadcast
 to the network to be included in a block.
 
 ``` r
+
 # Broadcast the finalized transaction
 swap_txid <- mc_send_raw_transaction(conn, final_tx_hex)
 
@@ -126,6 +132,7 @@ print(mc_get_address_balances(conn, trader_b))
 Finally, we stop the node and remove the temporary data directory.
 
 ``` r
+
 mc_node_stop(conn)
 Sys.sleep(2)
 

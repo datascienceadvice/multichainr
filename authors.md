@@ -8,7 +8,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/datascienceadvice/multichainr/blob/HEAD/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/datascienceadvice/multichainr/blob/master/DESCRIPTION)
 
 Martsinkevich A (2026). *multichainr: R Interface to the 'MultiChain'
 Blockchain RPC API*. R package version 0.1.0,

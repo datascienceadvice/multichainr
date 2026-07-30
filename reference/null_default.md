@@ -27,7 +27,7 @@ a %||% b
 
 ``` r
 "value" %||% "default"
-#> Error in "value" %||% "default": could not find function "%||%"
+#> [1] "value"
 NULL %||% "default"
-#> Error in NULL %||% "default": could not find function "%||%"
+#> [1] "default"
 ```

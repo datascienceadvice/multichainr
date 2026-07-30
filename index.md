@@ -19,6 +19,7 @@ Make sure the MultiChain binaries (`multichaind`, `multichain-util`) are
 accessible. Set the path via:
 
 ``` r
+
 mc_set_path("/path/to/multichain/binaries")
 ```
 
@@ -29,6 +30,7 @@ or add `MULTICHAIN_PATH` to your `.Renviron` file.
 ## Installation
 
 ``` r
+
 # From GitHub (development version)
 remotes::install_github("datascienceadvice/multichainr")
 
@@ -41,6 +43,7 @@ install.packages("multichainr")
 ## Quick Start
 
 ``` r
+
 library(multichainr)
 
 # Set path to MultiChain binaries
@@ -96,23 +99,6 @@ mc_node_stop(conn)
 
 ------------------------------------------------------------------------
 
-## Vignettes
-
-| Vignette | Description |
-|----|----|
-| [Getting Started](https://datascienceadvice.github.io/multichainr/vignettes/getting-started.Rmd) | Set up a local node and run your first commands |
-| [Working with Assets](https://datascienceadvice.github.io/multichainr/vignettes/working-with-assets.Rmd) | Issue, send, list, and manage assets and tokens |
-| [Data Streams](https://datascienceadvice.github.io/multichainr/vignettes/data-streams.Rmd) | Create streams, publish items, and query data |
-| [Permissions & Governance](https://datascienceadvice.github.io/multichainr/vignettes/permissions-and-governance.Rmd) | Grant, revoke, and verify permissions |
-| [Advanced Transactions](https://datascienceadvice.github.io/multichainr/vignettes/advanced-transactions.Rmd) | Build, sign, and broadcast raw transactions |
-| [Multi-Signature Wallets](https://datascienceadvice.github.io/multichainr/vignettes/multi-signature-wallets.Rmd) | Create and use multi-signature addresses |
-| [Smart Filters](https://datascienceadvice.github.io/multichainr/vignettes/smart-filters.Rmd) | Write JavaScript filters and upgrades |
-| [Global Variables](https://datascienceadvice.github.io/multichainr/vignettes/global-variables.Rmd) | Use on-chain variables for configuration |
-| [Handling Large Payloads](https://datascienceadvice.github.io/multichainr/vignettes/handling-large-payloads.Rmd) | Off-chain data chunks and binary cache |
-| [Pharma SOP](https://datascienceadvice.github.io/multichainr/vignettes/pharma-sop.Rmd) | Real-world example: pharmaceutical standard operating procedure on-chain |
-
-------------------------------------------------------------------------
-
 ## Documentation
 
 Full reference documentation is available at the [package
@@ -120,6 +106,7 @@ website](https://datascienceadvice.github.io/multichainr/) (once
 published) or via R’s built-in help:
 
 ``` r
+
 ?mc_connect    # help for a specific function
 help(package = "multichainr")  # list all exported functions
 ```
@@ -134,9 +121,7 @@ Contributions are welcome! Please:
     [issue](https://github.com/datascienceadvice/multichainr/issues) to
     report bugs or suggest features.
 2.  Submit a pull request with a clear description of the change.
-3.  Ensure
-    [`devtools::check()`](https://devtools.r-lib.org/reference/check.html)
-    passes before submitting.
+3.  Ensure `devtools::check()` passes before submitting.
 
 ------------------------------------------------------------------------
 

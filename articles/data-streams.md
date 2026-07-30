@@ -9,6 +9,7 @@ logs, supply chain tracking, and sharing data between participants
 without the overhead of native assets.
 
 ``` r
+
 library(multichainr)
 
 # Set the path to MultiChain binaries
@@ -20,6 +21,7 @@ mc_set_path(Sys.getenv("MULTICHAIN_PATH"))
 We begin by setting up a local node and a temporary blockchain.
 
 ``` r
+
 chain_name <- "streams_demo_chain"
 
 # Create and start the node
@@ -41,6 +43,7 @@ write) or **restricted** (only specific addresses with `write`
 permissions on that stream can publish).
 
 ``` r
+
 stream_name <- "sensor_data"
 
 # Create an open stream
@@ -60,6 +63,7 @@ print(info$name)
 Data can be published as plain text, JSON, or raw hexadecimal strings.
 
 ``` r
+
 # 1. Publish a simple text message
 mc_publish(conn, stream_name, "device_01", list(text = "Temperature: 22.5C"))
 
@@ -81,6 +85,7 @@ You can retrieve items by their specific transaction ID, or list
 multiple items using various filters.
 
 ``` r
+
 # List the 10 most recent items in the stream
 # Returns a data frame with columns: publishers, key, data, blocktime, etc.
 recent_items <- mc_list_stream_items(conn, stream_name, count = 10)
@@ -98,6 +103,7 @@ the same key. This is useful for tracking the “current state” of an
 object without manual aggregation.
 
 ``` r
+
 # Update the status of device_01
 mc_publish(conn, stream_name, "device_01", list(json = list(status = "MAINTENANCE")))
 
@@ -116,6 +122,7 @@ print(current_state)
 Shut down the node and clean up the data directory.
 
 ``` r
+
 # Stop the node
 mc_node_stop(conn)
 Sys.sleep(2)

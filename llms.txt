@@ -19,6 +19,7 @@ Make sure the MultiChain binaries (`multichaind`, `multichain-util`) are
 accessible. Set the path via:
 
 ``` r
+
 mc_set_path("/path/to/multichain/binaries")
 ```
 
@@ -29,6 +30,7 @@ or add `MULTICHAIN_PATH` to your `.Renviron` file.
 ## Installation
 
 ``` r
+
 # From GitHub (development version)
 remotes::install_github("datascienceadvice/multichainr")
 
@@ -41,6 +43,7 @@ install.packages("multichainr")
 ## Quick Start
 
 ``` r
+
 library(multichainr)
 
 # Set path to MultiChain binaries
@@ -96,23 +99,6 @@ mc_node_stop(conn)
 
 ------------------------------------------------------------------------
 
-## Vignettes
-
-| Vignette | Description |
-|----|----|
-| [Getting Started](https://datascienceadvice.github.io/multichainr/vignettes/getting-started.Rmd) | Set up a local node and run your first commands |
-| [Working with Assets](https://datascienceadvice.github.io/multichainr/vignettes/working-with-assets.Rmd) | Issue, send, list, and manage assets and tokens |
-| [Data Streams](https://datascienceadvice.github.io/multichainr/vignettes/data-streams.Rmd) | Create streams, publish items, and query data |
-| [Permissions & Governance](https://datascienceadvice.github.io/multichainr/vignettes/permissions-and-governance.Rmd) | Grant, revoke, and verify permissions |
-| [Advanced Transactions](https://datascienceadvice.github.io/multichainr/vignettes/advanced-transactions.Rmd) | Build, sign, and broadcast raw transactions |
-| [Multi-Signature Wallets](https://datascienceadvice.github.io/multichainr/vignettes/multi-signature-wallets.Rmd) | Create and use multi-signature addresses |
-| [Smart Filters](https://datascienceadvice.github.io/multichainr/vignettes/smart-filters.Rmd) | Write JavaScript filters and upgrades |
-| [Global Variables](https://datascienceadvice.github.io/multichainr/vignettes/global-variables.Rmd) | Use on-chain variables for configuration |
-| [Handling Large Payloads](https://datascienceadvice.github.io/multichainr/vignettes/handling-large-payloads.Rmd) | Off-chain data chunks and binary cache |
-| [Pharma SOP](https://datascienceadvice.github.io/multichainr/vignettes/pharma-sop.Rmd) | Real-world example: pharmaceutical standard operating procedure on-chain |
-
-------------------------------------------------------------------------
-
 ## Documentation
 
 Full reference documentation is available at the [package
@@ -120,6 +106,7 @@ website](https://datascienceadvice.github.io/multichainr/) (once
 published) or via R’s built-in help:
 
 ``` r
+
 ?mc_connect    # help for a specific function
 help(package = "multichainr")  # list all exported functions
 ```
@@ -134,9 +121,7 @@ Contributions are welcome! Please:
     [issue](https://github.com/datascienceadvice/multichainr/issues) to
     report bugs or suggest features.
 2.  Submit a pull request with a clear description of the change.
-3.  Ensure
-    [`devtools::check()`](https://devtools.r-lib.org/reference/check.html)
-    passes before submitting.
+3.  Ensure `devtools::check()` passes before submitting.
 
 ------------------------------------------------------------------------
 
@@ -228,24 +213,24 @@ for details.
   : Encrypt the wallet
 - [`mc_get_added_node_info()`](https://datascienceadvice.github.io/multichainr/reference/mc_get_added_node_info.md)
   : Get information about manually added nodes
-- [`mc_get_addresses()`](https://datascienceadvice.github.io/multichainr/reference/mc_get_addresses.md)
-  : Get node wallet addresses
 - [`mc_get_address_balances()`](https://datascienceadvice.github.io/multichainr/reference/mc_get_address_balances.md)
   : Get asset balances for a specific address
 - [`mc_get_address_transaction()`](https://datascienceadvice.github.io/multichainr/reference/mc_get_address_transaction.md)
   : Get details of a transaction for a specific address
+- [`mc_get_addresses()`](https://datascienceadvice.github.io/multichainr/reference/mc_get_addresses.md)
+  : Get node wallet addresses
 - [`mc_get_asset_info()`](https://datascienceadvice.github.io/multichainr/reference/mc_get_asset_info.md)
   : Get information about a specific asset
 - [`mc_get_asset_transaction()`](https://datascienceadvice.github.io/multichainr/reference/mc_get_asset_transaction.md)
   : Get a specific transaction involving a subscribed asset
 - [`mc_get_block()`](https://datascienceadvice.github.io/multichainr/reference/mc_get_block.md)
   : Get block information
+- [`mc_get_block_hash()`](https://datascienceadvice.github.io/multichainr/reference/mc_get_block_hash.md)
+  : Get block hash by height
 - [`mc_get_blockchain_info()`](https://datascienceadvice.github.io/multichainr/reference/mc_get_blockchain_info.md)
   : Get general blockchain information
 - [`mc_get_blockchain_params()`](https://datascienceadvice.github.io/multichainr/reference/mc_get_blockchain_params.md)
   : Get blockchain parameters
-- [`mc_get_block_hash()`](https://datascienceadvice.github.io/multichainr/reference/mc_get_block_hash.md)
-  : Get block hash by height
 - [`mc_get_chain_totals()`](https://datascienceadvice.github.io/multichainr/reference/mc_get_chain_totals.md)
   : Get counts of blockchain entities
 - [`mc_get_chunk_queue_info()`](https://datascienceadvice.github.io/multichainr/reference/mc_get_chunk_queue_info.md)
@@ -336,16 +321,16 @@ for details.
   : Issue tokens for a non-fungible asset (NFT)
 - [`mc_issue_token_from()`](https://datascienceadvice.github.io/multichainr/reference/mc_issue_token_from.md)
   : Issue tokens from specific address
-- [`mc_list_addresses()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_addresses.md)
-  : List addresses in the wallet
 - [`mc_list_address_transactions()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_address_transactions.md)
   : List transactions for a specific address
-- [`mc_list_assets()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_assets.md)
-  : List blockchain assets
+- [`mc_list_addresses()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_addresses.md)
+  : List addresses in the wallet
 - [`mc_list_asset_issues()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_asset_issues.md)
   : List issuance events for an asset
 - [`mc_list_asset_transactions()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_asset_transactions.md)
   : List transactions involving a subscribed asset
+- [`mc_list_assets()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_assets.md)
+  : List blockchain assets
 - [`mc_list_blocks()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_blocks.md)
   : List information about specific blocks
 - [`mc_list_libraries()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_libraries.md)
@@ -358,26 +343,26 @@ for details.
   : List network permissions
 - [`mc_list_stored_nodes()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_stored_nodes.md)
   : List known peer node addresses (MultiChain 2.3+)
-- [`mc_list_streams()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_streams.md)
-  : List streams on the blockchain
 - [`mc_list_stream_block_items()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_stream_block_items.md)
   : List items in a specific block or blocks
 - [`mc_list_stream_filters()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_stream_filters.md)
   : List stream filters
 - [`mc_list_stream_items()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_stream_items.md)
   : List items in a stream (Enhanced version)
-- [`mc_list_stream_keys()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_stream_keys.md)
-  : List unique keys in a stream
 - [`mc_list_stream_key_items()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_stream_key_items.md)
   : List items with a specific key
-- [`mc_list_stream_publishers()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_stream_publishers.md)
-  : List publishers who have written to a stream
+- [`mc_list_stream_keys()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_stream_keys.md)
+  : List unique keys in a stream
 - [`mc_list_stream_publisher_items()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_stream_publisher_items.md)
   : List items published by a specific address
+- [`mc_list_stream_publishers()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_stream_publishers.md)
+  : List publishers who have written to a stream
 - [`mc_list_stream_query_items()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_stream_query_items.md)
   : Query items by matching keys and publishers
 - [`mc_list_stream_tx_items()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_stream_tx_items.md)
   : List items in stream within a given transaction ID
+- [`mc_list_streams()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_streams.md)
+  : List streams on the blockchain
 - [`mc_list_tx_filters()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_tx_filters.md)
   : List transaction filters
 - [`mc_list_unspent()`](https://datascienceadvice.github.io/multichainr/reference/mc_list_unspent.md)

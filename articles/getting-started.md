@@ -14,7 +14,8 @@ MultiChain executable files (`multichaind` and `multichain-util`).
 
 The most convenient way is to set the path in your environment
 variables. Open your `.Renviron` file (you can use
-`usethis::edit_r_environ()`) and add the following line:
+[`usethis::edit_r_environ()`](https://usethis.r-lib.org/reference/edit.html))
+and add the following line:
 
 ``` text
 MULTICHAIN_PATH="C:/path/to/multichain"
@@ -30,7 +31,6 @@ manually at the beginning of your R script using
 [`mc_set_path()`](https://datascienceadvice.github.io/multichainr/reference/mc_set_path.md):
 
 ``` r
-
 library(multichainr)
 
 # Provide the path to the folder containing MultiChain executables
@@ -43,7 +43,6 @@ Let’s create a “sandbox” — a temporary blockchain named `vignette_chain`
 for testing purposes.
 
 ``` r
-
 chain_name <- "vignette_chain"
 
 # Initialize a new blockchain (creates the configuration files)
@@ -56,7 +55,6 @@ Once initialized, we can launch the MultiChain node. By default, it
 starts in daemon mode (background process).
 
 ``` r
-
 # Start the node
 mc_node_start(chain_name)
 
@@ -72,7 +70,6 @@ port, username, and password) and create a connection object.
 automatically.
 
 ``` r
-
 # Get the configuration for the specific chain
 config <- mc_get_config(chain_name)
 
@@ -93,7 +90,6 @@ blockchain was temporary, delete its data directory to free up disk
 space.
 
 ``` r
-
 # Send the stop signal to the node
 mc_node_stop(conn)
 

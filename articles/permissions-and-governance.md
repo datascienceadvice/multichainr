@@ -9,7 +9,6 @@ how to manage these permissions and audit the current state of the
 network.
 
 ``` r
-
 library(multichainr)
 
 # Ensure the path to MultiChain binaries is set
@@ -23,7 +22,6 @@ address that initializes the chain is automatically granted all
 permissions, including “Admin” rights.
 
 ``` r
-
 chain_name <- "governance_demo_chain"
 
 # Create and start the node
@@ -44,7 +42,6 @@ There are several types of permissions in MultiChain, such as `connect`,
 `send`, `receive`, `issue`, `mine`, and `admin`.
 
 ``` r
-
 # Create a new address for a participant
 participant_addr <- mc_get_new_address(conn)
 
@@ -63,7 +60,6 @@ For enterprise use cases, you may want to attach metadata (like a KYC
 reference) to a permission grant or make a permission temporary.
 
 ``` r
-
 # Grant 'send' permission with a metadata note and a validity period
 # start_block = 0 (now), end_block = 5000 (expires at block 5000)
 metadata <- list(kyc_id = "USR-9982", officer = "Admin_01")
@@ -83,7 +79,6 @@ As an administrator or auditor, you can list all active permissions on
 the chain to ensure compliance.
 
 ``` r
-
 # List all addresses with 'admin' rights
 admins <- mc_list_permissions(conn, "admin")
 print(admins)
@@ -101,7 +96,6 @@ Governance also involves removing rights when a participant leaves the
 network or violates its rules.
 
 ``` r
-
 # Revoke 'send' permission from the participant
 mc_revoke(conn, participant_addr, "send")
 
@@ -116,7 +110,6 @@ Always ensure that the node is stopped and temporary files are cleaned
 up in your testing environment.
 
 ``` r
-
 mc_node_stop(conn)
 Sys.sleep(2)
 

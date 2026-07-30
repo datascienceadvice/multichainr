@@ -9,7 +9,6 @@ valid if it contains certain metadata. To keep code clean, common logic
 can be stored in Libraries.
 
 ``` r
-
 library(multichainr)
 
 # Set the path to your MultiChain binaries
@@ -22,7 +21,6 @@ We start by setting up a local node. Governance permissions (Admin) are
 required to create filters and libraries.
 
 ``` r
-
 chain_name <- "logic_demo_chain"
 
 # Create and start the node
@@ -44,7 +42,6 @@ A library contains helper functions. Here, we create a library called
 physical range.
 
 ``` r
-
 # Define the JavaScript code for the library
 lib_js <- "
 function isSafeTemp(temp) {
@@ -71,7 +68,6 @@ The filter logic must be contained in a function named
 `filterstreamitem()`.
 
 ``` r
-
 # The filter code imports the 'validator' library
 filter_js <- "
 function filterstreamitem() {
@@ -94,7 +90,6 @@ test it locally using `mc_test_stream_filter`. To do this, we first
 publish a sample item to get a valid transaction ID.
 
 ``` r
-
 # 0. Setup a temporary stream for testing
 mc_create_stream(conn, "test_stream", open = TRUE)
 mc_subscribe(conn, "test_stream")
@@ -126,7 +121,6 @@ Once tested, we create the filter on the blockchain and attach it to our
 stream.
 
 ``` r
-
 # 1. Create the telemetry stream
 mc_create_stream(conn, "telemetry", open = TRUE)
 
@@ -152,7 +146,6 @@ After the filter is active, any attempt to publish invalid data to the
 `telemetry` stream will be rejected by every node in the network.
 
 ``` r
-
 # This will SUCCEED (20 is within range)
 txid_ok <- mc_publish(conn, "telemetry", "sensor_01", list(json = list(temp = 20)))
 print(paste("Successful publish TXID:", txid_ok))
@@ -176,7 +169,6 @@ cat("Stored filter code length:", nchar(code_info), "characters.\n")
 Always shut down the node and clean up the temporary directory.
 
 ``` r
-
 # Stop the node
 mc_node_stop(conn)
 Sys.sleep(2)

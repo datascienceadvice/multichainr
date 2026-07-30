@@ -19,7 +19,6 @@ Make sure the MultiChain binaries (`multichaind`, `multichain-util`) are
 accessible. Set the path via:
 
 ``` r
-
 mc_set_path("/path/to/multichain/binaries")
 ```
 
@@ -30,7 +29,6 @@ or add `MULTICHAIN_PATH` to your `.Renviron` file.
 ## Installation
 
 ``` r
-
 # From GitHub (development version)
 remotes::install_github("datascienceadvice/multichainr")
 
@@ -43,7 +41,6 @@ install.packages("multichainr")
 ## Quick Start
 
 ``` r
-
 library(multichainr)
 
 # Set path to MultiChain binaries
@@ -106,7 +103,6 @@ website](https://datascienceadvice.github.io/multichainr/) (once
 published) or via R’s built-in help:
 
 ``` r
-
 ?mc_connect    # help for a specific function
 help(package = "multichainr")  # list all exported functions
 ```
@@ -121,7 +117,9 @@ Contributions are welcome! Please:
     [issue](https://github.com/datascienceadvice/multichainr/issues) to
     report bugs or suggest features.
 2.  Submit a pull request with a clear description of the change.
-3.  Ensure `devtools::check()` passes before submitting.
+3.  Ensure
+    [`devtools::check()`](https://devtools.r-lib.org/reference/check.html)
+    passes before submitting.
 
 ------------------------------------------------------------------------
 

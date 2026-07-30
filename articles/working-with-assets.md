@@ -11,7 +11,6 @@ To follow this guide, ensure you have the MultiChain binaries
 (`multichaind` and `multichain-util`) installed on your system.
 
 ``` r
-
 library(multichainr)
 
 # Set the path to your MultiChain binaries
@@ -24,7 +23,6 @@ MultiChain operates as a permissioned blockchain. We start by
 initializing a new chain and launching the daemon.
 
 ``` r
-
 chain_name <- "asset_demo_chain"
 
 # Create the blockchain configuration
@@ -47,7 +45,6 @@ By default, MultiChain is secure. Addresses must be granted specific
 permissions to issue or receive assets.
 
 ``` r
-
 # Generate new wallet addresses
 issuer_addr <- mc_get_new_address(conn)
 recipient_addr <- mc_get_new_address(conn)
@@ -65,7 +62,6 @@ Fungible assets are divisible and interchangeable. We can create an
 “open” asset to allow the supply to be increased later.
 
 ``` r
-
 # Define an asset named 'gold' with 2 decimal places (units = 0.01)
 gold_params <- list(name = "gold", open = TRUE)
 
@@ -91,7 +87,6 @@ To support individual tokens, the parent asset must be created with
 `fungible = FALSE` and an initial quantity of `0`.
 
 ``` r
-
 art_params <- list(
   name = "art", 
   fungible = FALSE, 
@@ -108,7 +103,6 @@ Once the parent exists, we can issue individual tokens (NFTs). Each
 token can include custom JSON metadata.
 
 ``` r
-
 # Issue a unique token "painting_001" with specific metadata
 mc_issue_token(conn,
                address = issuer_addr, 
@@ -128,7 +122,6 @@ We can transfer assets using specific convenience functions or the
 general-purpose `mc_send` function for complex transactions (like NFTs).
 
 ``` r
-
 # 1. Send 100 units of fungible 'gold'
 mc_send_asset(conn, recipient_addr, "gold", 100)
 
@@ -154,7 +147,6 @@ When the work is complete, it is important to stop the node and, if
 necessary, remove the data directory.
 
 ``` r
-
 mc_node_stop(conn)
 Sys.sleep(2)
 

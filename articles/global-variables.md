@@ -9,7 +9,6 @@ value the variable has held, along with the timestamp and the address
 that performed the update.
 
 ``` r
-
 library(multichainr)
 
 # Set the path to your MultiChain binaries
@@ -21,7 +20,6 @@ mc_set_path(Sys.getenv("MULTICHAIN_PATH"))
 We start by setting up a local testing environment.
 
 ``` r
-
 chain_name <- "vars_demo_chain"
 
 # Create and start the node
@@ -42,7 +40,6 @@ When creating a variable, you can decide if it is **open** (can be
 updated by anyone with `create` permissions) or restricted to admins.
 
 ``` r
-
 var_name <- "system_config"
 
 # Create a variable that is open for updates
@@ -63,7 +60,6 @@ can be a string, a number, or a complex nested list (which is
 automatically converted to JSON).
 
 ``` r
-
 # Update 1: Change status to 'active'
 mc_set_variable_value(conn, var_name, list(version = "1.0.0", status = "active"))
 
@@ -86,7 +82,6 @@ The `mc_get_variable_value` function always returns the most recent
 state of the variable.
 
 ``` r
-
 current_val <- mc_get_variable_value(conn, var_name)
 
 cat("Current System Version:", current_val$version, "\n")
@@ -100,7 +95,6 @@ function. This returns a data frame containing every version of the
 variable ever published.
 
 ``` r
-
 # Retrieve the full history of changes
 history_df <- mc_get_variable_history(conn, var_name, verbose = TRUE)
 
@@ -116,7 +110,6 @@ print(history_df[, c("blocktime", "value")])
 Always shut down the node and clean up the environment after testing.
 
 ``` r
-
 # Stop the node
 mc_node_stop(conn)
 Sys.sleep(2)
